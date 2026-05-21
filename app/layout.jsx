@@ -1,5 +1,12 @@
+import { Suspense } from "react";
 import { DM_Serif_Display, Cormorant_Garamond, Jost, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
+import { Providers } from "@/components/shared/Providers";
+import { AnnouncementBar } from "@/components/shared/AnnouncementBar";
+import { Navbar } from "@/components/shared/Navbar";
+import { Footer } from "@/components/shared/Footer";
+import { CartDrawer } from "@/components/shared/CartDrawer";
+import { PageFade } from "@/components/shared/PageFade";
 
 // Tipografías de marca cargadas vía next/font/google.
 // Cada una expone su CSS variable, que tokens.css consume en --font-* .
@@ -43,7 +50,23 @@ export default function RootLayout({ children }) {
   const fontVars = `${fontDisplay.variable} ${fontSerif.variable} ${fontBody.variable} ${fontMono.variable}`;
   return (
     <html lang="es" className={fontVars}>
-      <body>{children}</body>
+      <body>
+        <Providers>
+          <AnnouncementBar />
+          {/* Suspense necesario porque useRoute() llama a useSearchParams(),
+              que en Next 14 fuerza CSR si no está dentro de un boundary. */}
+          <Suspense fallback={null}>
+            <Navbar />
+          </Suspense>
+          <PageFade>{children}</PageFade>
+          <Suspense fallback={null}>
+            <Footer />
+          </Suspense>
+          <Suspense fallback={null}>
+            <CartDrawer />
+          </Suspense>
+        </Providers>
+      </body>
     </html>
   );
 }
