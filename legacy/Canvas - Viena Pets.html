@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Viena Pets — Opciones de dirección</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles/tokens.css">
+<style>
+  body { background: #f0eee9; }
+  iframe { border: none; width: 100%; height: 100%; display: block; background: var(--vp-cream); }
+</style>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="design-canvas.jsx"></script>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+function App() {
+  // Each artboard is an iframe of the live HTML at a specific route & variant.
+  const Frame = ({ url, h = 2200 }) => (
+    <iframe src={url} style={{ width: "100%", height: h, border: "none" }} />
+  );
+
+  return (
+    <DesignCanvas>
+      <DCSection id="home" title="Home — 2 direcciones" subtitle="Boutique editorial vs. DTC moderna. La misma tienda, dos almas.">
+        <DCArtboard id="boutique" label="A · Boutique editorial (foto única, crema, serif)" width={1400} height={2200}>
+          <Frame url="Viena Pets.html?v=boutique" />
+        </DCArtboard>
+        <DCArtboard id="moderna" label="B · DTC moderna (color pleno, bloques, redondeces)" width={1400} height={2200}>
+          <Frame url="Viena Pets.html?v=moderna#/" />
+        </DCArtboard>
+      </DCSection>
+
+      <DCSection id="shop" title="Tienda — catálogo" subtitle="Listado de todas las piezas (arneses, correas, accesorios).">
+        <DCArtboard id="catalogo" label="Tienda · 9 productos" width={1500} height={1400}>
+          <Frame url="Viena Pets.html#/tienda" h={1400} />
+        </DCArtboard>
+      </DCSection>
+
+      <DCSection id="product" title="Producto — vista detallada" subtitle="Galería, selector de pieza y talla, conjunto, diagrama de herrajes, guía de tallas.">
+        <DCArtboard id="capri" label="Modelo Capri" width={1500} height={2600}>
+          <Frame url="Viena Pets.html#/producto/capri" h={2600} />
+        </DCArtboard>
+        <DCArtboard id="peachy" label="Modelo Peachy" width={1500} height={2600}>
+          <Frame url="Viena Pets.html#/producto/peachy" h={2600} />
+        </DCArtboard>
+        <DCArtboard id="daisy" label="Modelo Daisy" width={1500} height={2600}>
+          <Frame url="Viena Pets.html#/producto/daisy" h={2600} />
+        </DCArtboard>
+      </DCSection>
+
+      <DCSection id="checkout" title="Checkout — 3 pasos" subtitle="Contacto · envío · pago. Con resumen lateral y confirmación.">
+        <DCArtboard id="checkout" label="Proceso de compra" width={1300} height={1000}>
+          <Frame url="Viena Pets.html#/checkout" h={1000} />
+        </DCArtboard>
+      </DCSection>
+
+      <DCSection id="extra" title="Otras páginas" subtitle="Historia del atelier e índice de modelos.">
+        <DCArtboard id="historia" label="Historia" width={1400} height={1400}>
+          <Frame url="Viena Pets.html#/historia" h={1400} />
+        </DCArtboard>
+        <DCArtboard id="modelos" label="Modelos (índice)" width={1400} height={1600}>
+          <Frame url="Viena Pets.html#/modelos" h={1600} />
+        </DCArtboard>
+      </DCSection>
+    </DesignCanvas>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(<App />);
+</script>
+</body>
+</html>
