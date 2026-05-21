@@ -3,13 +3,12 @@
 import { Icon } from "@/components/shared/Icon";
 import { ModelSwatch } from "@/components/shared/ModelSwatch";
 import { useRoute } from "@/components/shared/useRoute";
-import { VP_MODELS } from "@/lib/data";
 
-export function Hero({ model, heroStyle }) {
+export function Hero({ model, models = [], heroStyle }) {
   const { go } = useRoute();
 
   if (heroStyle === "mosaic") {
-    return <HeroMosaic />;
+    return <HeroMosaic models={models} />;
   }
 
   // SINGLE hero: foto editorial a la derecha + bloque editorial-comercial a la izquierda
@@ -198,7 +197,7 @@ export function Hero({ model, heroStyle }) {
   );
 }
 
-function HeroMosaic() {
+function HeroMosaic({ models = [] }) {
   const { go } = useRoute();
   return (
     <section style={{ padding: "30px 40px 60px" }}>
@@ -215,8 +214,8 @@ function HeroMosaic() {
           <img src="/assets/hero-dalmata.png" alt="Viena" style={{ width: "100%", height: "100%", objectFit: "contain", objectPosition: "center", display: "block" }} />
         </div>
 
-        <div style={{ height: 260 }}><ModelSwatch model={VP_MODELS[0]} style={{ width: "100%", height: "100%", display: "block" }} /></div>
-        <div style={{ height: 260 }}><ModelSwatch model={VP_MODELS[1]} style={{ width: "100%", height: "100%", display: "block" }} /></div>
+        {models[0] && <div style={{ height: 260 }}><ModelSwatch model={models[0]} style={{ width: "100%", height: "100%", display: "block" }} /></div>}
+        {models[1] && <div style={{ height: 260 }}><ModelSwatch model={models[1]} style={{ width: "100%", height: "100%", display: "block" }} /></div>}
 
         <div style={{ background: "var(--vp-brown)", color: "var(--vp-paper)", padding: "36px 32px", display: "flex", flexDirection: "column", justifyContent: "space-between", height: 260 }}>
           <div>

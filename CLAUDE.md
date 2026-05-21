@@ -65,7 +65,7 @@ Si encuentras texto existente con lenguaje prohibido, **señálalo y reemplázal
 - **Framework:** Next.js 14+ (App Router)
 - **Lenguaje:** JavaScript (no TypeScript, para mantener simplicidad)
 - **Estilos:** CSS modules + variables CSS de `tokens.css`. **NO usar Tailwind.**
-- **Base de datos:** Supabase (PostgreSQL, región Frankfurt EU)
+- **Base de datos:** Supabase (PostgreSQL, región Dublin eu-west-1)
 - **Pasarela de pago:** Stripe Checkout (hosted, no Elements)
 - **Facturación:** Stripe Tax + Stripe Invoicing automático
 - **Email transaccional:** Brevo (a integrar en sprint posterior)

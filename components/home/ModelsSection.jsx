@@ -4,9 +4,8 @@ import { useState } from "react";
 import { ModelSwatch } from "@/components/shared/ModelSwatch";
 import { useRoute } from "@/components/shared/useRoute";
 import { useIsMobile } from "@/components/shared/useIsMobile";
-import { VP_MODELS } from "@/lib/data";
 
-export function ModelsSection() {
+export function ModelsSection({ models = [] }) {
   const { go } = useRoute();
   const isMobile = useIsMobile();
   return (
@@ -38,8 +37,8 @@ export function ModelsSection() {
         gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr 1fr",
         gap: isMobile ? 32 : 40,
       }}>
-        {VP_MODELS.map((m, i) => (
-          <ModelCard key={m.id} model={m} index={i + 1} onClick={() => go(`/producto/${m.id}`)} />
+        {models.map((m, i) => (
+          <ModelCard key={m.id} model={m} index={i + 1} onClick={() => go(`/producto/${m.slugs?.conjunto ?? m.slugs?.arnes ?? m.id}`)} />
         ))}
       </div>
     </section>
