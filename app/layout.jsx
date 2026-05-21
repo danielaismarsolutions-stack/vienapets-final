@@ -58,7 +58,9 @@ export default function RootLayout({ children }) {
           <Suspense fallback={null}>
             <Navbar />
           </Suspense>
-          <PageFade>{children}</PageFade>
+          <Suspense fallback={null}>
+            <PageFade>{children}</PageFade>
+          </Suspense>
           <Suspense fallback={null}>
             <Footer />
           </Suspense>
