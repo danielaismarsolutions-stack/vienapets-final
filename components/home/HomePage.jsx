@@ -1,4 +1,3 @@
-import { VP_MODELS } from "@/lib/data";
 import { Hero } from "./Hero";
 import { CategoryRow } from "./CategoryRow";
 import { PromoPackSection } from "./PromoPackSection";
@@ -12,20 +11,21 @@ import { FAQSection } from "./FAQSection";
 import { InstagramStrip } from "./InstagramStrip";
 
 // Composer del home. Variante "boutique" del legacy (única que se migra).
-// heroStyle: "single" | "mosaic" (default: single).
-export function HomePage({ heroModelId = "capri", heroStyle = "single" } = {}) {
-  const model = VP_MODELS.find((m) => m.id === heroModelId) || VP_MODELS[0];
+// Recibe `models` desde el Server Component padre (app/page.jsx) que los
+// consulta en Supabase. heroStyle: "single" | "mosaic".
+export function HomePage({ models = [], heroModelId = "capri", heroStyle = "single" }) {
+  const heroModel = models.find((m) => m.id === heroModelId) || models[0] || null;
 
   return (
     <>
-      <Hero model={model} heroStyle={heroStyle} />
+      <Hero model={heroModel} models={models} heroStyle={heroStyle} />
       <CategoryRow />
-      <PromoPackSection />
+      <PromoPackSection models={models} />
       <ProbadorBlock />
       <ValueProps />
-      <ModelsSection />
+      <ModelsSection models={models} />
       <StorySection />
-      <MaterialsSection />
+      <MaterialsSection models={models} />
       <TestimonialsSection />
       <FAQSection />
       <InstagramStrip />

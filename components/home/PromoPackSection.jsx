@@ -2,9 +2,8 @@
 
 import { Icon } from "@/components/shared/Icon";
 import { useRoute } from "@/components/shared/useRoute";
-import { VP_MODELS } from "@/lib/data";
 
-export function PromoPackSection() {
+export function PromoPackSection({ models = [] }) {
   const { go } = useRoute();
   return (
     <section style={{ padding: "100px 40px", background: "var(--vp-cream-soft)" }}>
@@ -23,11 +22,12 @@ export function PromoPackSection() {
         </div>
 
         <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 24 }}>
-          {VP_MODELS.map((m) => {
+          {models.map((m) => {
             const totalRaw = m.priceHarness + m.priceLeash + m.priceBag;
-            const totalDiscounted = Math.round(totalRaw * 0.9 * 100) / 100;
+            const totalDiscounted = m.priceConjunto ?? Math.round(totalRaw * 0.9 * 100) / 100;
+            const slug = m.slugs?.conjunto ?? m.slugs?.arnes ?? m.id;
             return (
-              <article key={m.id} onClick={() => go(`/producto/${m.id}`)} style={{ cursor: "pointer", background: "var(--vp-paper)", padding: 20, display: "flex", flexDirection: "column", gap: 16 }}>
+              <article key={m.id} onClick={() => go(`/producto/${slug}`)} style={{ cursor: "pointer", background: "var(--vp-paper)", padding: 20, display: "flex", flexDirection: "column", gap: 16 }}>
                 <div style={{ aspectRatio: "4/5", background: "var(--vp-cream)", overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center", position: "relative" }}>
                   <img src={m.heroImg} alt={`Conjunto ${m.name}`} style={{ width: "100%", height: "100%", objectFit: "contain", objectPosition: "center", display: "block", padding: 16 }} />
                   <div style={{ position: "absolute", top: 12, right: 12, background: "var(--vp-olive)", color: "var(--vp-paper)", padding: "5px 10px", fontSize: 10, letterSpacing: ".18em", textTransform: "uppercase", fontFamily: "var(--font-mono)" }}>−10%</div>

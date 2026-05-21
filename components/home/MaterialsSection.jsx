@@ -1,6 +1,4 @@
-import { VP_MODELS } from "@/lib/data";
-
-export function MaterialsSection() {
+export function MaterialsSection({ models = [] }) {
   return (
     <section style={{ padding: "140px 40px" }}>
       <div style={{ maxWidth: 1400, margin: "0 auto" }}>
@@ -18,7 +16,7 @@ export function MaterialsSection() {
         </div>
 
         <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 32 }}>
-          {VP_MODELS.map((m, i) => (
+          {models.map((m, i) => (
             <div key={m.id}>
               <div style={{ aspectRatio: "4/5", background: "var(--vp-cream-soft)", position: "relative", overflow: "hidden" }}>
                 <img src={m.materialsImg} alt={`Estampado ${m.name}`} style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center", display: "block" }} />

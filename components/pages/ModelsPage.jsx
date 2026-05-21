@@ -2,9 +2,8 @@
 
 import { Icon } from "@/components/shared/Icon";
 import { useRoute } from "@/components/shared/useRoute";
-import { VP_MODELS } from "@/lib/data";
 
-export function ModelsPage() {
+export function ModelsPage({ models = [] }) {
   const { go } = useRoute();
   return (
     <div style={{ padding: "40px 40px 80px" }}>
@@ -13,7 +12,7 @@ export function ModelsPage() {
           <div className="vp-eyebrow" style={{ marginBottom: 14 }}>— Modelos</div>
           <h1 className="vp-display" style={{ fontSize: "clamp(48px, 6vw, 96px)", color: "var(--vp-brown)", margin: 0, lineHeight: .95 }}>Capri <span className="vp-italic" style={{ fontStyle: "italic" }}>·</span> Peachy <span className="vp-italic" style={{ fontStyle: "italic" }}>·</span> Daisy</h1>
         </div>
-        {VP_MODELS.map((m, i) => (
+        {models.map((m, i) => (
           <div key={m.id} style={{ display: "grid", gridTemplateColumns: i % 2 === 0 ? "1.1fr 1fr" : "1fr 1.1fr", gap: 80, alignItems: "center", padding: "80px 0", borderBottom: "1px solid rgba(74,46,28,.12)" }}>
             <div style={{ order: i % 2 === 0 ? 0 : 1, width: "100%", height: 520, overflow: "hidden", background: "var(--vp-cream-soft)" }}>
               <img src={m.heroImg} alt={m.name} style={{ width: "100%", height: "100%", objectFit: "contain", objectPosition: "center", display: "block" }} />
@@ -26,7 +25,7 @@ export function ModelsPage() {
                 <div style={{ width: 40, height: 40, background: m.hex.primary }} />
                 <div style={{ width: 40, height: 40, background: m.hex.secondary }} />
               </div>
-              <button className="vp-btn" style={{ marginTop: 32 }} onClick={() => go(`/producto/${m.id}`)}>Descubrir {m.name} <Icon.Arrow style={{ width: 14, height: 14 }} /></button>
+              <button className="vp-btn" style={{ marginTop: 32 }} onClick={() => go(`/producto/${m.slugs?.conjunto ?? m.slugs?.arnes ?? m.id}`)}>Descubrir {m.name} <Icon.Arrow style={{ width: 14, height: 14 }} /></button>
             </div>
           </div>
         ))}
