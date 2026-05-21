@@ -1,0 +1,169 @@
+/* Viena Pets — Design tokens */
+:root {
+  /* Base neutrals (del mood board) */
+  --vp-cream: #F2E9DC;
+  --vp-cream-soft: #EAE0D0;
+  --vp-cream-deep: #E2D4BE;
+  --vp-sand: #D4C3A8;
+  --vp-stone: #B8A585;
+
+  /* Text / ink */
+  --vp-ink: #2A1D12;
+  --vp-ink-soft: #4A3828;
+  --vp-ink-muted: #8A7355;
+  --vp-brown: #4A2E1C;       /* logo brown */
+  --vp-brown-deep: #3A2212;
+
+  /* Paper white / highlights */
+  --vp-paper: #FBF6ED;
+  --vp-white: #FEFBF4;
+
+  /* Model accents */
+  --capri-green: #B0844A;        /* repurposed: cobre suave (no más verde) */
+  --capri-green-deep: #8A6231;
+  --capri-pink: #F0D4DC;
+  --peachy-pink: #F2A9C4;
+  --peachy-orange: #E8653E;
+  --daisy-yellow: #F2E2A8;
+  --daisy-cream: #F7EFC8;
+  --daisy-brown: #5C3A1E;
+
+  /* Type — las variables --font-*-loaded las inyecta next/font/google en layout.jsx */
+  --font-display: var(--font-display-loaded), "DM Serif Display", "Cormorant Garamond", Georgia, serif;
+  --font-serif: var(--font-serif-loaded), "Cormorant Garamond", Georgia, serif;
+  --font-body: var(--font-body-loaded), "Jost", "Inter Tight", system-ui, sans-serif;
+  --font-mono: var(--font-mono-loaded), "JetBrains Mono", ui-monospace, monospace;
+
+  /* Spacing scale */
+  --s-1: 4px;  --s-2: 8px;  --s-3: 12px; --s-4: 16px;
+  --s-5: 20px; --s-6: 24px; --s-8: 32px; --s-10: 40px;
+  --s-12: 48px; --s-16: 64px; --s-20: 80px; --s-24: 96px;
+  --s-32: 128px;
+
+  --radius-arch: 180px 180px 12px 12px;
+  --radius-soft: 4px;
+  --radius-card: 2px;
+
+  /* === Acentos premium (cobre / dorado quemado) — sustituye al verde oliva === */
+  --vp-olive: #A06B3F;            /* nombre conservado por compatibilidad */
+  --vp-olive-deep: #7A4F2A;
+  --vp-olive-soft: #F1E5D0;
+  --vp-olive-muted: #C9A57F;
+
+  /* Aliases premium (uso preferido en código nuevo) */
+  --vp-copper: var(--vp-olive);
+  --vp-copper-deep: var(--vp-olive-deep);
+  --vp-gold: #B98E4E;
+  --vp-gold-soft: #E9D9B4;
+}
+
+/* Base */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: var(--font-body);
+  color: var(--vp-ink);
+  background: var(--vp-cream);
+  -webkit-font-smoothing: antialiased;
+  font-weight: 300;
+  line-height: 1.55;
+  letter-spacing: 0.005em;
+}
+
+.vp-display { font-family: var(--font-display); font-weight: 400; line-height: 0.95; letter-spacing: -0.01em; }
+.vp-serif   { font-family: var(--font-serif);   font-weight: 400; letter-spacing: 0; }
+.vp-eyebrow {
+  font-family: var(--font-body);
+  font-size: 11px;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  font-weight: 500;
+  color: var(--vp-brown);
+}
+.vp-italic { font-family: var(--font-serif); font-style: italic; font-weight: 400; }
+
+button, input, textarea, select { font: inherit; color: inherit; }
+a { color: inherit; text-decoration: none; }
+img { max-width: 100%; display: block; }
+
+/* Refined buttons */
+.vp-btn {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-family: var(--font-body);
+  font-size: 12px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  font-weight: 500;
+  padding: 16px 28px;
+  border: 1px solid var(--vp-brown);
+  background: var(--vp-brown);
+  color: var(--vp-paper);
+  cursor: pointer;
+  transition: background .25s ease, color .25s ease, border-color .25s ease, transform .25s ease;
+  border-radius: 0;
+}
+.vp-btn:hover { background: var(--vp-ink); border-color: var(--vp-ink); }
+.vp-btn.ghost { background: transparent; color: var(--vp-brown); }
+.vp-btn.ghost:hover { background: var(--vp-brown); color: var(--vp-paper); }
+.vp-btn.small { padding: 10px 18px; font-size: 10.5px; }
+.vp-btn.full { width: 100%; justify-content: center; }
+
+/* Variante verde oliva (CTAs principales de marca) */
+.vp-btn.olive {
+  background: var(--vp-olive);
+  border-color: var(--vp-olive);
+  color: var(--vp-paper);
+}
+.vp-btn.olive:hover {
+  background: var(--vp-olive-deep);
+  border-color: var(--vp-olive-deep);
+}
+.vp-btn.olive.ghost {
+  background: transparent;
+  color: var(--vp-olive-deep);
+  border-color: var(--vp-olive-deep);
+}
+.vp-btn.olive.ghost:hover {
+  background: var(--vp-olive);
+  color: var(--vp-paper);
+  border-color: var(--vp-olive);
+}
+
+/* Badge "Nuevo" verde oliva */
+.vp-badge-new {
+  display: inline-block;
+  background: var(--vp-olive);
+  color: var(--vp-paper);
+  font-family: var(--font-body);
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-weight: 500;
+  padding: 3px 8px;
+  border-radius: 2px;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
+/* Link activo en navbar */
+.vp-navlink-active {
+  color: var(--vp-olive-deep) !important;
+  border-bottom-color: var(--vp-olive-deep) !important;
+}
+
+.vp-link {
+  font-family: var(--font-body);
+  font-size: 12px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--vp-brown);
+  border-bottom: 1px solid var(--vp-brown);
+  padding-bottom: 2px;
+  cursor: pointer;
+}
+
+/* Utility */
+.vp-divider { height: 1px; background: rgba(74,46,28,.18); width: 100%; }
+.vp-dot { width: 4px; height: 4px; border-radius: 999px; background: var(--vp-brown); display: inline-block; vertical-align: middle; }
+
+::selection { background: var(--vp-brown); color: var(--vp-paper); }
