@@ -20,7 +20,7 @@ export function ModelsSection({ models = [] }) {
         gap: isMobile ? 24 : 0,
       }}>
         <div>
-          <div className="vp-eyebrow" style={{ marginBottom: 20 }}>— Colección SS26</div>
+          <div className="vp-eyebrow" style={{ marginBottom: 20 }}>— Edición limitada</div>
           <h2 className="vp-display" style={{ fontSize: "clamp(40px, 5.5vw, 92px)", color: "var(--vp-brown)", margin: 0, lineHeight: 1, maxWidth: 720 }}>
             Tres estampados,<br/><span className="vp-italic" style={{ fontStyle: "italic" }}>una firma</span>.
           </h2>
