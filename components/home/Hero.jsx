@@ -163,7 +163,7 @@ export function Hero({ model, models = [], heroStyle }) {
             <img src="/assets/monograma-viena.png" alt="" style={{ width: 56, height: 56, objectFit: "contain", display: "block" }} />
             <div>
               <div className="vp-eyebrow" style={{ fontSize: 9, marginBottom: 6, color: "var(--vp-olive-deep)", letterSpacing: ".28em" }}>
-                Edición SS26
+                EDICIÓN LIMITADA
               </div>
               <div className="vp-serif" style={{
                 fontSize: 15,
@@ -171,7 +171,7 @@ export function Hero({ model, models = [], heroStyle }) {
                 lineHeight: 1.35,
                 fontStyle: "italic",
               }}>
-                Diseño de autor · Edición SS26
+                Diseño de autor · Edición limitada
               </div>
             </div>
           </div>
