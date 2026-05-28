@@ -31,7 +31,7 @@ export function Hero({ model, models = [], heroStyle }) {
           <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 24 }}>
             <img src="/assets/logo-viena-pets-oficial.png" alt="" style={{ height: 28, width: "auto", opacity: .9 }} />
             <span style={{ height: 1, flex: 1, maxWidth: 80, background: "var(--vp-olive-deep)", opacity: .35 }}></span>
-            <span className="vp-eyebrow" style={{ color: "var(--vp-olive-deep)", fontSize: 10 }}>SS26 · Madrid</span>
+            <span className="vp-eyebrow" style={{ color: "var(--vp-olive-deep)", fontSize: 10 }}>Madrid</span>
           </div>
 
           <h1 className="vp-display" style={{
@@ -233,7 +233,7 @@ function HeroMosaic({ models = [] }) {
 }
 
 function Ticker() {
-  const items = ["Diseños exclusivos firmados", "✶", "Diseñado en España", "✶", "Edición limitada · SS26", "✶", "Envío gratuito desde 45 €", "✶"];
+  const items = ["Diseños exclusivos firmados", "✶", "Diseñado en España", "✶", "Edición limitada", "✶", "Envío gratuito desde 45 €", "✶"];
   const row = [...items, ...items, ...items];
   return (
     <div style={{ marginTop: 80, borderTop: "1px solid rgba(74,46,28,.2)", borderBottom: "1px solid rgba(74,46,28,.2)", padding: "16px 0", overflow: "hidden" }}>

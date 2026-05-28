@@ -98,7 +98,7 @@ export function ProductPage({ product }) {
           </div>
 
           <div style={{ paddingTop: 10 }}>
-            <div className="vp-eyebrow" style={{ marginBottom: 14 }}>— Colección SS26 · Diseño de autor</div>
+            <div className="vp-eyebrow" style={{ marginBottom: 14 }}>— Edición limitada · Diseño de autor</div>
             <h1 className="vp-display" style={{ fontSize: 64, color: "var(--vp-brown)", margin: 0, lineHeight: 1.05, paddingBottom: 4 }}>
               <span className="vp-italic" style={{ fontStyle: "italic" }}>{product.name}</span>
             </h1>
