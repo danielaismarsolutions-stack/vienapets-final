@@ -1,8 +1,6 @@
 "use client";
 
 // Carrito persistente en localStorage. Migrado idéntico de legacy/scripts/shared.jsx.
-// En Sprint 3 el checkout se conecta a Stripe Checkout; la lógica de pack 10%
-// se mantiene en cliente para la vista del carrito.
 import { createContext, useContext, useEffect, useState } from "react";
 
 const CartCtx = createContext(null);
@@ -43,31 +41,8 @@ export function CartProvider({ children }) {
   const count = items.reduce((s, i) => s + i.qty, 0);
   const subtotal = items.reduce((s, i) => s + i.price * i.qty, 0);
 
-  // Descuento pack 10%: si en el carrito hay arnés + correa + portabolsas del mismo modelo,
-  // se aplica 10% sobre el subtotal de esas 3 piezas. El qty considerado es el mínimo de las 3.
-  // Los items con category="conjunto" ya vienen con el precio descontado y no se cuentan aquí.
-  const packDiscount = (() => {
-    const byModel = {};
-    items.forEach((it) => {
-      if (!it.category || it.category === "conjunto") return;
-      if (!byModel[it.modelId]) byModel[it.modelId] = {};
-      byModel[it.modelId][it.category] = it;
-    });
-    let discount = 0;
-    Object.values(byModel).forEach((g) => {
-      if (g.harness && g.leash && g.bag) {
-        const minQty = Math.min(g.harness.qty, g.leash.qty, g.bag.qty);
-        const packSubtotal = (g.harness.price + g.leash.price + g.bag.price) * minQty;
-        discount += packSubtotal * 0.1;
-      }
-    });
-    return Math.round(discount * 100) / 100;
-  })();
-
-  const totalAfterDiscount = Math.round((subtotal - packDiscount) * 100) / 100;
-
   return (
-    <CartCtx.Provider value={{ items, add, remove, updateQty, clear, count, subtotal, packDiscount, totalAfterDiscount, open, setOpen }}>
+    <CartCtx.Provider value={{ items, add, remove, updateQty, clear, count, subtotal, open, setOpen }}>
       {children}
     </CartCtx.Provider>
   );

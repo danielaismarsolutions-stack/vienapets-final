@@ -6,10 +6,10 @@ import { useRoute } from "@/components/shared/useRoute";
 import { useCart } from "@/components/shared/CartProvider";
 
 export function CheckoutPage() {
-  const { items, subtotal, packDiscount, totalAfterDiscount } = useCart();
+  const { items, subtotal } = useCart();
   const { go } = useRoute();
   const [step, setStep] = useState(0);
-  const total = totalAfterDiscount;
+  const total = subtotal;
 
   if (items.length === 0) {
     return (
@@ -70,7 +70,6 @@ export function CheckoutPage() {
             ))}
             <div style={{ marginTop: 20, fontSize: 13, color: "var(--vp-ink-soft)" }}>
               <Row l="Subtotal" r={`€${subtotal.toFixed(2)}`} />
-              {packDiscount > 0 && <Row l={<span style={{ color: "var(--vp-olive-deep)" }}>Descuento pack (-10%)</span>} r={<span style={{ color: "var(--vp-olive-deep)" }}>−€{packDiscount.toFixed(2)}</span>} />}
               <Row l="Envío" r={<span style={{ fontSize: 12 }}>Se calcula en el siguiente paso</span>} />
               <div style={{ height: 1, background: "rgba(74,46,28,.2)", margin: "14px 0" }} />
               <Row l={<span className="vp-serif" style={{ fontSize: 20, color: "var(--vp-brown)" }}>Total</span>} r={<span className="vp-serif" style={{ fontSize: 20, color: "var(--vp-brown)" }}>€{total.toFixed(2)}</span>} />
