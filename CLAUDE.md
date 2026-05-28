@@ -216,7 +216,7 @@ vienapets/
 - Cookies: consentimiento previo Google Analytics (Consent Mode v2)
 - RGPD: política de privacidad debe listar todos los encargados de tratamiento (Supabase, Stripe, Vercel, Brevo, etc.)
 - Reseñas (cuando se implementen): publicar todas las verificadas, no filtrar (Directiva Ómnibus)
-- Devoluciones: 30 días desde recepción, gastos de devolución a cargo del cliente excepto defectuoso
+- Devoluciones: 15 días desde recepción, gastos de devolución a cargo del cliente excepto defectuoso
 - Garantía: 3 años legal EU (RDL 1/2007)
 
 ---

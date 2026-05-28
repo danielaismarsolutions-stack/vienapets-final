@@ -11,65 +11,65 @@
 insert into public.products (slug, name, model, category, description, price_cents, images) values
   -- CAPRI -------------------------------------------------------------------
   ('arnes-capri',       'Arnés Capri',        'capri', 'arnes',
-   'Inspirado en las sombrillas de la costa mediterránea. Rayas de autor sobre fondo claro, ribete cobre cálido y herrajes mate.',
-   5800,
+   'Inspirado en las sombrillas de la costa mediterránea. Rayas de autor sobre fondo claro, ribete cobre cálido y herrajes marrones.',
+   3295,
    '["/assets/capri-arnes.jpeg","/assets/capri-correa.jpeg","/assets/capri-portabolsa.jpeg","/assets/herrajes-capri.png"]'::jsonb),
 
   ('correa-capri',      'Correa Capri',       'capri', 'correa',
-   'Inspirado en las sombrillas de la costa mediterránea. Rayas de autor sobre fondo claro, ribete cobre cálido y herrajes mate.',
-   3200,
+   'Inspirado en las sombrillas de la costa mediterránea. Rayas de autor sobre fondo claro, ribete cobre cálido y herrajes marrones.',
+   2195,
    '["/assets/capri-correa.jpeg","/assets/capri-arnes.jpeg","/assets/capri-portabolsa.jpeg","/assets/herrajes-capri.png"]'::jsonb),
 
   ('portabolsas-capri', 'Portabolsas Capri',  'capri', 'portabolsas',
-   'Inspirado en las sombrillas de la costa mediterránea. Rayas de autor sobre fondo claro, ribete cobre cálido y herrajes mate.',
-   1800,
+   'Inspirado en las sombrillas de la costa mediterránea. Rayas de autor sobre fondo claro, ribete cobre cálido y herrajes marrones.',
+   1095,
    '["/assets/capri-portabolsa.jpeg","/assets/capri-arnes.jpeg","/assets/capri-correa.jpeg","/assets/herrajes-capri.png"]'::jsonb),
 
   ('conjunto-capri',    'Conjunto Capri',     'capri', 'conjunto',
-   'Arnés, correa y portabolsas Capri con un 10% de descuento aplicado.',
-   9720,
+   'El conjunto completo de la edición. Precio especial al llevar las tres piezas a juego.',
+   6395,
    '["/assets/capri-conjunto.jpeg","/assets/capri-arnes.jpeg","/assets/capri-correa.jpeg","/assets/capri-portabolsa.jpeg"]'::jsonb),
 
   -- PEACHY ------------------------------------------------------------------
   ('arnes-peachy',       'Arnés Peachy',        'peachy', 'arnes',
-   'Un estampado original de soles: optimismo en su forma más pura. Rosa chicle con contraste naranja y herrajes dorados.',
-   6200,
+   'Un estampado original de soles: optimismo en su forma más pura. Rosa chicle con contraste naranja y herrajes marrones.',
+   3295,
    '["/assets/peachy-arnes.jpeg","/assets/peachy-correa.jpeg","/assets/peachy-portabolsa.png","/assets/herrajes-peachy.png"]'::jsonb),
 
   ('correa-peachy',      'Correa Peachy',       'peachy', 'correa',
-   'Un estampado original de soles: optimismo en su forma más pura. Rosa chicle con contraste naranja y herrajes dorados.',
-   3400,
+   'Un estampado original de soles: optimismo en su forma más pura. Rosa chicle con contraste naranja y herrajes marrones.',
+   2195,
    '["/assets/peachy-correa.jpeg","/assets/peachy-arnes.jpeg","/assets/peachy-portabolsa.png","/assets/herrajes-peachy.png"]'::jsonb),
 
   ('portabolsas-peachy', 'Portabolsas Peachy',  'peachy', 'portabolsas',
-   'Un estampado original de soles: optimismo en su forma más pura. Rosa chicle con contraste naranja y herrajes dorados.',
-   2000,
+   'Un estampado original de soles: optimismo en su forma más pura. Rosa chicle con contraste naranja y herrajes marrones.',
+   1095,
    '["/assets/peachy-portabolsa.png","/assets/peachy-arnes.jpeg","/assets/peachy-correa.jpeg","/assets/herrajes-peachy.png"]'::jsonb),
 
   ('conjunto-peachy',    'Conjunto Peachy',     'peachy', 'conjunto',
-   'Arnés, correa y portabolsas Peachy con un 10% de descuento aplicado.',
-   10440,
+   'El conjunto completo de la edición. Precio especial al llevar las tres piezas a juego.',
+   6395,
    '["/assets/peachy-conjunto.jpeg","/assets/peachy-arnes.jpeg","/assets/peachy-correa.jpeg","/assets/peachy-portabolsa.png"]'::jsonb),
 
   -- DAISY -------------------------------------------------------------------
   ('arnes-daisy',       'Arnés Daisy',        'daisy', 'arnes',
    'Un clásico renovado. Topos chocolate sobre un amarillo crema suave — evocación de los años 60 con la calidad de hoy.',
-   5800,
+   3295,
    '["/assets/daisy-arnes.jpeg","/assets/daisy-correa.jpeg","/assets/daisy-portabolsa.png","/assets/herrajes-daisy.png"]'::jsonb),
 
   ('correa-daisy',      'Correa Daisy',       'daisy', 'correa',
    'Un clásico renovado. Topos chocolate sobre un amarillo crema suave — evocación de los años 60 con la calidad de hoy.',
-   3200,
+   2195,
    '["/assets/daisy-correa.jpeg","/assets/daisy-arnes.jpeg","/assets/daisy-portabolsa.png","/assets/herrajes-daisy.png"]'::jsonb),
 
   ('portabolsas-daisy', 'Portabolsas Daisy',  'daisy', 'portabolsas',
    'Un clásico renovado. Topos chocolate sobre un amarillo crema suave — evocación de los años 60 con la calidad de hoy.',
-   1800,
+   1095,
    '["/assets/daisy-portabolsa.png","/assets/daisy-arnes.jpeg","/assets/daisy-correa.jpeg","/assets/herrajes-daisy.png"]'::jsonb),
 
   ('conjunto-daisy',    'Conjunto Daisy',     'daisy', 'conjunto',
-   'Arnés, correa y portabolsas Daisy con un 10% de descuento aplicado.',
-   9720,
+   'El conjunto completo de la edición. Precio especial al llevar las tres piezas a juego.',
+   6395,
    '["/assets/daisy-conjunto.jpeg","/assets/daisy-arnes.jpeg","/assets/daisy-correa.jpeg","/assets/daisy-portabolsa.png"]'::jsonb);
 
 -- ---- variants ------------------------------------------------------------

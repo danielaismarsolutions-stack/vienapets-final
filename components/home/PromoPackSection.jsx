@@ -23,7 +23,6 @@ export function PromoPackSection({ models = [] }) {
 
         <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 24 }}>
           {models.map((m) => {
-            const totalRaw = m.priceHarness + m.priceLeash + m.priceBag;
             const packPrice = m.priceConjunto;
             if (packPrice == null) return null;
             const slug = m.slugs?.conjunto ?? m.slugs?.arnes ?? m.id;
@@ -35,9 +34,8 @@ export function PromoPackSection({ models = [] }) {
                 <div>
                   <div className="vp-serif" style={{ fontSize: 24, color: "var(--vp-brown)" }}>Conjunto <span className="vp-italic" style={{ fontStyle: "italic" }}>{m.name}</span></div>
                   <div style={{ fontSize: 12, color: "var(--vp-ink-muted)", marginTop: 4, letterSpacing: ".08em" }}>Arnés + correa + portabolsas</div>
-                  <div style={{ display: "flex", alignItems: "baseline", gap: 10, marginTop: 12 }}>
+                  <div style={{ marginTop: 12 }}>
                     <span className="vp-serif" style={{ fontSize: 22, color: "var(--vp-brown)" }}>€{packPrice.toFixed(2)}</span>
-                    <span style={{ fontSize: 13, color: "var(--vp-ink-muted)", textDecoration: "line-through" }}>€{totalRaw.toFixed(2)}</span>
                   </div>
                 </div>
               </article>
