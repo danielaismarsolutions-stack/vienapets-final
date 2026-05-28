@@ -1,10 +1,11 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Icon } from "@/components/shared/Icon";
 import { useRoute } from "@/components/shared/useRoute";
 import { useCart } from "@/components/shared/CartProvider";
-import { VP_SIZES, VP_LEASH_SIZE, VP_HARDWARE } from "@/lib/data";
+import { VP_SIZES, VP_HARDWARE } from "@/lib/data";
+import SizeGuide from "@/components/shared/SizeGuide";
 
 const TYPE_LABEL = {
   arnes: "Arnés",
@@ -31,6 +32,38 @@ export function ProductPage({ product }) {
   // Estado: índice de imagen + variante seleccionada.
   const [img, setImg] = useState(0);
   const [sizeModalOpen, setSizeModalOpen] = useState(false);
+
+  // Refs para gestión de foco del modal de tallas.
+  const closeBtnRef = useRef(null);
+  const prevFocusRef = useRef(null);
+
+  // Abre el modal guardando el elemento que tenía el foco.
+  const openSizeModal = () => {
+    prevFocusRef.current = document.activeElement;
+    setSizeModalOpen(true);
+  };
+
+  // Cierra el modal y devuelve el foco al disparador original.
+  const closeSizeModal = () => {
+    setSizeModalOpen(false);
+    prevFocusRef.current?.focus();
+    prevFocusRef.current = null;
+  };
+
+  // Mueve el foco al botón de cierre al abrir el modal.
+  useEffect(() => {
+    if (sizeModalOpen) {
+      requestAnimationFrame(() => closeBtnRef.current?.focus());
+    }
+  }, [sizeModalOpen]);
+
+  // Cierra el modal con Escape.
+  useEffect(() => {
+    if (!sizeModalOpen) return;
+    const handleKey = (e) => { if (e.key === "Escape") closeSizeModal(); };
+    document.addEventListener("keydown", handleKey);
+    return () => document.removeEventListener("keydown", handleKey);
+  }, [sizeModalOpen]);
 
   const variantBySize = useMemo(() => {
     const m = new Map();
@@ -132,7 +165,7 @@ export function ProductPage({ product }) {
                 <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 12, alignItems: "center", flexWrap: "wrap", gap: 8 }}>
                   <span className="vp-eyebrow">Talla · {size ?? "—"}</span>
                   <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
-                    <a onClick={() => setSizeModalOpen(true)} style={{ fontSize: 11, letterSpacing: ".2em", textTransform: "uppercase", borderBottom: "1px solid var(--vp-brown)", color: "var(--vp-brown)", cursor: "pointer" }}>Guía de tallas</a>
+                    <a onClick={openSizeModal} style={{ fontSize: 11, letterSpacing: ".2em", textTransform: "uppercase", borderBottom: "1px solid var(--vp-brown)", color: "var(--vp-brown)", cursor: "pointer" }}>Guía de tallas</a>
                     <a onClick={() => go("/guia-de-tallas")} style={{ fontSize: 11, letterSpacing: ".2em", textTransform: "uppercase", borderBottom: "1px solid var(--vp-brown)", color: "var(--vp-brown)", cursor: "pointer" }}>Ver completa</a>
                     <a onClick={() => go("/probador")} style={{ fontSize: 11, letterSpacing: ".2em", textTransform: "uppercase", borderBottom: "1px solid var(--vp-olive-deep)", color: "var(--vp-olive-deep)", cursor: "pointer" }}>✦ Probador IA</a>
                   </div>
@@ -232,7 +265,26 @@ export function ProductPage({ product }) {
         {meta.partsImg && <PartsDiagram partsImg={meta.partsImg} name={product.name} />}
       </div>
 
-      {sizeModalOpen && <SizeGuideModal onClose={() => setSizeModalOpen(false)} onProbador={() => { setSizeModalOpen(false); go("/probador"); }} />}
+      {sizeModalOpen && (
+        <div style={{ position: "fixed", inset: 0, zIndex: 200, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
+          <div onClick={closeSizeModal} style={{ position: "absolute", inset: 0, background: "rgba(42,29,18,.55)", backdropFilter: "blur(3px)" }} />
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="size-guide-modal-heading"
+            style={{ position: "relative", background: "var(--vp-paper)", maxWidth: 760, width: "100%", maxHeight: "90vh", overflowY: "auto", padding: "40px 44px" }}
+          >
+            <button ref={closeBtnRef} onClick={closeSizeModal} aria-label="Cerrar" style={{ position: "absolute", top: 16, right: 16, background: "transparent", border: "none", cursor: "pointer", color: "var(--vp-brown)" }}>
+              <Icon.Close style={{ width: 22, height: 22 }} />
+            </button>
+            <SizeGuide
+              variant="modal"
+              headingId="size-guide-modal-heading"
+              onProbador={() => { closeSizeModal(); go("/probador"); }}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -281,52 +333,3 @@ function PartsDiagram({ partsImg, name }) {
   );
 }
 
-function SizeGuideModal({ onClose, onProbador }) {
-  return (
-    <div style={{ position: "fixed", inset: 0, zIndex: 200, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
-      <div onClick={onClose} style={{ position: "absolute", inset: 0, background: "rgba(42,29,18,.55)", backdropFilter: "blur(3px)" }} />
-      <div style={{ position: "relative", background: "var(--vp-paper)", maxWidth: 760, width: "100%", maxHeight: "90vh", overflowY: "auto", padding: "40px 44px" }}>
-        <button onClick={onClose} aria-label="Cerrar" style={{ position: "absolute", top: 16, right: 16, background: "transparent", border: "none", cursor: "pointer", color: "var(--vp-brown)" }}>
-          <Icon.Close style={{ width: 22, height: 22 }} />
-        </button>
-        <div className="vp-eyebrow" style={{ marginBottom: 14 }}>— Guía de tallas</div>
-        <h3 className="vp-display" style={{ fontSize: 36, color: "var(--vp-brown)", margin: "0 0 28px", lineHeight: 1 }}>
-          Encuentra su talla <span className="vp-italic" style={{ fontStyle: "italic" }}>exacta</span>.
-        </h3>
-
-        <table style={{ width: "100%", borderCollapse: "collapse", fontFamily: "var(--font-body)" }}>
-          <thead>
-            <tr style={{ borderBottom: "1px solid var(--vp-brown)" }}>
-              {["Talla", "Ancho cinta", "Cuello", "Pecho"].map((h, i) => (
-                <th key={i} style={{ textAlign: "left", padding: "12px 14px", fontSize: 11, letterSpacing: ".2em", textTransform: "uppercase", color: "var(--vp-brown)", fontWeight: 500 }}>{h}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {VP_SIZES.map((s) => (
-              <tr key={s.size} style={{ borderBottom: "1px solid rgba(74,46,28,.12)" }}>
-                <td style={{ padding: "16px 14px" }}><span className="vp-serif" style={{ fontSize: 22, color: "var(--vp-brown)" }}>{s.size}</span></td>
-                <td style={{ padding: "16px 14px", fontSize: 14, color: "var(--vp-ink-soft)" }}>{s.webbing}</td>
-                <td style={{ padding: "16px 14px", fontSize: 14, color: "var(--vp-ink-soft)" }}>{s.neck}</td>
-                <td style={{ padding: "16px 14px", fontSize: 14, color: "var(--vp-ink-soft)" }}>{s.chest}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-
-        <div style={{ marginTop: 24, padding: 16, background: "var(--vp-cream-soft)", fontSize: 13, color: "var(--vp-ink-soft)", lineHeight: 1.65 }}>
-          <b style={{ color: "var(--vp-brown)" }}>Correa:</b> talla única — ancho de cinta {VP_LEASH_SIZE.webbing}, longitud total {VP_LEASH_SIZE.length}.<br/>
-          <b style={{ color: "var(--vp-brown)" }}>Portabolsas:</b> talla única.
-        </div>
-
-        <div style={{ marginTop: 24, padding: 16, background: "var(--vp-olive-soft)", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12 }}>
-          <div style={{ fontSize: 14, color: "var(--vp-brown)" }}>
-            <b>¿Prefieres probarlo virtualmente?</b><br/>
-            <span style={{ fontSize: 13, color: "var(--vp-ink-soft)" }}>Sube una foto de tu perro y comprueba cómo le queda.</span>
-          </div>
-          <button className="vp-btn olive" onClick={onProbador}>✦ Probador IA →</button>
-        </div>
-      </div>
-    </div>
-  );
-}
