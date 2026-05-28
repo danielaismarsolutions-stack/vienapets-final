@@ -51,7 +51,7 @@ export function MaterialsSection({ models = [] }) {
             <div className="vp-serif vp-italic" style={{ fontSize: 22, color: "var(--vp-brown)", lineHeight: 1.35, fontStyle: "italic" }}>
               &ldquo;No diseño accesorios. Diseño piezas para perros que tienen estilo propio.&rdquo;
             </div>
-            <div style={{ fontSize: 11, letterSpacing: ".2em", textTransform: "uppercase", color: "var(--vp-ink-muted)", marginTop: 12 }}>— Lucía L. Buno, fundadora</div>
+            <div style={{ fontSize: 11, letterSpacing: ".2em", textTransform: "uppercase", color: "var(--vp-ink-muted)", marginTop: 12 }}>— Lucía Larrondobuno Verdejo, fundadora</div>
           </div>
         </div>
       </div>
