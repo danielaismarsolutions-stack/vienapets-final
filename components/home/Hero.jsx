@@ -41,8 +41,8 @@ export function Hero({ model, models = [], heroStyle }) {
             margin: "0 0 28px 0",
             letterSpacing: "-0.02em",
           }}>
-            Diseño de autor<br/>
-            para tu <span className="vp-italic" style={{ color: "var(--vp-olive-deep)" }}>mejor amigo</span>.
+            Para perros con estilo<br/>
+            y dueños con <span className="vp-italic" style={{ color: "var(--vp-olive-deep)" }}>buen gusto</span>.
           </h1>
 
           <p style={{
