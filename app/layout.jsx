@@ -43,7 +43,7 @@ const fontMono = JetBrains_Mono({
 export const metadata = {
   title: "Viena Pets — Diseño de autor para tu mejor amigo",
   description:
-    "Arneses, correas y portabolsas con diseños exclusivos diseñados en España. Edición limitada SS26.",
+    "Arneses, correas y portabolsas con diseños exclusivos diseñados en España. Edición limitada.",
 };
 
 export default function RootLayout({ children }) {
