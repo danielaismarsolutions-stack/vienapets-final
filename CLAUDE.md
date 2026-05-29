@@ -65,7 +65,7 @@ Si encuentras texto existente con lenguaje prohibido, **señálalo y reemplázal
 - **Framework:** Next.js 14+ (App Router)
 - **Lenguaje:** JavaScript (no TypeScript, para mantener simplicidad)
 - **Estilos:** CSS modules + variables CSS de `tokens.css`. **NO usar Tailwind.**
-- **Base de datos:** Supabase (PostgreSQL, región Frankfurt EU)
+- **Base de datos:** Supabase (PostgreSQL, región Dublin eu-west-1)
 - **Pasarela de pago:** Stripe Checkout (hosted, no Elements)
 - **Facturación:** Stripe Tax + Stripe Invoicing automático
 - **Email transaccional:** Brevo (a integrar en sprint posterior)
@@ -216,7 +216,7 @@ vienapets/
 - Cookies: consentimiento previo Google Analytics (Consent Mode v2)
 - RGPD: política de privacidad debe listar todos los encargados de tratamiento (Supabase, Stripe, Vercel, Brevo, etc.)
 - Reseñas (cuando se implementen): publicar todas las verificadas, no filtrar (Directiva Ómnibus)
-- Devoluciones: 30 días desde recepción, gastos de devolución a cargo del cliente excepto defectuoso
+- Devoluciones: 15 días desde recepción, gastos de devolución a cargo del cliente excepto defectuoso
 - Garantía: 3 años legal EU (RDL 1/2007)
 
 ---

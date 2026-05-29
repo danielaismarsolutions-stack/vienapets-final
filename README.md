@@ -10,8 +10,13 @@ Stack: **Next.js 14** (App Router) · JavaScript · CSS modules + tokens · Supa
 
 - **Sprint 1 — Migración a Next.js** ✅ completado.
   Migración estructural del sitio (legacy de Claude AI Apps en `legacy/`) a Next.js 14 App Router. Sin comercio aún: carrito persistente en localStorage funcional para la UX, pero **sin pasarela de pago real**. El botón "Pagar" del checkout está `disabled` (a la espera del Sprint 3).
-- **Sprint 2 — Supabase** (siguiente): tablas `products`, `variants`, `orders`, `order_items` + RLS + cliente Supabase.
-- **Sprint 3 — Stripe**: Checkout hosted + webhook + descuento stock.
+- **Sprint 2 — Catálogo dinámico Supabase** ✅ completado.
+  Tablas `products` y `variants` con RLS de lectura pública. 12 productos
+  + 21 variantes seeded. Home, `/tienda`, `/modelos` y `/producto/[slug]`
+  consultan Supabase desde Server Components con `revalidate = 60`.
+  Stock visible (stock − stock_reserved) y banner "Agotado" funcionando.
+- **Sprint 3 — Stripe** (siguiente): Checkout hosted + webhook + descuento
+  stock + tablas `orders` / `order_items`.
 
 ---
 
@@ -25,7 +30,10 @@ npm install
 
 # 2. Crear archivo de variables locales
 cp .env.local.example .env.local
-# (en Sprint 1 no hay servicios externos conectados; el archivo puede quedar vacío)
+# Rellena las 3 variables de Supabase (proyecto Dublin eu-west-1):
+#   NEXT_PUBLIC_SUPABASE_URL=...
+#   NEXT_PUBLIC_SUPABASE_ANON_KEY=...
+#   SUPABASE_SERVICE_ROLE_KEY=...      # solo server-side, nunca al cliente
 
 # 3. Arrancar el dev server
 npm run dev
@@ -62,8 +70,16 @@ vienapets-final/
 │   ├── home/                     # Bloques del home (Hero, Models, FAQ, etc.)
 │   └── pages/                    # Componentes de cada página
 ├── lib/
-│   └── data.js                   # VP_MODELS, VP_SIZES, VP_FAQ, VP_HARDWARE…
-│                                 # (Sprint 2: sustituir por queries a Supabase)
+│   ├── data.js                   # VP_SIZES, VP_FAQ, VP_HARDWARE… (constantes
+│   │                             # de UI no migradas a BBDD)
+│   ├── model-meta.js             # MODEL_META: hex, pantones, subtitle,
+│   │                             # partsImg, materialsImg (tokens del
+│   │                             # sistema visual — no editables)
+│   ├── supabase/                 # client.js (browser), public.js (server
+│   │                             # anon), server.js (service_role)
+│   └── queries/products.js       # getAllProducts, getProductsByCategory,
+│                                 # getProductBySlug, getProductWithVariants,
+│                                 # getAllProductSlugs, getModelsView
 ├── public/
 │   └── assets/                   # Imágenes (copiadas desde legacy/assets/)
 ├── styles/
@@ -82,8 +98,36 @@ vienapets-final/
 
 - **Tipografías** (DM Serif Display, Cormorant Garamond, Jost, JetBrains Mono) cargadas vía `next/font/google` y enlazadas a las variables `--font-*-loaded` que `tokens.css` consume.
 - **Router:** `useRoute()` (en `components/shared/useRoute.jsx`) es un adaptador sobre `next/navigation` que mantiene la API `{ route, go }` del legacy para no refactorizar los componentes migrados.
-- **Carrito:** `CartProvider` con persistencia en `localStorage` (`vp_cart`), idéntico al legacy. Lógica de descuento pack 10% intacta.
+- **Carrito:** `CartProvider` con persistencia en `localStorage` (`vp_cart`), idéntico al legacy.
 - **Suspense boundaries** alrededor de `Navbar`, `Footer`, `CartDrawer` y `{children}` — necesarios porque `useRoute` consume `useSearchParams`.
+
+---
+
+## Cómo edita Lucía el stock (Sprint 2)
+
+Toda la edición del catálogo se hace desde **Supabase Studio** del proyecto
+`vienapets` (región Dublin, eu-west-1). No hay panel `/admin` (CLAUDE.md §4):
+
+1. Entra a [supabase.com](https://supabase.com) y abre el proyecto `vienapets`.
+2. Menú lateral → **Table editor** → tabla `variants`.
+3. Filtra por `sku` (ej. `ARN-CAPRI-M`) o por `product_id`.
+4. Edita la columna **`stock`** y guarda. El "stock disponible" que ve el
+   cliente es `stock − stock_reserved`. La columna `stock_reserved`
+   (típicamente 1) protege un colchón para garantías / devoluciones y
+   **no debe tocarse en operación normal**.
+5. Para marcar una variante como agotada sin borrarla, pon `stock = 1` y
+   `stock_reserved = 1` (disponible = 0). Para volver a venderla, sube
+   `stock` al valor real.
+6. Los cambios se ven en la web en **máximo 60 segundos** (revalidate de
+   Next.js). Para forzar refresco inmediato durante pruebas: redeploy en
+   Vercel.
+
+Para añadir o editar **productos** (precio, descripción, imágenes,
+publicación), misma ruta: Table editor → `products`. La columna `active`
+controla la visibilidad en la tienda.
+
+**Atajo:** descontar un producto de venta = `active = false`. La RLS
+filtra automáticamente y desaparece de toda la web.
 
 ---
 

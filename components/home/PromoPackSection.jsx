@@ -2,9 +2,8 @@
 
 import { Icon } from "@/components/shared/Icon";
 import { useRoute } from "@/components/shared/useRoute";
-import { VP_MODELS } from "@/lib/data";
 
-export function PromoPackSection() {
+export function PromoPackSection({ models = [] }) {
   const { go } = useRoute();
   return (
     <section style={{ padding: "100px 40px", background: "var(--vp-cream-soft)" }}>
@@ -18,26 +17,25 @@ export function PromoPackSection() {
             </h2>
           </div>
           <p style={{ fontSize: 17, color: "var(--vp-ink-soft)", lineHeight: 1.7, alignSelf: "center", maxWidth: 520 }}>
-            Arnés, correa y portabolsas a juego. Combina el set completo de cualquier modelo y aplicamos un <b style={{ color: "var(--vp-olive-deep)" }}>10% de descuento</b> automáticamente al carrito.
+            El conjunto completo de la edición. Precio especial al llevar las tres piezas a juego.
           </p>
         </div>
 
         <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 24 }}>
-          {VP_MODELS.map((m) => {
-            const totalRaw = m.priceHarness + m.priceLeash + m.priceBag;
-            const totalDiscounted = Math.round(totalRaw * 0.9 * 100) / 100;
+          {models.map((m) => {
+            const packPrice = m.priceConjunto;
+            if (packPrice == null) return null;
+            const slug = m.slugs?.conjunto ?? m.slugs?.arnes ?? m.id;
             return (
-              <article key={m.id} onClick={() => go(`/producto/${m.id}`)} style={{ cursor: "pointer", background: "var(--vp-paper)", padding: 20, display: "flex", flexDirection: "column", gap: 16 }}>
+              <article key={m.id} onClick={() => go(`/producto/${slug}`)} style={{ cursor: "pointer", background: "var(--vp-paper)", padding: 20, display: "flex", flexDirection: "column", gap: 16 }}>
                 <div style={{ aspectRatio: "4/5", background: "var(--vp-cream)", overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center", position: "relative" }}>
                   <img src={m.heroImg} alt={`Conjunto ${m.name}`} style={{ width: "100%", height: "100%", objectFit: "contain", objectPosition: "center", display: "block", padding: 16 }} />
-                  <div style={{ position: "absolute", top: 12, right: 12, background: "var(--vp-olive)", color: "var(--vp-paper)", padding: "5px 10px", fontSize: 10, letterSpacing: ".18em", textTransform: "uppercase", fontFamily: "var(--font-mono)" }}>−10%</div>
                 </div>
                 <div>
                   <div className="vp-serif" style={{ fontSize: 24, color: "var(--vp-brown)" }}>Conjunto <span className="vp-italic" style={{ fontStyle: "italic" }}>{m.name}</span></div>
                   <div style={{ fontSize: 12, color: "var(--vp-ink-muted)", marginTop: 4, letterSpacing: ".08em" }}>Arnés + correa + portabolsas</div>
-                  <div style={{ display: "flex", alignItems: "baseline", gap: 10, marginTop: 12 }}>
-                    <span className="vp-serif" style={{ fontSize: 22, color: "var(--vp-brown)" }}>€{totalDiscounted.toFixed(2)}</span>
-                    <span style={{ fontSize: 13, color: "var(--vp-ink-muted)", textDecoration: "line-through" }}>€{totalRaw.toFixed(2)}</span>
+                  <div style={{ marginTop: 12 }}>
+                    <span className="vp-serif" style={{ fontSize: 22, color: "var(--vp-brown)" }}>€{packPrice.toFixed(2)}</span>
                   </div>
                 </div>
               </article>
