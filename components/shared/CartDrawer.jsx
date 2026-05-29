@@ -6,7 +6,7 @@ import { useRoute } from "./useRoute";
 import { QtyStepper } from "./QtyStepper";
 
 export function CartDrawer() {
-  const { items, open, setOpen, updateQty, remove, subtotal, packDiscount, totalAfterDiscount } = useCart();
+  const { items, open, setOpen, updateQty, remove, subtotal } = useCart();
   const { go } = useRoute();
   return (
     <>
@@ -54,20 +54,12 @@ export function CartDrawer() {
 
         {items.length > 0 && (
           <div style={{ padding: "20px 28px 28px", borderTop: "1px solid rgba(74,46,28,.15)" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 10, fontSize: 13, color: "var(--vp-ink-muted)" }}>
-              <span>Subtotal</span><span>€{subtotal.toFixed(2)}</span>
-            </div>
-            {packDiscount > 0 && (
-              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 10, fontSize: 13, color: "var(--vp-olive-deep)" }}>
-                <span>Descuento pack (-10%)</span><span>−€{packDiscount.toFixed(2)}</span>
-              </div>
-            )}
             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 18, fontSize: 13, color: "var(--vp-ink-muted)" }}>
               <span>Envío</span><span style={{ fontSize: 12 }}>Se calcula en el siguiente paso</span>
             </div>
             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 20 }}>
               <span className="vp-serif" style={{ fontSize: 20, color: "var(--vp-brown)" }}>Total</span>
-              <span className="vp-serif" style={{ fontSize: 20, color: "var(--vp-brown)" }}>€{totalAfterDiscount.toFixed(2)}</span>
+              <span className="vp-serif" style={{ fontSize: 20, color: "var(--vp-brown)" }}>€{subtotal.toFixed(2)}</span>
             </div>
             <button className="vp-btn full" onClick={() => { setOpen(false); go("/checkout"); }}>Finalizar compra <Icon.Arrow style={{ width: 14, height: 14 }} /></button>
           </div>

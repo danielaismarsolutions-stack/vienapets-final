@@ -31,7 +31,7 @@ export function Hero({ model, models = [], heroStyle }) {
           <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 24 }}>
             <img src="/assets/logo-viena-pets-oficial.png" alt="" style={{ height: 28, width: "auto", opacity: .9 }} />
             <span style={{ height: 1, flex: 1, maxWidth: 80, background: "var(--vp-olive-deep)", opacity: .35 }}></span>
-            <span className="vp-eyebrow" style={{ color: "var(--vp-olive-deep)", fontSize: 10 }}>SS26 · Madrid</span>
+            <span className="vp-eyebrow" style={{ color: "var(--vp-olive-deep)", fontSize: 10 }}>Madrid</span>
           </div>
 
           <h1 className="vp-display" style={{
@@ -41,8 +41,8 @@ export function Hero({ model, models = [], heroStyle }) {
             margin: "0 0 28px 0",
             letterSpacing: "-0.02em",
           }}>
-            Diseño de autor<br/>
-            para tu <span className="vp-italic" style={{ color: "var(--vp-olive-deep)" }}>mejor amigo</span>.
+            Para perros con estilo<br/>
+            y dueños con <span className="vp-italic" style={{ color: "var(--vp-olive-deep)" }}>buen gusto</span>.
           </h1>
 
           <p style={{
@@ -163,7 +163,7 @@ export function Hero({ model, models = [], heroStyle }) {
             <img src="/assets/monograma-viena.png" alt="" style={{ width: 56, height: 56, objectFit: "contain", display: "block" }} />
             <div>
               <div className="vp-eyebrow" style={{ fontSize: 9, marginBottom: 6, color: "var(--vp-olive-deep)", letterSpacing: ".28em" }}>
-                Edición SS26
+                EDICIÓN LIMITADA
               </div>
               <div className="vp-serif" style={{
                 fontSize: 15,
@@ -171,7 +171,7 @@ export function Hero({ model, models = [], heroStyle }) {
                 lineHeight: 1.35,
                 fontStyle: "italic",
               }}>
-                Diseño de autor · Edición SS26
+                Diseño de autor · Edición limitada
               </div>
             </div>
           </div>
@@ -233,7 +233,7 @@ function HeroMosaic({ models = [] }) {
 }
 
 function Ticker() {
-  const items = ["Diseños exclusivos firmados", "✶", "Diseñado en España", "✶", "Edición limitada · SS26", "✶", "Envío gratuito desde 45 €", "✶"];
+  const items = ["Diseños exclusivos firmados", "✶", "Diseñado en España", "✶", "Edición limitada", "✶", "Envío gratuito desde 45 €", "✶"];
   const row = [...items, ...items, ...items];
   return (
     <div style={{ marginTop: 80, borderTop: "1px solid rgba(74,46,28,.2)", borderBottom: "1px solid rgba(74,46,28,.2)", padding: "16px 0", overflow: "hidden" }}>

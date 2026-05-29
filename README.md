@@ -98,7 +98,7 @@ vienapets-final/
 
 - **Tipografías** (DM Serif Display, Cormorant Garamond, Jost, JetBrains Mono) cargadas vía `next/font/google` y enlazadas a las variables `--font-*-loaded` que `tokens.css` consume.
 - **Router:** `useRoute()` (en `components/shared/useRoute.jsx`) es un adaptador sobre `next/navigation` que mantiene la API `{ route, go }` del legacy para no refactorizar los componentes migrados.
-- **Carrito:** `CartProvider` con persistencia en `localStorage` (`vp_cart`), idéntico al legacy. Lógica de descuento pack 10% intacta.
+- **Carrito:** `CartProvider` con persistencia en `localStorage` (`vp_cart`), idéntico al legacy.
 - **Suspense boundaries** alrededor de `Navbar`, `Footer`, `CartDrawer` y `{children}` — necesarios porque `useRoute` consume `useSearchParams`.
 
 ---

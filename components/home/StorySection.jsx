@@ -22,7 +22,7 @@ export function StorySection() {
             <img src="/assets/capri-conjunto.jpeg" alt="Estampado Capri" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center", display: "block" }} />
           </div>
           <div style={{ position: "absolute", right: isMobile ? 16 : -40, bottom: isMobile ? -24 : -40, background: "var(--vp-brown)", color: "var(--vp-paper)", padding: isMobile ? "20px 24px" : "28px 32px", maxWidth: 220 }}>
-            <div className="vp-display" style={{ fontSize: isMobile ? 40 : 56, lineHeight: .9 }}>SS26</div>
+            <div className="vp-display" style={{ fontSize: isMobile ? 40 : 56, lineHeight: .9 }}>Edición limitada</div>
             <div style={{ fontSize: 12, letterSpacing: ".14em", textTransform: "uppercase", marginTop: 8, opacity: .85 }}>Nueva colección · diseño de autor</div>
           </div>
         </div>
@@ -41,7 +41,7 @@ export function StorySection() {
               <div style={{ fontSize: 11, letterSpacing: ".2em", textTransform: "uppercase", color: "var(--vp-ink-muted)", marginTop: 6 }}>Modelos · edición limitada</div>
             </div>
             <div>
-              <div className="vp-display" style={{ fontSize: 48, color: "var(--vp-brown)", lineHeight: 1 }}>SS26</div>
+              <div className="vp-display" style={{ fontSize: 48, color: "var(--vp-brown)", lineHeight: 1 }}>Edición limitada</div>
               <div style={{ fontSize: 11, letterSpacing: ".2em", textTransform: "uppercase", color: "var(--vp-ink-muted)", marginTop: 6 }}>Colección de temporada</div>
             </div>
             <div>
