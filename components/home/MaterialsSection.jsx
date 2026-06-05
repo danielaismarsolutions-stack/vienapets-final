@@ -40,7 +40,7 @@ export function MaterialsSection({ models = [] }) {
             <div style={{ fontSize: 11, letterSpacing: ".2em", textTransform: "uppercase", color: "var(--vp-ink-muted)", marginTop: 8 }}>Estampados originales · firmados por Lucía</div>
           </div>
           <div>
-            <div className="vp-display" style={{ fontSize: 64, color: "var(--vp-brown)", lineHeight: 1 }}>Edición limitada</div>
+            <div className="vp-display" style={{ fontSize: "clamp(20px, 2vw, 26px)", color: "var(--vp-brown)", lineHeight: 1.1 }}>Edición limitada</div>
             <div style={{ fontSize: 11, letterSpacing: ".2em", textTransform: "uppercase", color: "var(--vp-ink-muted)", marginTop: 8 }}>Colección de temporada · Madrid</div>
           </div>
           <div>

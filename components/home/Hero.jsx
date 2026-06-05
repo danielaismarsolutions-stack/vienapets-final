@@ -23,7 +23,7 @@ export function Hero({ model, models = [], heroStyle }) {
         maxWidth: 1500,
         margin: "0 auto",
         display: "grid",
-        gridTemplateColumns: "1fr 1.1fr",
+        gridTemplateColumns: "1fr 1.5fr",
         gap: 80,
         alignItems: "center",
       }}>
@@ -50,10 +50,19 @@ export function Hero({ model, models = [], heroStyle }) {
             color: "var(--vp-ink-soft)",
             lineHeight: 1.7,
             maxWidth: 480,
-            margin: "0 0 40px 0",
+            margin: "0 0 24px 0",
           }}>
             Arneses, correas y portabolsas con diseños exclusivos firmados por Lucía.
             Diseñados en España, en ediciones limitadas.
+          </p>
+
+          <p className="vp-eyebrow" style={{
+            fontSize: 11,
+            color: "var(--vp-brown)",
+            margin: "0 0 40px 0",
+            letterSpacing: ".16em",
+          }}>
+            — Una colección de Lucía Larrondobuno Verdejo
           </p>
 
           <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginBottom: 18 }}>
@@ -143,53 +152,6 @@ export function Hero({ model, models = [], heroStyle }) {
               position: "absolute", inset: 0,
               background: "linear-gradient(180deg, rgba(0,0,0,0) 60%, rgba(74,46,28,.10) 100%)",
             }} />
-          </div>
-
-          <div style={{
-            position: "absolute",
-            left: -40,
-            bottom: 40,
-            background: "var(--vp-paper)",
-            padding: "22px 26px 22px 22px",
-            borderRadius: 2,
-            boxShadow: "0 24px 60px rgba(42,29,18,.16)",
-            maxWidth: 320,
-            display: "grid",
-            gridTemplateColumns: "auto 1fr",
-            gap: 16,
-            alignItems: "center",
-            borderTop: "3px solid var(--vp-olive)",
-          }}>
-            <img src="/assets/monograma-viena.png" alt="" style={{ width: 56, height: 56, objectFit: "contain", display: "block" }} />
-            <div>
-              <div className="vp-eyebrow" style={{ fontSize: 9, marginBottom: 6, color: "var(--vp-olive-deep)", letterSpacing: ".28em" }}>
-                EDICIÓN LIMITADA
-              </div>
-              <div className="vp-serif" style={{
-                fontSize: 15,
-                color: "var(--vp-brown)",
-                lineHeight: 1.35,
-                fontStyle: "italic",
-              }}>
-                Diseño de autor · Edición limitada
-              </div>
-            </div>
-          </div>
-
-          <div style={{
-            position: "absolute",
-            top: -8,
-            right: 8,
-            fontFamily: "var(--font-display)",
-            fontSize: 11,
-            letterSpacing: ".42em",
-            textTransform: "uppercase",
-            color: "var(--vp-brown)",
-            opacity: .55,
-            writingMode: "vertical-rl",
-            transform: "rotate(180deg)",
-          }}>
-            MADRID
           </div>
         </div>
       </div>
