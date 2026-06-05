@@ -13,11 +13,101 @@ export function Hero({ model, models = [], heroStyle }) {
     return <HeroMosaic models={models} />;
   }
 
-  // SINGLE hero: foto editorial a la derecha + bloque editorial-comercial a la izquierda
+  // MOBILE: layout plano — imagen entre el lema y el texto descriptivo
+  if (isMobile) {
+    return (
+      <section style={{ padding: "40px 20px 52px", background: "var(--vp-cream)" }}>
+        {/* 1. Eyebrow / logo / Madrid */}
+        <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 14 }}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/assets/logo-viena-pets-oficial.png" alt="" style={{ height: 28, width: "auto", opacity: .9 }} />
+          <span style={{ height: 1, flex: 1, maxWidth: 80, background: "var(--vp-olive-deep)", opacity: .35 }} />
+          <span className="vp-eyebrow" style={{ color: "var(--vp-olive-deep)", fontSize: 10 }}>Madrid</span>
+        </div>
+
+        {/* 2. Lema */}
+        <h1 className="vp-display" style={{
+          fontSize: "clamp(32px, 9vw, 44px)",
+          color: "var(--vp-brown)",
+          lineHeight: 1.05,
+          margin: "0 0 24px 0",
+          letterSpacing: "-0.02em",
+        }}>
+          Para perros con estilo<br/>
+          y dueños con <span className="vp-italic" style={{ color: "var(--vp-olive-deep)" }}>buen gusto</span>.
+        </h1>
+
+        {/* 3. Imagen del dálmata */}
+        <div style={{ width: "100%", marginBottom: 28 }}>
+          <div style={{
+            width: "100%",
+            aspectRatio: "4/5",
+            borderRadius: "var(--radius-arch)",
+            background: "var(--vp-cream-deep)",
+            overflow: "hidden",
+            position: "relative",
+            boxShadow: "0 20px 60px rgba(42,29,18,.12)",
+          }}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/assets/hero-dalmata.png"
+              alt="Dálmata Viena con arnés"
+              style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "contain", objectPosition: "center", display: "block" }}
+            />
+            <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(0,0,0,0) 60%, rgba(74,46,28,.10) 100%)", pointerEvents: "none" }} />
+          </div>
+        </div>
+
+        {/* 4. Texto descriptivo */}
+        <p style={{ fontSize: 14, color: "var(--vp-ink-soft)", lineHeight: 1.65, margin: "0 0 12px 0" }}>
+          Arneses, correas y portabolsas con diseños exclusivos firmados por Lucía.
+          Diseñados en España, en ediciones limitadas.
+        </p>
+
+        {/* 5. Firma */}
+        <p className="vp-eyebrow" style={{ fontSize: 11, color: "var(--vp-brown)", margin: "0 0 20px 0", letterSpacing: ".16em" }}>
+          — Una colección de Lucía Larrondobuno Verdejo
+        </p>
+
+        {/* 6. Botones de categorías */}
+        <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginBottom: 14 }}>
+          <button className="vp-btn olive" onClick={() => go("/tienda?cat=conjuntos")}>Conjuntos</button>
+          <button className="vp-btn olive ghost" onClick={() => go("/tienda?cat=arneses")}>Arneses</button>
+          <button className="vp-btn olive ghost" onClick={() => go("/tienda?cat=correas")}>Correas</button>
+          <button className="vp-btn olive ghost" onClick={() => go("/tienda?cat=portabolsas")}>Portabolsas</button>
+        </div>
+
+        {/* 7. Botón Probador IA */}
+        <div style={{ marginBottom: 24 }}>
+          <button
+            className="vp-btn"
+            onClick={() => go("/probador")}
+            style={{ position: "relative", background: "var(--vp-brown)", color: "var(--vp-paper)", borderColor: "var(--vp-brown)", paddingRight: 22 }}
+          >
+            <span aria-hidden="true" style={{ fontSize: 14, lineHeight: 1, marginRight: 2 }}>✦</span>
+            Probador IA
+            <span aria-hidden="true" style={{ fontSize: 14, lineHeight: 1, marginLeft: 4 }}>→</span>
+            <span style={{ position: "absolute", top: -8, right: -10, background: "var(--vp-olive-deep)", color: "var(--vp-paper)", fontSize: 9, fontFamily: "var(--font-mono)", fontWeight: 500, padding: "3px 7px", letterSpacing: ".18em", textTransform: "uppercase", borderRadius: 2, lineHeight: 1 }}>
+              Nuevo
+            </span>
+          </button>
+        </div>
+
+        {/* 8. Trust badges */}
+        <div style={{ display: "flex", gap: 20, flexWrap: "wrap", fontSize: 11, color: "var(--vp-ink-muted)", letterSpacing: "0.08em", textTransform: "uppercase" }}>
+          <span>✓ Envío gratuito desde 45 €</span>
+          <span>✓ Diseñado en España</span>
+          <span>✓ 15 días de devolución</span>
+        </div>
+      </section>
+    );
+  }
+
+  // DESKTOP: grid de 2 columnas — texto izquierda, imagen derecha
   return (
     <section style={{
       position: "relative",
-      padding: isMobile ? "40px 20px 52px" : "60px 40px 80px",
+      padding: "60px 40px 80px",
       overflow: "hidden",
       background: "var(--vp-cream)",
     }}>
@@ -25,115 +115,63 @@ export function Hero({ model, models = [], heroStyle }) {
         maxWidth: 1500,
         margin: "0 auto",
         display: "grid",
-        gridTemplateColumns: isMobile ? "1fr" : "1fr 1.5fr",
-        gap: isMobile ? 36 : 80,
+        gridTemplateColumns: "1fr 1.5fr",
+        gap: 80,
         alignItems: "center",
       }}>
-        <div style={{ paddingLeft: isMobile ? 0 : 20 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: isMobile ? 14 : 24 }}>
+        <div style={{ paddingLeft: 20 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 24 }}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/assets/logo-viena-pets-oficial.png" alt="" style={{ height: 28, width: "auto", opacity: .9 }} />
-            <span style={{ height: 1, flex: 1, maxWidth: 80, background: "var(--vp-olive-deep)", opacity: .35 }}></span>
+            <span style={{ height: 1, flex: 1, maxWidth: 80, background: "var(--vp-olive-deep)", opacity: .35 }} />
             <span className="vp-eyebrow" style={{ color: "var(--vp-olive-deep)", fontSize: 10 }}>Madrid</span>
           </div>
 
           <h1 className="vp-display" style={{
-            fontSize: isMobile ? "clamp(32px, 9vw, 44px)" : "clamp(48px, 6vw, 84px)",
+            fontSize: "clamp(48px, 6vw, 84px)",
             color: "var(--vp-brown)",
-            lineHeight: 1.05,
-            margin: isMobile ? "0 0 14px 0" : "0 0 28px 0",
+            lineHeight: 1,
+            margin: "0 0 28px 0",
             letterSpacing: "-0.02em",
           }}>
             Para perros con estilo<br/>
             y dueños con <span className="vp-italic" style={{ color: "var(--vp-olive-deep)" }}>buen gusto</span>.
           </h1>
 
-          <p style={{
-            fontSize: isMobile ? 14 : 17,
-            color: "var(--vp-ink-soft)",
-            lineHeight: 1.65,
-            maxWidth: 480,
-            margin: isMobile ? "0 0 12px 0" : "0 0 24px 0",
-          }}>
+          <p style={{ fontSize: 17, color: "var(--vp-ink-soft)", lineHeight: 1.7, maxWidth: 480, margin: "0 0 24px 0" }}>
             Arneses, correas y portabolsas con diseños exclusivos firmados por Lucía.
             Diseñados en España, en ediciones limitadas.
           </p>
 
-          <p className="vp-eyebrow" style={{
-            fontSize: 11,
-            color: "var(--vp-brown)",
-            margin: isMobile ? "0 0 20px 0" : "0 0 40px 0",
-            letterSpacing: ".16em",
-          }}>
+          <p className="vp-eyebrow" style={{ fontSize: 11, color: "var(--vp-brown)", margin: "0 0 40px 0", letterSpacing: ".16em" }}>
             — Una colección de Lucía Larrondobuno Verdejo
           </p>
 
-          <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginBottom: isMobile ? 12 : 18 }}>
-            <button className="vp-btn olive" onClick={() => go("/tienda?cat=conjuntos")}>
-              Conjuntos
-            </button>
-            <button className="vp-btn olive ghost" onClick={() => go("/tienda?cat=arneses")}>
-              Arneses
-            </button>
-            <button className="vp-btn olive ghost" onClick={() => go("/tienda?cat=correas")}>
-              Correas
-            </button>
-            <button className="vp-btn olive ghost" onClick={() => go("/tienda?cat=portabolsas")}>
-              Portabolsas
-            </button>
+          <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginBottom: 18 }}>
+            <button className="vp-btn olive" onClick={() => go("/tienda?cat=conjuntos")}>Conjuntos</button>
+            <button className="vp-btn olive ghost" onClick={() => go("/tienda?cat=arneses")}>Arneses</button>
+            <button className="vp-btn olive ghost" onClick={() => go("/tienda?cat=correas")}>Correas</button>
+            <button className="vp-btn olive ghost" onClick={() => go("/tienda?cat=portabolsas")}>Portabolsas</button>
           </div>
-          <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: isMobile ? 20 : 36, flexWrap: "wrap" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 36, flexWrap: "wrap" }}>
             <button
               className="vp-btn"
               onClick={() => go("/probador")}
-              style={{
-                position: "relative",
-                background: "var(--vp-brown)",
-                color: "var(--vp-paper)",
-                borderColor: "var(--vp-brown)",
-                paddingRight: 22,
-              }}
+              style={{ position: "relative", background: "var(--vp-brown)", color: "var(--vp-paper)", borderColor: "var(--vp-brown)", paddingRight: 22 }}
             >
               <span aria-hidden="true" style={{ fontSize: 14, lineHeight: 1, marginRight: 2 }}>✦</span>
               Probador IA
               <span aria-hidden="true" style={{ fontSize: 14, lineHeight: 1, marginLeft: 4 }}>→</span>
-              <span style={{
-                position: "absolute",
-                top: -8,
-                right: -10,
-                background: "var(--vp-olive-deep)",
-                color: "var(--vp-paper)",
-                fontSize: 9,
-                fontFamily: "var(--font-mono)",
-                fontWeight: 500,
-                padding: "3px 7px",
-                letterSpacing: ".18em",
-                textTransform: "uppercase",
-                borderRadius: 2,
-                lineHeight: 1,
-              }}>
+              <span style={{ position: "absolute", top: -8, right: -10, background: "var(--vp-olive-deep)", color: "var(--vp-paper)", fontSize: 9, fontFamily: "var(--font-mono)", fontWeight: 500, padding: "3px 7px", letterSpacing: ".18em", textTransform: "uppercase", borderRadius: 2, lineHeight: 1 }}>
                 Nuevo
               </span>
             </button>
-            <span style={{
-              fontSize: 12,
-              color: "var(--vp-ink-muted)",
-              letterSpacing: ".04em",
-              maxWidth: 260,
-              lineHeight: 1.45,
-            }}>
+            <span style={{ fontSize: 12, color: "var(--vp-ink-muted)", letterSpacing: ".04em", maxWidth: 260, lineHeight: 1.45 }}>
               Sube una foto de tu perro y descubre cómo le queda cada modelo.
             </span>
           </div>
 
-          <div style={{
-            display: "flex",
-            gap: 28,
-            flexWrap: "wrap",
-            fontSize: 12,
-            color: "var(--vp-ink-muted)",
-            letterSpacing: "0.08em",
-            textTransform: "uppercase",
-          }}>
+          <div style={{ display: "flex", gap: 28, flexWrap: "wrap", fontSize: 12, color: "var(--vp-ink-muted)", letterSpacing: "0.08em", textTransform: "uppercase" }}>
             <span>✓ Envío gratuito desde 45 €</span>
             <span>✓ Diseñado en España</span>
             <span>✓ 15 días de devolución</span>
@@ -143,7 +181,7 @@ export function Hero({ model, models = [], heroStyle }) {
         <div style={{ position: "relative", width: "100%" }}>
           <div style={{
             width: "100%",
-            aspectRatio: isMobile ? "3/4" : "4/5",
+            aspectRatio: "4/5",
             borderRadius: "var(--radius-arch)",
             background: "var(--vp-cream-deep)",
             overflow: "hidden",
@@ -154,21 +192,9 @@ export function Hero({ model, models = [], heroStyle }) {
             <img
               src="/assets/hero-dalmata.png"
               alt="Dálmata Viena con arnés"
-              style={{
-                position: "absolute",
-                inset: 0,
-                width: "100%",
-                height: "100%",
-                objectFit: "contain",
-                objectPosition: "center",
-                display: "block",
-              }}
+              style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "contain", objectPosition: "center", display: "block" }}
             />
-            <div style={{
-              position: "absolute", inset: 0,
-              background: "linear-gradient(180deg, rgba(0,0,0,0) 60%, rgba(74,46,28,.10) 100%)",
-              pointerEvents: "none",
-            }} />
+            <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(0,0,0,0) 60%, rgba(74,46,28,.10) 100%)", pointerEvents: "none" }} />
           </div>
         </div>
       </div>

@@ -3,21 +3,19 @@
 import { useState } from "react";
 import { ModelSwatch } from "@/components/shared/ModelSwatch";
 import { useRoute } from "@/components/shared/useRoute";
-import { useIsMobile } from "@/components/shared/useIsMobile";
 
 export function ModelsSection({ models = [] }) {
   const { go } = useRoute();
-  const isMobile = useIsMobile();
   return (
-    <section style={{ padding: isMobile ? "60px 20px 32px" : "140px 40px 80px", position: "relative" }}>
+    <section style={{ padding: "clamp(60px, 10vw, 140px) clamp(20px, 3vw, 40px) clamp(32px, 6vw, 80px)", position: "relative" }}>
       <div style={{
         maxWidth: 1400,
-        margin: isMobile ? "0 auto 40px" : "0 auto 80px",
+        margin: "0 auto clamp(40px, 6vw, 80px)",
         display: "flex",
-        flexDirection: isMobile ? "column" : "row",
+        flexWrap: "wrap",
         justifyContent: "space-between",
-        alignItems: isMobile ? "flex-start" : "end",
-        gap: isMobile ? 24 : 0,
+        alignItems: "flex-end",
+        gap: 24,
       }}>
         <div>
           <div className="vp-eyebrow" style={{ marginBottom: 20 }}>— Edición limitada</div>
@@ -34,8 +32,8 @@ export function ModelsSection({ models = [] }) {
         maxWidth: 1400,
         margin: "0 auto",
         display: "grid",
-        gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr 1fr",
-        gap: isMobile ? 32 : 40,
+        gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 320px), 1fr))",
+        gap: "clamp(24px, 3vw, 40px)",
       }}>
         {models.map((m, i) => (
           <ModelCard key={m.id} model={m} index={i + 1} onClick={() => go(`/producto/${m.slugs?.conjunto ?? m.slugs?.arnes ?? m.id}`)} />
