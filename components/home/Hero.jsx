@@ -143,7 +143,7 @@ export function Hero({ model, models = [], heroStyle }) {
             width: "100%",
             aspectRatio: "4/5",
             borderRadius: "var(--radius-arch)",
-            background: "url(/assets/hero-dalmata.png) center/contain no-repeat, var(--vp-cream-deep)",
+            background: "url(/assets/hero-dalmata.png) center/cover no-repeat",
             overflow: "hidden",
             position: "relative",
             boxShadow: "0 30px 80px rgba(42,29,18,.12)",
@@ -152,6 +152,18 @@ export function Hero({ model, models = [], heroStyle }) {
               position: "absolute", inset: 0,
               background: "linear-gradient(180deg, rgba(0,0,0,0) 60%, rgba(74,46,28,.10) 100%)",
             }} />
+            <span className="vp-eyebrow" style={{
+              position: "absolute",
+              bottom: 28,
+              left: 32,
+              fontSize: 10,
+              letterSpacing: ".28em",
+              color: "var(--vp-paper)",
+              opacity: .72,
+              pointerEvents: "none",
+            }}>
+              VIENA PETS · MADRID
+            </span>
           </div>
         </div>
       </div>
