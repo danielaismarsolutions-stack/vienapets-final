@@ -4,11 +4,13 @@ import { useState } from "react";
 import { Icon } from "@/components/shared/Icon";
 import { useRoute } from "@/components/shared/useRoute";
 import { useCart } from "@/components/shared/CartProvider";
+import { useIsMobile } from "@/components/shared/useIsMobile";
 
 export function CheckoutPage() {
   const { items, subtotal } = useCart();
   const { go } = useRoute();
   const [step, setStep] = useState(0);
+  const isMobile = useIsMobile();
   const total = subtotal;
 
   if (items.length === 0) {
@@ -26,14 +28,14 @@ export function CheckoutPage() {
   const steps = ["Contacto", "Envío", "Pago"];
 
   return (
-    <div style={{ padding: "24px 40px 80px" }}>
+    <div style={{ padding: isMobile ? "16px 20px 60px" : "24px 40px 80px" }}>
       <div style={{ maxWidth: 1300, margin: "0 auto" }}>
-        <div style={{ marginBottom: 40, display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
-          <h1 className="vp-display" style={{ fontSize: 56, color: "var(--vp-brown)", margin: 0 }}>Tu pedido</h1>
+        <div style={{ marginBottom: 40, display: "flex", justifyContent: "space-between", alignItems: "baseline", flexWrap: "wrap", gap: 12 }}>
+          <h1 className="vp-display" style={{ fontSize: isMobile ? 40 : 56, color: "var(--vp-brown)", margin: 0 }}>Tu pedido</h1>
           <a onClick={() => go("/tienda")} style={{ cursor: "pointer", fontSize: 12, letterSpacing: ".2em", textTransform: "uppercase", color: "var(--vp-brown)", borderBottom: "1px solid" }}>← Seguir comprando</a>
         </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "1.3fr 1fr", gap: 60 }}>
+        <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1.3fr 1fr", gap: isMobile ? 40 : 60 }}>
           <div>
             <div style={{ display: "flex", gap: 0, marginBottom: 40, borderBottom: "1px solid rgba(74,46,28,.2)" }}>
               {steps.map((s, i) => (
@@ -54,7 +56,7 @@ export function CheckoutPage() {
             {step === 2 && <CheckoutPayment onBack={() => setStep(1)} total={total} />}
           </div>
 
-          <aside style={{ background: "var(--vp-cream-soft)", padding: 32, alignSelf: "start", position: "sticky", top: 100 }}>
+          <aside style={{ background: "var(--vp-cream-soft)", padding: isMobile ? 20 : 32, alignSelf: "start", position: isMobile ? "static" : "sticky", top: 100 }}>
             <div className="vp-eyebrow" style={{ marginBottom: 20 }}>Resumen</div>
             {items.map((it) => (
               <div key={it.key} style={{ display: "grid", gridTemplateColumns: "56px 1fr auto", gap: 14, padding: "14px 0", borderBottom: "1px solid rgba(74,46,28,.1)" }}>
@@ -93,7 +95,7 @@ function Field({ label, ...props }) {
   return (
     <label style={{ display: "block", marginBottom: 20 }}>
       <span className="vp-eyebrow" style={{ display: "block", marginBottom: 8 }}>{label}</span>
-      <input {...props} style={{ width: "100%", padding: "14px 0", border: "none", borderBottom: "1px solid rgba(74,46,28,.3)", background: "transparent", outline: "none", fontSize: 15, color: "var(--vp-ink)" }} />
+      <input {...props} style={{ width: "100%", padding: "14px 0", border: "none", borderBottom: "1px solid rgba(74,46,28,.3)", background: "transparent", outline: "none", fontSize: 16, color: "var(--vp-ink)" }} />
     </label>
   );
 }
@@ -111,14 +113,15 @@ function CheckoutContact({ onNext }) {
 }
 
 function CheckoutShipping({ onNext, onBack }) {
+  const isMobile = useIsMobile();
   return (
     <div>
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
+      <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 24 }}>
         <Field label="Nombre" placeholder="Lucía" />
         <Field label="Apellidos" placeholder="Larrondobuno" />
       </div>
       <Field label="Dirección" placeholder="Calle, número, piso" />
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 24 }}>
+      <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr 1fr", gap: 24 }}>
         <Field label="Ciudad" placeholder="Madrid" />
         <Field label="Código postal" placeholder="28003" />
         <Field label="Teléfono" placeholder="+34 ..." />
@@ -147,15 +150,16 @@ function CheckoutShipping({ onNext, onBack }) {
 }
 
 function CheckoutPayment({ onBack, total }) {
+  const isMobile = useIsMobile();
   return (
     <div>
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, marginBottom: 24 }}>
         {["Tarjeta", "PayPal", "Bizum"].map((m, i) => (
-          <button key={m} style={{ padding: "14px 0", border: "1px solid var(--vp-brown)", background: i === 0 ? "var(--vp-brown)" : "transparent", color: i === 0 ? "var(--vp-paper)" : "var(--vp-brown)", cursor: "pointer", fontSize: 12, letterSpacing: ".2em", textTransform: "uppercase" }}>{m}</button>
+          <button key={m} style={{ padding: "14px 0", minHeight: 44, border: "1px solid var(--vp-brown)", background: i === 0 ? "var(--vp-brown)" : "transparent", color: i === 0 ? "var(--vp-paper)" : "var(--vp-brown)", cursor: "pointer", fontSize: 12, letterSpacing: ".2em", textTransform: "uppercase" }}>{m}</button>
         ))}
       </div>
       <Field label="Número de tarjeta" placeholder="4242 4242 4242 4242" />
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 24 }}>
+      <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr 1fr", gap: 24 }}>
         <Field label="Caducidad" placeholder="MM/AA" />
         <Field label="CVC" placeholder="123" />
         <Field label="Código postal" placeholder="28003" />
@@ -167,7 +171,7 @@ function CheckoutPayment({ onBack, total }) {
       <div style={{ display: "flex", gap: 12 }}>
         <button className="vp-btn ghost" onClick={onBack}><Icon.ArrowLeft style={{ width: 14, height: 14 }} /> Atrás</button>
         {/* Sprint 3: conectar a Stripe */}
-        <button className="vp-btn" disabled>
+        <button className="vp-btn" disabled style={{ minHeight: 44 }}>
           Pagar €{total.toFixed(2)} <Icon.Arrow style={{ width: 14, height: 14 }} />
         </button>
       </div>

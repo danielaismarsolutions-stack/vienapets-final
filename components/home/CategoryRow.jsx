@@ -2,20 +2,21 @@
 
 import { useState } from "react";
 import { useRoute } from "@/components/shared/useRoute";
-import { Icon } from "@/components/shared/Icon";
+import { useIsMobile } from "@/components/shared/useIsMobile";
 
 export function CategoryRow() {
   const { go } = useRoute();
+  const isMobile = useIsMobile();
   const cats = [
-    { label: "Conjuntos", to: "/tienda?cat=conjuntos", icon: "set" },
-    { label: "Arneses", to: "/tienda?cat=arneses", icon: "harness" },
-    { label: "Correas", to: "/tienda?cat=correas", icon: "leash" },
-    { label: "Portabolsas", to: "/tienda?cat=portabolsas", icon: "bag" },
-    { label: "Probador IA", to: "/probador", icon: "ai", isNew: true },
+    { label: "Conjuntos", to: "/tienda?cat=conjuntos" },
+    { label: "Arneses", to: "/tienda?cat=arneses" },
+    { label: "Correas", to: "/tienda?cat=correas" },
+    { label: "Portabolsas", to: "/tienda?cat=portabolsas" },
+    { label: "Probador IA", to: "/probador", isNew: true },
   ];
   return (
     <section style={{
-      padding: "70px 40px 56px",
+      padding: isMobile ? "40px 20px 32px" : "70px 40px 56px",
       background: "var(--vp-paper)",
       borderTop: "1px solid rgba(74,46,28,.06)",
       borderBottom: "1px solid rgba(74,46,28,.06)",
@@ -24,8 +25,8 @@ export function CategoryRow() {
         maxWidth: 1280,
         margin: "0 auto",
         display: "grid",
-        gridTemplateColumns: "repeat(5, 1fr)",
-        gap: 24,
+        gridTemplateColumns: isMobile ? "repeat(2, 1fr)" : "repeat(5, 1fr)",
+        gap: isMobile ? 12 : 24,
       }}>
         {cats.map((cat) => (
           <CategoryTile key={cat.label} cat={cat} onClick={() => go(cat.to)} />
@@ -48,7 +49,11 @@ function CategoryTile({ cat, onClick }) {
       style={{
         cursor: "pointer",
         textAlign: "center",
-        padding: "28px 16px 22px",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "40px 16px",
         borderRadius: 6,
         background: bg,
         border: `1px solid ${ring}`,
@@ -56,37 +61,14 @@ function CategoryTile({ cat, onClick }) {
         transform: hover ? "translateY(-4px)" : "translateY(0)",
         position: "relative",
       }}>
-      <div style={{
-        width: 64, height: 64,
-        margin: "0 auto 16px",
-        display: "grid", placeItems: "center",
-        borderRadius: "50%",
-        background: cat.isNew ? "var(--vp-paper)" : "var(--vp-cream-soft)",
-        border: `1px solid ${cat.isNew ? "var(--vp-copper)" : "rgba(74,46,28,.15)"}`,
-      }}>
-        <CategoryIcon kind={cat.icon} stroke={stroke} />
-      </div>
       <div className="vp-eyebrow" style={{
         color: stroke,
         letterSpacing: "0.22em",
-        fontSize: 11,
+        fontSize: 12,
       }}>
         {cat.label}
         {cat.isNew && <span className="vp-badge-new">Nuevo</span>}
       </div>
     </div>
   );
-}
-
-function CategoryIcon({ kind, stroke }) {
-  const map = {
-    set: Icon.CategorySet,
-    harness: Icon.CategoryHarness,
-    leash: Icon.CategoryLeash,
-    bag: Icon.CategoryBag,
-    ai: Icon.CategoryAI,
-  };
-  const Cmp = map[kind];
-  if (!Cmp) return null;
-  return <Cmp style={{ color: stroke }} />;
 }

@@ -3,9 +3,11 @@
 import { Icon } from "@/components/shared/Icon";
 import { ModelSwatch } from "@/components/shared/ModelSwatch";
 import { useRoute } from "@/components/shared/useRoute";
+import { useIsMobile } from "@/components/shared/useIsMobile";
 
 export function Hero({ model, models = [], heroStyle }) {
   const { go } = useRoute();
+  const isMobile = useIsMobile();
 
   if (heroStyle === "mosaic") {
     return <HeroMosaic models={models} />;
@@ -15,7 +17,7 @@ export function Hero({ model, models = [], heroStyle }) {
   return (
     <section style={{
       position: "relative",
-      padding: "60px 40px 80px",
+      padding: isMobile ? "40px 20px 52px" : "60px 40px 80px",
       overflow: "hidden",
       background: "var(--vp-cream)",
     }}>
@@ -23,8 +25,8 @@ export function Hero({ model, models = [], heroStyle }) {
         maxWidth: 1500,
         margin: "0 auto",
         display: "grid",
-        gridTemplateColumns: "1fr 1.5fr",
-        gap: 80,
+        gridTemplateColumns: isMobile ? "1fr" : "1fr 1.5fr",
+        gap: isMobile ? 36 : 80,
         alignItems: "center",
       }}>
         <div style={{ paddingLeft: 20 }}>
