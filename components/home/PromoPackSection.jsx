@@ -2,13 +2,15 @@
 
 import { Icon } from "@/components/shared/Icon";
 import { useRoute } from "@/components/shared/useRoute";
+import { useIsMobile } from "@/components/shared/useIsMobile";
 
 export function PromoPackSection({ models = [] }) {
   const { go } = useRoute();
+  const isMobile = useIsMobile();
   return (
-    <section style={{ padding: "100px 40px", background: "var(--vp-cream-soft)" }}>
+    <section style={{ padding: isMobile ? "60px 20px" : "100px 40px", background: "var(--vp-cream-soft)" }}>
       <div style={{ maxWidth: 1400, margin: "0 auto" }}>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1.2fr", gap: 80, alignItems: "center", marginBottom: 56 }}>
+        <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1.2fr", gap: isMobile ? 24 : 80, alignItems: "center", marginBottom: 40 }}>
           <div>
             <div className="vp-eyebrow" style={{ marginBottom: 16, color: "var(--vp-olive-deep)" }}>— Oferta de lanzamiento</div>
             <h2 className="vp-display" style={{ fontSize: "clamp(40px, 5vw, 80px)", color: "var(--vp-brown)", margin: 0, lineHeight: 1 }}>
@@ -21,7 +23,7 @@ export function PromoPackSection({ models = [] }) {
           </p>
         </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 24 }}>
+        <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(3, 1fr)", gap: isMobile ? 20 : 24 }}>
           {models.map((m) => {
             const packPrice = m.priceConjunto;
             if (packPrice == null) return null;

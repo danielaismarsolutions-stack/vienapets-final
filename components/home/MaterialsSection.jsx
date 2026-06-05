@@ -1,8 +1,13 @@
+"use client";
+
+import { useIsMobile } from "@/components/shared/useIsMobile";
+
 export function MaterialsSection({ models = [] }) {
+  const isMobile = useIsMobile();
   return (
-    <section style={{ padding: "140px 40px" }}>
+    <section style={{ padding: isMobile ? "80px 20px" : "140px 40px" }}>
       <div style={{ maxWidth: 1400, margin: "0 auto" }}>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 80, marginBottom: 80 }}>
+        <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: isMobile ? 32 : 80, marginBottom: isMobile ? 48 : 80 }}>
           <div>
             <div className="vp-eyebrow" style={{ marginBottom: 22 }}>— Diseño de autor</div>
             <h2 className="vp-display" style={{ fontSize: "clamp(48px, 5vw, 86px)", color: "var(--vp-brown)", margin: 0, lineHeight: .95 }}>
@@ -15,7 +20,7 @@ export function MaterialsSection({ models = [] }) {
           </p>
         </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 32 }}>
+        <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(3, 1fr)", gap: isMobile ? 32 : 32 }}>
           {models.map((m, i) => (
             <div key={m.id}>
               <div style={{ aspectRatio: "4/5", background: "var(--vp-cream-soft)", position: "relative", overflow: "hidden" }}>
@@ -34,24 +39,24 @@ export function MaterialsSection({ models = [] }) {
           ))}
         </div>
 
-        <div style={{ marginTop: 100, padding: "48px 56px", background: "var(--vp-cream-soft)", display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: 48, alignItems: "center" }}>
+        <div style={{ marginTop: isMobile ? 56 : 100, padding: isMobile ? "32px 24px" : "48px 56px", background: "var(--vp-cream-soft)", display: "grid", gridTemplateColumns: isMobile ? "1fr 1fr" : "1fr 1fr 1fr 1fr", gap: isMobile ? 24 : 48, alignItems: "center" }}>
           <div>
-            <div className="vp-display" style={{ fontSize: 64, color: "var(--vp-brown)", lineHeight: 1 }}>03</div>
-            <div style={{ fontSize: 11, letterSpacing: ".2em", textTransform: "uppercase", color: "var(--vp-ink-muted)", marginTop: 8 }}>Estampados originales · firmados por Lucía</div>
+            <div className="vp-display" style={{ fontSize: isMobile ? 48 : 64, color: "var(--vp-brown)", lineHeight: 1 }}>03</div>
+            <div style={{ fontSize: 11, letterSpacing: ".18em", textTransform: "uppercase", color: "var(--vp-ink-muted)", marginTop: 8 }}>Estampados originales</div>
           </div>
           <div>
-            <div className="vp-display" style={{ fontSize: "clamp(20px, 2vw, 26px)", color: "var(--vp-brown)", lineHeight: 1.1 }}>Edición limitada</div>
-            <div style={{ fontSize: 11, letterSpacing: ".2em", textTransform: "uppercase", color: "var(--vp-ink-muted)", marginTop: 8 }}>Colección de temporada · Madrid</div>
+            <div className="vp-display" style={{ fontSize: "clamp(16px, 1.5vw, 22px)", color: "var(--vp-brown)", lineHeight: 1.1, wordBreak: "break-word", overflowWrap: "anywhere", hyphens: "auto" }}>Edición limitada</div>
+            <div style={{ fontSize: 11, letterSpacing: ".18em", textTransform: "uppercase", color: "var(--vp-ink-muted)", marginTop: 8 }}>Colección de temporada</div>
           </div>
           <div>
-            <div className="vp-display" style={{ fontSize: 64, color: "var(--vp-brown)", lineHeight: 1 }}>0</div>
-            <div style={{ fontSize: 11, letterSpacing: ".2em", textTransform: "uppercase", color: "var(--vp-ink-muted)", marginTop: 8 }}>Reediciones · cuando se agota, descansa</div>
+            <div className="vp-display" style={{ fontSize: isMobile ? 48 : 64, color: "var(--vp-brown)", lineHeight: 1 }}>0</div>
+            <div style={{ fontSize: 11, letterSpacing: ".18em", textTransform: "uppercase", color: "var(--vp-ink-muted)", marginTop: 8 }}>Reediciones</div>
           </div>
-          <div style={{ borderLeft: "1px solid rgba(74,46,28,.2)", paddingLeft: 32 }}>
-            <div className="vp-serif vp-italic" style={{ fontSize: 22, color: "var(--vp-brown)", lineHeight: 1.35, fontStyle: "italic" }}>
+          <div style={{ borderLeft: isMobile ? "none" : "1px solid rgba(74,46,28,.2)", paddingLeft: isMobile ? 0 : 32, gridColumn: isMobile ? "1 / -1" : undefined }}>
+            <div className="vp-serif vp-italic" style={{ fontSize: isMobile ? 16 : 22, color: "var(--vp-brown)", lineHeight: 1.45, fontStyle: "italic" }}>
               &ldquo;No diseño accesorios. Diseño piezas para perros que tienen estilo propio.&rdquo;
             </div>
-            <div style={{ fontSize: 11, letterSpacing: ".2em", textTransform: "uppercase", color: "var(--vp-ink-muted)", marginTop: 12 }}>— Lucía Larrondobuno Verdejo, fundadora</div>
+            <div style={{ fontSize: 11, letterSpacing: ".18em", textTransform: "uppercase", color: "var(--vp-ink-muted)", marginTop: 12 }}>— Lucía Larrondobuno Verdejo, fundadora</div>
           </div>
         </div>
       </div>

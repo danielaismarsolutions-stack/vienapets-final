@@ -41,7 +41,7 @@ export function StorySection() {
               <div style={{ fontSize: 11, letterSpacing: ".2em", textTransform: "uppercase", color: "var(--vp-ink-muted)", marginTop: 6 }}>Modelos · edición limitada</div>
             </div>
             <div>
-              <div className="vp-display" style={{ fontSize: "clamp(20px, 2vw, 26px)", color: "var(--vp-brown)", lineHeight: 1.1 }}>Edición limitada</div>
+              <div className="vp-display" style={{ fontSize: "clamp(16px, 1.5vw, 22px)", color: "var(--vp-brown)", lineHeight: 1.1, wordBreak: "break-word", overflowWrap: "anywhere", hyphens: "auto" }}>Edición limitada</div>
               <div style={{ fontSize: 11, letterSpacing: ".2em", textTransform: "uppercase", color: "var(--vp-ink-muted)", marginTop: 6 }}>Colección de temporada</div>
             </div>
             <div>
