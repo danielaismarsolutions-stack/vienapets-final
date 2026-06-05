@@ -29,18 +29,18 @@ export function Hero({ model, models = [], heroStyle }) {
         gap: isMobile ? 36 : 80,
         alignItems: "center",
       }}>
-        <div style={{ paddingLeft: 20 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 24 }}>
+        <div style={{ paddingLeft: isMobile ? 0 : 20 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: isMobile ? 14 : 24 }}>
             <img src="/assets/logo-viena-pets-oficial.png" alt="" style={{ height: 28, width: "auto", opacity: .9 }} />
             <span style={{ height: 1, flex: 1, maxWidth: 80, background: "var(--vp-olive-deep)", opacity: .35 }}></span>
             <span className="vp-eyebrow" style={{ color: "var(--vp-olive-deep)", fontSize: 10 }}>Madrid</span>
           </div>
 
           <h1 className="vp-display" style={{
-            fontSize: "clamp(48px, 6vw, 84px)",
+            fontSize: isMobile ? "clamp(32px, 9vw, 44px)" : "clamp(48px, 6vw, 84px)",
             color: "var(--vp-brown)",
-            lineHeight: 1,
-            margin: "0 0 28px 0",
+            lineHeight: 1.05,
+            margin: isMobile ? "0 0 14px 0" : "0 0 28px 0",
             letterSpacing: "-0.02em",
           }}>
             Para perros con estilo<br/>
@@ -48,11 +48,11 @@ export function Hero({ model, models = [], heroStyle }) {
           </h1>
 
           <p style={{
-            fontSize: 17,
+            fontSize: isMobile ? 14 : 17,
             color: "var(--vp-ink-soft)",
-            lineHeight: 1.7,
+            lineHeight: 1.65,
             maxWidth: 480,
-            margin: "0 0 24px 0",
+            margin: isMobile ? "0 0 12px 0" : "0 0 24px 0",
           }}>
             Arneses, correas y portabolsas con diseños exclusivos firmados por Lucía.
             Diseñados en España, en ediciones limitadas.
@@ -61,13 +61,13 @@ export function Hero({ model, models = [], heroStyle }) {
           <p className="vp-eyebrow" style={{
             fontSize: 11,
             color: "var(--vp-brown)",
-            margin: "0 0 40px 0",
+            margin: isMobile ? "0 0 20px 0" : "0 0 40px 0",
             letterSpacing: ".16em",
           }}>
             — Una colección de Lucía Larrondobuno Verdejo
           </p>
 
-          <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginBottom: 18 }}>
+          <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginBottom: isMobile ? 12 : 18 }}>
             <button className="vp-btn olive" onClick={() => go("/tienda?cat=conjuntos")}>
               Conjuntos
             </button>
@@ -81,7 +81,7 @@ export function Hero({ model, models = [], heroStyle }) {
               Portabolsas
             </button>
           </div>
-          <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 36, flexWrap: "wrap" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: isMobile ? 20 : 36, flexWrap: "wrap" }}>
             <button
               className="vp-btn"
               onClick={() => go("/probador")}

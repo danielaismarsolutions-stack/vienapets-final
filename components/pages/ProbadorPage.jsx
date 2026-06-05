@@ -150,7 +150,22 @@ export function ProbadorPage() {
             }}>
               {hasUpload ? (
                 <>
-                  <div style={{ fontSize: 100, marginBottom: 20 }}>🐕‍🦺</div>
+                  <svg viewBox="0 0 120 90" width="100" height="75" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style={{ marginBottom: 20 }}>
+                    <ellipse cx="58" cy="56" rx="32" ry="22" stroke="var(--vp-brown)" strokeWidth="1.5" />
+                    <circle cx="92" cy="38" r="14" stroke="var(--vp-brown)" strokeWidth="1.5" />
+                    <ellipse cx="103" cy="44" rx="7" ry="5" stroke="var(--vp-brown)" strokeWidth="1.2" />
+                    <path d="M84 28 Q78 18 80 30" stroke="var(--vp-brown)" strokeWidth="1.5" strokeLinecap="round" />
+                    <circle cx="96" cy="36" r="1.5" fill="var(--vp-brown)" />
+                    <circle cx="108" cy="43" r="1.2" fill="var(--vp-brown)" />
+                    <line x1="76" y1="74" x2="76" y2="88" stroke="var(--vp-brown)" strokeWidth="1.5" strokeLinecap="round" />
+                    <line x1="68" y1="74" x2="68" y2="88" stroke="var(--vp-brown)" strokeWidth="1.5" strokeLinecap="round" />
+                    <line x1="40" y1="74" x2="40" y2="88" stroke="var(--vp-brown)" strokeWidth="1.5" strokeLinecap="round" />
+                    <line x1="32" y1="74" x2="32" y2="88" stroke="var(--vp-brown)" strokeWidth="1.5" strokeLinecap="round" />
+                    <path d="M26 48 Q12 36 18 28" stroke="var(--vp-brown)" strokeWidth="1.5" strokeLinecap="round" fill="none" />
+                    <path d="M44 44 Q58 36 74 44" stroke="var(--vp-brown)" strokeWidth="2" strokeLinecap="round" fill="none" />
+                    <path d="M54 44 L54 62" stroke="var(--vp-brown)" strokeWidth="1.8" strokeLinecap="round" />
+                    <ellipse cx="54" cy="50" rx="12" ry="8" stroke="var(--vp-brown)" strokeWidth="1.5" fill="none" />
+                  </svg>
                   <div className="vp-serif" style={{
                     fontSize: 22,
                     color: "var(--vp-brown)",

@@ -1,5 +1,7 @@
 "use client";
 
+"use client";
+
 import { useState } from "react";
 import { ModelSwatch } from "@/components/shared/ModelSwatch";
 import { useRoute } from "@/components/shared/useRoute";
@@ -47,10 +49,11 @@ export function ModelsSection({ models = [] }) {
 
 function ModelCard({ model, index, onClick }) {
   const [hover, setHover] = useState(false);
+  const isMobile = useIsMobile();
   return (
     <article onClick={onClick} onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}
       style={{ cursor: "pointer", display: "flex", flexDirection: "column" }}>
-      <div style={{ position: "relative", width: "100%", aspectRatio: "4/5", overflow: "hidden", background: "var(--vp-cream-soft)" }}>
+      <div style={{ position: "relative", width: "100%", aspectRatio: isMobile ? "3/2" : "4/5", overflow: "hidden", background: "var(--vp-cream-soft)" }}>
         <img src={model.heroImg} alt={model.name} style={{
           width: "100%", height: "100%", objectFit: "contain", objectPosition: "center", display: "block",
           transform: hover ? "scale(1.03)" : "scale(1)",
@@ -70,12 +73,12 @@ function ModelCard({ model, index, onClick }) {
         </div>
         <div style={{ position: "absolute", top: 16, left: 16, fontSize: 11, color: "var(--vp-brown)", background: "var(--vp-paper)", padding: "4px 10px", letterSpacing: ".2em", textTransform: "uppercase" }}>0{index} / 03</div>
       </div>
-      <div style={{ paddingTop: 20, display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+      <div style={{ paddingTop: isMobile ? 12 : 20, display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
         <div>
-          <div className="vp-serif" style={{ fontSize: 28, color: "var(--vp-brown)", letterSpacing: ".01em" }}>Modelo <span className="vp-italic" style={{ fontStyle: "italic" }}>{model.name}</span></div>
-          <div style={{ fontSize: 12, color: "var(--vp-ink-muted)", marginTop: 4, letterSpacing: ".08em" }}>{model.subtitle}</div>
+          <div className="vp-serif" style={{ fontSize: isMobile ? 20 : 28, color: "var(--vp-brown)", letterSpacing: ".01em" }}>Modelo <span className="vp-italic" style={{ fontStyle: "italic" }}>{model.name}</span></div>
+          {!isMobile && <div style={{ fontSize: 12, color: "var(--vp-ink-muted)", marginTop: 4, letterSpacing: ".08em" }}>{model.subtitle}</div>}
         </div>
-        <div className="vp-serif" style={{ fontSize: 20, color: "var(--vp-brown)" }}>€{model.priceHarness}</div>
+        <div className="vp-serif" style={{ fontSize: isMobile ? 16 : 20, color: "var(--vp-brown)" }}>€{model.priceHarness}</div>
       </div>
     </article>
   );
