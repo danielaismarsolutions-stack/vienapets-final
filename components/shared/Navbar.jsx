@@ -29,7 +29,6 @@ export function Navbar() {
     { label: "Tienda", path: "/tienda", active: route.startsWith("/tienda") },
     { label: "Modelos", path: "/modelos", active: route.startsWith("/modelos") },
     { label: "Historia", path: "/historia", active: route === "/historia" },
-    { label: "Cuidado", path: "/cuidado", active: route === "/cuidado" },
   ];
 
   return (

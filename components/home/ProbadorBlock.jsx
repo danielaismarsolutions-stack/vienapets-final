@@ -124,7 +124,7 @@ export function ProbadorBlock() {
               }}>
                 Antes
               </div>
-              <div style={{ fontSize: 80, paddingBottom: 30 }}>🐕</div>
+              <DogSilhouette color="var(--vp-ink-muted)" />
             </div>
             <div style={{
               background: "var(--vp-olive-soft)",
@@ -149,11 +149,57 @@ export function ProbadorBlock() {
               }}>
                 Después
               </div>
-              <div style={{ fontSize: 80, paddingBottom: 30 }}>🐕‍🦺</div>
+              <DogSilhouette color="var(--vp-brown)" withHarness />
             </div>
           </div>
         </div>
       </div>
     </section>
+  );
+}
+
+// Silueta SVG de perfil de perro — línea fina monocromática
+// withHarness añade el trazo del arnés sobre el pecho para la card "Después"
+function DogSilhouette({ color = "var(--vp-brown)", withHarness = false }) {
+  return (
+    <div style={{ paddingBottom: 24, display: "flex", alignItems: "flex-end", justifyContent: "center" }}>
+      <svg
+        viewBox="0 0 120 90"
+        width="96"
+        height="72"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        aria-hidden="true"
+      >
+        {/* Cuerpo */}
+        <ellipse cx="58" cy="56" rx="32" ry="22" stroke={color} strokeWidth="1.5" />
+        {/* Cabeza */}
+        <circle cx="92" cy="38" r="14" stroke={color} strokeWidth="1.5" />
+        {/* Hocico */}
+        <ellipse cx="103" cy="44" rx="7" ry="5" stroke={color} strokeWidth="1.2" />
+        {/* Oreja caída */}
+        <path d="M84 28 Q78 18 80 30" stroke={color} strokeWidth="1.5" strokeLinecap="round" />
+        {/* Ojo */}
+        <circle cx="96" cy="36" r="1.5" fill={color} />
+        {/* Nariz */}
+        <circle cx="108" cy="43" r="1.2" fill={color} />
+        {/* Patas delanteras */}
+        <line x1="76" y1="74" x2="76" y2="88" stroke={color} strokeWidth="1.5" strokeLinecap="round" />
+        <line x1="68" y1="74" x2="68" y2="88" stroke={color} strokeWidth="1.5" strokeLinecap="round" />
+        {/* Patas traseras */}
+        <line x1="40" y1="74" x2="40" y2="88" stroke={color} strokeWidth="1.5" strokeLinecap="round" />
+        <line x1="32" y1="74" x2="32" y2="88" stroke={color} strokeWidth="1.5" strokeLinecap="round" />
+        {/* Cola */}
+        <path d="M26 48 Q12 36 18 28" stroke={color} strokeWidth="1.5" strokeLinecap="round" fill="none" />
+        {/* Arnés (solo en card "Después") */}
+        {withHarness && (
+          <>
+            <path d="M44 44 Q58 36 74 44" stroke={color} strokeWidth="2" strokeLinecap="round" fill="none" />
+            <path d="M54 44 L54 62" stroke={color} strokeWidth="1.8" strokeLinecap="round" />
+            <ellipse cx="54" cy="50" rx="12" ry="8" stroke={color} strokeWidth="1.5" fill="none" />
+          </>
+        )}
+      </svg>
+    </div>
   );
 }
