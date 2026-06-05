@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Icon } from "@/components/shared/Icon";
 import { useRoute } from "@/components/shared/useRoute";
 import { useCart } from "@/components/shared/CartProvider";
+import { useIsMobile } from "@/components/shared/useIsMobile";
 import { VP_SIZES, VP_HARDWARE } from "@/lib/data";
 import SizeGuide from "@/components/shared/SizeGuide";
 
@@ -26,6 +27,7 @@ const ALL_SIZES = ["XS", "S", "M", "L"];
 export function ProductPage({ product }) {
   const { go } = useRoute();
   const { add } = useCart();
+  const isMobile = useIsMobile();
   const meta = product.meta ?? {};
   const isArnes = product.category === "arnes";
 
@@ -107,13 +109,13 @@ export function ProductPage({ product }) {
   };
 
   return (
-    <div style={{ padding: "24px 40px 80px" }}>
+    <div style={{ padding: isMobile ? "16px 20px 60px" : "24px 40px 80px" }}>
       <div style={{ maxWidth: 1500, margin: "0 auto" }}>
         <div style={{ fontSize: 11, letterSpacing: ".2em", textTransform: "uppercase", color: "var(--vp-ink-muted)", marginBottom: 24 }}>
           <a onClick={() => go("/")} style={{ cursor: "pointer" }}>Inicio</a> · <a onClick={() => go("/tienda")} style={{ cursor: "pointer" }}>Tienda</a> · <span style={{ color: "var(--vp-brown)" }}>{product.name}</span>
         </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 80 }}>
+        <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: isMobile ? 28 : 80 }}>
           <div>
             <div style={{ width: "100%", aspectRatio: "4/5", background: "var(--vp-cream-soft)", overflow: "hidden", position: "relative", display: "flex", alignItems: "center", justifyContent: "center" }}>
               {heroImg && <img src={heroImg} alt={product.name} style={{ width: "100%", height: "100%", objectFit: "contain", objectPosition: "center", display: "block", padding: 24 }} />}
@@ -272,7 +274,7 @@ export function ProductPage({ product }) {
             role="dialog"
             aria-modal="true"
             aria-labelledby="size-guide-modal-heading"
-            style={{ position: "relative", background: "var(--vp-paper)", maxWidth: 760, width: "100%", maxHeight: "90vh", overflowY: "auto", padding: "40px 44px" }}
+            style={{ position: "relative", background: "var(--vp-paper)", maxWidth: 760, width: "100%", maxHeight: "90vh", overflowY: "auto", padding: "clamp(20px, 4vw, 44px)" }}
           >
             <button ref={closeBtnRef} onClick={closeSizeModal} aria-label="Cerrar" style={{ position: "absolute", top: 16, right: 16, background: "transparent", border: "none", cursor: "pointer", color: "var(--vp-brown)" }}>
               <Icon.Close style={{ width: 22, height: 22 }} />

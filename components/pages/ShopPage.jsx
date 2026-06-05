@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useRoute } from "@/components/shared/useRoute";
 import { useCart } from "@/components/shared/CartProvider";
+import { useIsMobile } from "@/components/shared/useIsMobile";
 
 // La categoría llega desde el server (mapeada a la del esquema BBDD: arnes,
 // correa, portabolsas, conjunto). El filtro de UI navega por URL para que el
@@ -35,6 +36,7 @@ const CART_CATEGORY = {
 export function ShopPage({ products = [], initialCategory = null }) {
   const { go } = useRoute();
   const router = useRouter();
+  const isMobile = useIsMobile();
   const [sort, setSort] = useState("featured");
 
   const sorted = useMemo(() => {
@@ -49,7 +51,7 @@ export function ShopPage({ products = [], initialCategory = null }) {
   };
 
   return (
-    <div style={{ padding: "40px 40px 80px" }}>
+    <div style={{ padding: isMobile ? "24px 20px 60px" : "40px 40px 80px" }}>
       <div style={{ maxWidth: 1500, margin: "0 auto" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "end", marginBottom: 48, borderBottom: "1px solid rgba(74,46,28,.2)", paddingBottom: 32 }}>
           <div>
@@ -83,7 +85,7 @@ export function ShopPage({ products = [], initialCategory = null }) {
           </select>
         </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 40 }}>
+        <div style={{ display: "grid", gridTemplateColumns: isMobile ? "repeat(2, 1fr)" : "repeat(3, 1fr)", gap: isMobile ? 20 : 40 }}>
           {sorted.map((p) => (
             <ShopCard
               key={p.id}
