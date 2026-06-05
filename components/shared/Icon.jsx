@@ -21,44 +21,51 @@ export const Icon = {
   Leaf: (p) => (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" {...p}><path d="M5 19c0-8 6-14 14-14 0 8-6 14-14 14ZM5 19l8-8"/></svg>),
   Scissors: (p) => (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" {...p}><circle cx="6" cy="7" r="2.5"/><circle cx="6" cy="17" r="2.5"/><path d="m8 9 12 9M8 15l12-9"/></svg>),
 
+  // CategorySet: tres cápsulas verticales idénticas en fila + línea base → "tres piezas de una colección"
   CategorySet: (p) => (
-    <svg width="30" height="30" viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" {...p}>
-      <circle cx="10" cy="11" r="2.5" />
-      <circle cx="22" cy="11" r="2.5" />
-      <circle cx="16" cy="22" r="2.5" />
-      <path d="M10 13.5 L16 19.5 M22 13.5 L16 19.5 M12.5 11 L19.5 11" />
+    <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" {...p}>
+      <rect x="8" y="9" width="4" height="13" rx="1.2"/>
+      <rect x="14" y="9" width="4" height="13" rx="1.2"/>
+      <rect x="20" y="9" width="4" height="13" rx="1.2"/>
+      <path d="M7 24 L25 24"/>
     </svg>
   ),
 
+  // CategoryHarness: arnés visto de frente — arco de cuello (arriba), arco de pecho (abajo), correas laterales y punto central D-ring
   CategoryHarness: (p) => (
-    <svg width="30" height="30" viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" {...p}>
-      <path d="M9 8 L9 24 M23 8 L23 24" />
-      <path d="M9 10 Q16 6 23 10" />
-      <path d="M9 16 L23 16" />
-      <circle cx="16" cy="16" r="1.5" />
+    <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" {...p}>
+      <path d="M11 12 Q16 8.5 21 12"/>
+      <path d="M8 24 Q16 20.5 24 24"/>
+      <path d="M11 12 L8 24 M21 12 L24 24"/>
+      <circle cx="16" cy="16" r="1.2" fill="currentColor" stroke="none"/>
     </svg>
   ),
 
+  // CategoryLeash: empuñadura (rect redondeado, arriba-izq) → curva elegante → D-ring mosquetón (abajo-dcha)
   CategoryLeash: (p) => (
-    <svg width="30" height="30" viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" {...p}>
-      <path d="M7 25 Q11 18 16 16 Q21 14 24 9" />
-      <circle cx="24" cy="9" r="2.5" />
-      <path d="M6 24 L9 24 M6 24 L7 26" />
+    <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" {...p}>
+      <rect x="5.5" y="5" width="3" height="6" rx="1.5"/>
+      <path d="M7 11 Q14 16 21 21"/>
+      <path d="M21 27 L21 21 Q26 21 26 24 Q26 27 21 27"/>
     </svg>
   ),
 
+  // CategoryBag: cilindro vertical (dispensador) con anilla de sujeción en la parte superior derecha
   CategoryBag: (p) => (
-    <svg width="30" height="30" viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" {...p}>
-      <rect x="11" y="8" width="10" height="16" rx="1.5" />
-      <path d="M11 12 L21 12" />
-      <circle cx="16" cy="16" r="1.2" fill="currentColor" />
-      <path d="M14 24 L14 26 M18 24 L18 26" />
+    <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" {...p}>
+      <ellipse cx="16" cy="10" rx="4.5" ry="1.8"/>
+      <path d="M11.5 10 L11.5 25 M20.5 10 L20.5 25"/>
+      <path d="M11.5 25 Q11.5 27.5 16 27.5 Q20.5 27.5 20.5 25"/>
+      <path d="M19.5 8.5 L19.5 5 Q19.5 4 21 4 Q22.5 4 22.5 5 L22.5 8.5"/>
     </svg>
   ),
 
+  // CategoryAI: dos elipses perpendiculares cruzadas (esfera orbital / lente de análisis) + punto central — evoca visión mágica y análisis IA
   CategoryAI: (p) => (
-    <svg width="30" height="30" viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" {...p}>
-      <path d="M16 4 L18.5 13.5 L28 16 L18.5 18.5 L16 28 L13.5 18.5 L4 16 L13.5 13.5 Z" />
+    <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" {...p}>
+      <ellipse cx="16" cy="16" rx="10" ry="3.5"/>
+      <ellipse cx="16" cy="16" rx="3.5" ry="10"/>
+      <circle cx="16" cy="16" r="1.3" fill="currentColor" stroke="none"/>
     </svg>
   ),
 };
