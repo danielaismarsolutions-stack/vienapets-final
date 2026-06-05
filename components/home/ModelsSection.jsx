@@ -47,28 +47,38 @@ export function ModelsSection({ models = [] }) {
 
 function ModelCard({ model, index, onClick }) {
   const [hover, setHover] = useState(false);
-  const isMobile = useIsMobile();
   return (
-    <article onClick={onClick} onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}
-      style={{ cursor: "pointer", display: "flex", flexDirection: "column" }}>
-
-      {/* Imagen: cuadrada en mobile (1/1) con cover para llenar el área; 4/5 portrait en desktop */}
+    <article
+      onClick={onClick}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+      style={{ cursor: "pointer", display: "flex", flexDirection: "column", width: "100%" }}
+    >
+      {/* Imagen siempre full-width cuadrada — el grid exterior controla cuántas columnas hay */}
       <div style={{
         position: "relative",
         width: "100%",
-        aspectRatio: isMobile ? "1/1" : "4/5",
+        aspectRatio: "1/1",
         overflow: "hidden",
         background: "var(--vp-cream-soft)",
+        flexShrink: 0,
       }}>
-        <img src={model.heroImg} alt={model.name} style={{
-          width: "100%", height: "100%",
-          objectFit: isMobile ? "cover" : "contain",
-          objectPosition: "center",
-          display: "block",
-          transform: hover ? "scale(1.03)" : "scale(1)",
-          transition: "transform .8s cubic-bezier(.2,.7,.2,1)",
-          opacity: hover ? 0 : 1,
-        }} />
+        <img
+          src={model.heroImg}
+          alt={model.name}
+          style={{
+            position: "absolute",
+            inset: 0,
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            objectPosition: "center",
+            display: "block",
+            transform: hover ? "scale(1.03)" : "scale(1)",
+            transition: "transform .8s cubic-bezier(.2,.7,.2,1)",
+            opacity: hover ? 0 : 1,
+          }}
+        />
         <div style={{ position: "absolute", inset: 0, opacity: hover ? 1 : 0, transition: "opacity .5s ease" }}>
           <ModelSwatch model={model} style={{ width: "100%", height: "100%" }} />
           <div style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center" }}>
@@ -82,13 +92,13 @@ function ModelCard({ model, index, onClick }) {
         </div>
       </div>
 
-      {/* Texto: apilado debajo de la imagen */}
-      <div style={{ paddingTop: isMobile ? 16 : 20 }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: isMobile ? 6 : 0 }}>
-          <div className="vp-serif" style={{ fontSize: isMobile ? "clamp(28px, 7vw, 40px)" : 28, color: "var(--vp-brown)", letterSpacing: ".01em" }}>
+      {/* Texto siempre debajo de la imagen */}
+      <div style={{ paddingTop: 16, flex: 1 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 6 }}>
+          <div className="vp-serif" style={{ fontSize: "clamp(20px, 3vw, 28px)", color: "var(--vp-brown)", letterSpacing: ".01em" }}>
             Modelo <span className="vp-italic" style={{ fontStyle: "italic" }}>{model.name}</span>
           </div>
-          <div className="vp-serif" style={{ fontSize: isMobile ? 16 : 20, color: "var(--vp-brown)" }}>
+          <div className="vp-serif" style={{ fontSize: "clamp(15px, 2vw, 20px)", color: "var(--vp-brown)" }}>
             €{model.priceHarness}
           </div>
         </div>

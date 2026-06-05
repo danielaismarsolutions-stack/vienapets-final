@@ -140,19 +140,34 @@ export function Hero({ model, models = [], heroStyle }) {
           </div>
         </div>
 
-        <div style={{ position: "relative" }}>
+        <div style={{ position: "relative", width: "100%" }}>
           <div style={{
             width: "100%",
-            aspectRatio: "4/5",
+            aspectRatio: isMobile ? "3/4" : "4/5",
             borderRadius: "var(--radius-arch)",
-            background: "url(/assets/hero-dalmata.png) center/contain no-repeat, var(--vp-cream-deep)",
+            background: "var(--vp-cream-deep)",
             overflow: "hidden",
             position: "relative",
             boxShadow: "0 30px 80px rgba(42,29,18,.12)",
           }}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/assets/hero-dalmata.png"
+              alt="Dálmata Viena con arnés"
+              style={{
+                position: "absolute",
+                inset: 0,
+                width: "100%",
+                height: "100%",
+                objectFit: "contain",
+                objectPosition: "center",
+                display: "block",
+              }}
+            />
             <div style={{
               position: "absolute", inset: 0,
               background: "linear-gradient(180deg, rgba(0,0,0,0) 60%, rgba(74,46,28,.10) 100%)",
+              pointerEvents: "none",
             }} />
           </div>
         </div>
