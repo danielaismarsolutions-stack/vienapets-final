@@ -1,7 +1,5 @@
 "use client";
 
-"use client";
-
 import { useState } from "react";
 import { ModelSwatch } from "@/components/shared/ModelSwatch";
 import { useRoute } from "@/components/shared/useRoute";
@@ -53,17 +51,25 @@ function ModelCard({ model, index, onClick }) {
   return (
     <article onClick={onClick} onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}
       style={{ cursor: "pointer", display: "flex", flexDirection: "column" }}>
-      <div style={{ position: "relative", width: "100%", aspectRatio: isMobile ? "3/2" : "4/5", overflow: "hidden", background: "var(--vp-cream-soft)" }}>
+
+      {/* Imagen: cuadrada en mobile (1/1) con cover para llenar el área; 4/5 portrait en desktop */}
+      <div style={{
+        position: "relative",
+        width: "100%",
+        aspectRatio: isMobile ? "1/1" : "4/5",
+        overflow: "hidden",
+        background: "var(--vp-cream-soft)",
+      }}>
         <img src={model.heroImg} alt={model.name} style={{
-          width: "100%", height: "100%", objectFit: "contain", objectPosition: "center", display: "block",
+          width: "100%", height: "100%",
+          objectFit: isMobile ? "cover" : "contain",
+          objectPosition: "center",
+          display: "block",
           transform: hover ? "scale(1.03)" : "scale(1)",
           transition: "transform .8s cubic-bezier(.2,.7,.2,1)",
           opacity: hover ? 0 : 1,
         }} />
-        <div style={{
-          position: "absolute", inset: 0,
-          opacity: hover ? 1 : 0, transition: "opacity .5s ease",
-        }}>
+        <div style={{ position: "absolute", inset: 0, opacity: hover ? 1 : 0, transition: "opacity .5s ease" }}>
           <ModelSwatch model={model} style={{ width: "100%", height: "100%" }} />
           <div style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center" }}>
             <div style={{ background: "var(--vp-paper)", padding: "14px 20px", borderRadius: 2 }}>
@@ -71,14 +77,24 @@ function ModelCard({ model, index, onClick }) {
             </div>
           </div>
         </div>
-        <div style={{ position: "absolute", top: 16, left: 16, fontSize: 11, color: "var(--vp-brown)", background: "var(--vp-paper)", padding: "4px 10px", letterSpacing: ".2em", textTransform: "uppercase" }}>0{index} / 03</div>
-      </div>
-      <div style={{ paddingTop: isMobile ? 8 : 20, display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
-        <div>
-          <div className="vp-serif" style={{ fontSize: isMobile ? 16 : 28, color: "var(--vp-brown)", letterSpacing: ".01em" }}>Modelo <span className="vp-italic" style={{ fontStyle: "italic" }}>{model.name}</span></div>
-          {!isMobile && <div style={{ fontSize: 12, color: "var(--vp-ink-muted)", marginTop: 4, letterSpacing: ".08em" }}>{model.subtitle}</div>}
+        <div style={{ position: "absolute", top: 16, left: 16, fontSize: 11, color: "var(--vp-brown)", background: "var(--vp-paper)", padding: "4px 10px", letterSpacing: ".2em", textTransform: "uppercase" }}>
+          0{index} / 03
         </div>
-        <div className="vp-serif" style={{ fontSize: isMobile ? 14 : 20, color: "var(--vp-brown)" }}>€{model.priceHarness}</div>
+      </div>
+
+      {/* Texto: apilado debajo de la imagen */}
+      <div style={{ paddingTop: isMobile ? 16 : 20 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: isMobile ? 6 : 0 }}>
+          <div className="vp-serif" style={{ fontSize: isMobile ? "clamp(28px, 7vw, 40px)" : 28, color: "var(--vp-brown)", letterSpacing: ".01em" }}>
+            Modelo <span className="vp-italic" style={{ fontStyle: "italic" }}>{model.name}</span>
+          </div>
+          <div className="vp-serif" style={{ fontSize: isMobile ? 16 : 20, color: "var(--vp-brown)" }}>
+            €{model.priceHarness}
+          </div>
+        </div>
+        <div style={{ fontSize: 12, color: "var(--vp-ink-muted)", marginTop: 4, letterSpacing: ".08em" }}>
+          {model.subtitle}
+        </div>
       </div>
     </article>
   );
