@@ -52,11 +52,10 @@ function ModelCard({ model, index, onClick }) {
       onMouseLeave={() => setHover(false)}
       style={{ cursor: "pointer", display: "flex", flexDirection: "column", width: "100%" }}
     >
-      {/* Imagen siempre full-width cuadrada — el grid exterior controla cuántas columnas hay */}
+      {/* Imagen full-width — la img está en flujo normal para que el wrapper tenga altura real */}
       <div style={{
         position: "relative",
         width: "100%",
-        aspectRatio: "1/1",
         overflow: "hidden",
         background: "var(--vp-cream-soft)",
         flexShrink: 0,
@@ -65,13 +64,11 @@ function ModelCard({ model, index, onClick }) {
           src={model.heroImg}
           alt={model.name}
           style={{
-            position: "absolute",
-            inset: 0,
+            display: "block",
             width: "100%",
-            height: "100%",
+            aspectRatio: "1 / 1",
             objectFit: "cover",
             objectPosition: "center",
-            display: "block",
             transform: hover ? "scale(1.03)" : "scale(1)",
             transition: "transform .8s cubic-bezier(.2,.7,.2,1)",
             opacity: hover ? 0 : 1,
