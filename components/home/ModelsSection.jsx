@@ -11,7 +11,7 @@ export function ModelsSection({ models = [] }) {
   const { go } = useRoute();
   const isMobile = useIsMobile();
   return (
-    <section style={{ padding: isMobile ? "80px 20px 40px" : "140px 40px 80px", position: "relative" }}>
+    <section style={{ padding: isMobile ? "60px 20px 32px" : "140px 40px 80px", position: "relative" }}>
       <div style={{
         maxWidth: 1400,
         margin: isMobile ? "0 auto 40px" : "0 auto 80px",
@@ -73,12 +73,12 @@ function ModelCard({ model, index, onClick }) {
         </div>
         <div style={{ position: "absolute", top: 16, left: 16, fontSize: 11, color: "var(--vp-brown)", background: "var(--vp-paper)", padding: "4px 10px", letterSpacing: ".2em", textTransform: "uppercase" }}>0{index} / 03</div>
       </div>
-      <div style={{ paddingTop: isMobile ? 12 : 20, display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+      <div style={{ paddingTop: isMobile ? 8 : 20, display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
         <div>
-          <div className="vp-serif" style={{ fontSize: isMobile ? 20 : 28, color: "var(--vp-brown)", letterSpacing: ".01em" }}>Modelo <span className="vp-italic" style={{ fontStyle: "italic" }}>{model.name}</span></div>
+          <div className="vp-serif" style={{ fontSize: isMobile ? 16 : 28, color: "var(--vp-brown)", letterSpacing: ".01em" }}>Modelo <span className="vp-italic" style={{ fontStyle: "italic" }}>{model.name}</span></div>
           {!isMobile && <div style={{ fontSize: 12, color: "var(--vp-ink-muted)", marginTop: 4, letterSpacing: ".08em" }}>{model.subtitle}</div>}
         </div>
-        <div className="vp-serif" style={{ fontSize: isMobile ? 16 : 20, color: "var(--vp-brown)" }}>€{model.priceHarness}</div>
+        <div className="vp-serif" style={{ fontSize: isMobile ? 14 : 20, color: "var(--vp-brown)" }}>€{model.priceHarness}</div>
       </div>
     </article>
   );
