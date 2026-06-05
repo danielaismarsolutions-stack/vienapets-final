@@ -163,6 +163,33 @@ export function Hero({ model, models = [], heroStyle }) {
 
 function HeroMosaic({ models = [] }) {
   const { go } = useRoute();
+  const isMobile = useIsMobile();
+
+  if (isMobile) {
+    return (
+      <section style={{ padding: "32px 20px 52px" }}>
+        <div style={{ maxWidth: 1600, margin: "0 auto" }}>
+          <div className="vp-eyebrow" style={{ marginBottom: 20 }}>— Primavera / Verano 2026</div>
+          <h1 className="vp-display" style={{ fontSize: "clamp(52px, 14vw, 96px)", color: "var(--vp-brown)", margin: "0 0 32px", lineHeight: 0.9 }}>
+            Un paseo,<br/>
+            <span style={{ fontStyle: "italic" }}>una</span> ceremonia.
+          </h1>
+          <div style={{ borderRadius: "180px 180px 4px 4px", overflow: "hidden", background: "var(--vp-cream-deep)", marginBottom: 24 }}>
+            <img src="/assets/hero-dalmata.png" alt="Viena" style={{ width: "100%", aspectRatio: "3/4", objectFit: "contain", objectPosition: "center", display: "block" }} />
+          </div>
+          <div style={{ background: "var(--vp-brown)", color: "var(--vp-paper)", padding: "28px 24px" }}>
+            <div className="vp-eyebrow" style={{ color: "var(--vp-paper)", fontSize: 10, marginBottom: 10 }}>Tres modelos · Tres historias</div>
+            <p className="vp-serif" style={{ fontSize: 18, lineHeight: 1.4, margin: "0 0 20px" }}>Capri, Peachy y Daisy. Cada uno pensado para un perro que no se parece a ningún otro.</p>
+            <button className="vp-btn ghost" style={{ color: "var(--vp-paper)", borderColor: "var(--vp-paper)" }} onClick={() => go("/tienda")}>
+              Ver colección <Icon.Arrow style={{ width: 14, height: 14 }} />
+            </button>
+          </div>
+        </div>
+        <Ticker />
+      </section>
+    );
+  }
+
   return (
     <section style={{ padding: "30px 40px 60px" }}>
       <div style={{ maxWidth: 1600, margin: "0 auto", display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gridTemplateRows: "auto auto", gap: 16, alignItems: "stretch" }}>
