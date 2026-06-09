@@ -14,6 +14,18 @@
   from { opacity: 0; }
   to   { opacity: 1; }
 }
+@keyframes vpFloat {
+  0%,  100% { transform: translateY(0px); }
+  50%        { transform: translateY(-6px); }
+}
+/* Desactiva animaciones decorativas para usuarios que lo prefieren */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
 
 ::-webkit-scrollbar       { width: 10px; height: 10px; }
 ::-webkit-scrollbar-track { background: var(--vp-cream); }

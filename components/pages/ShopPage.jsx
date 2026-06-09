@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useRoute } from "@/components/shared/useRoute";
 import { useCart } from "@/components/shared/CartProvider";
 import { useIsMobile } from "@/components/shared/useIsMobile";
+import { useTilt } from "@/lib/useTilt";
 import { LQIP_CREAM } from "@/lib/lqip";
 
 // La categoría llega desde el server (mapeada a la del esquema BBDD: arnes,
@@ -103,7 +104,9 @@ export function ShopPage({ products = [], initialCategory = null }) {
 
 function ShopCard({ product, onClick }) {
   const [hover, setHover] = useState(false);
+  const isMobile = useIsMobile();
   const { add } = useCart();
+  const { ref, onMouseMove, onMouseLeave } = useTilt(8);
   const productImg = product.image || product.meta?.heroImg || null;
   const swatch = product.meta?.hex?.primary ?? "#816754";
   const typeLabel = TYPE_LABEL[product.category] ?? "";
@@ -113,21 +116,42 @@ function ShopCard({ product, onClick }) {
   return (
     <article
       onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}
+      onMouseLeave={() => { setHover(false); if (!isMobile) onMouseLeave(); }}
+      onMouseMove={isMobile ? undefined : onMouseMove}
       style={{ cursor: agotado ? "not-allowed" : "pointer", opacity: agotado ? .55 : 1 }}
     >
-      <div onClick={onClick} style={{ position: "relative", width: "100%", aspectRatio: "4/5", overflow: "hidden", background: "var(--vp-cream-soft)", borderRadius: 2, boxShadow: "0 2px 12px rgba(42,29,18,.06)" }}>
+      <div
+        ref={ref}
+        onClick={onClick}
+        style={{
+          position: "relative",
+          width: "100%",
+          aspectRatio: "4/5",
+          background: "var(--vp-cream-soft)",
+          borderRadius: 2,
+          boxShadow: hover && !agotado
+            ? "0 8px 32px rgba(42,29,18,.12)"
+            : "0 2px 12px rgba(42,29,18,.06)",
+          transition: "box-shadow .4s ease",
+          willChange: "transform",
+          overflow: "hidden",
+        }}
+      >
         {productImg && (
           <Image
             fill
             src={productImg}
             alt={product.name}
             loading="lazy"
+            priority={false}
             style={{
-              objectFit: "cover",
-              objectPosition: "top center",
-              transform: hover && !agotado ? "scale(1.04)" : "scale(1)",
-              transition: "transform .7s ease",
+              objectFit: "contain",
+              inset: "6%",
+              filter: hover && !agotado
+                ? "drop-shadow(0 18px 28px rgba(70,50,30,.22)) drop-shadow(0 6px 10px rgba(70,50,30,.14))"
+                : "drop-shadow(0 10px 18px rgba(70,50,30,.16)) drop-shadow(0 3px 6px rgba(70,50,30,.10))",
+              transition: "filter .4s ease",
+              animation: "vpFloat 4s ease-in-out infinite",
             }}
             sizes="(max-width: 768px) 50vw, 33vw"
             placeholder="blur"
@@ -145,6 +169,7 @@ function ShopCard({ product, onClick }) {
             position: "absolute", left: 12, right: 12, bottom: 12,
             opacity: hover ? 1 : 0, transform: `translateY(${hover ? 0 : 6}px)`,
             transition: "all .3s ease",
+            zIndex: 3,
           }}>
             <button onClick={(e) => {
               e.stopPropagation();
