@@ -146,7 +146,7 @@ function ShopCard({ product, onClick }) {
             priority={false}
             style={{
               objectFit: "contain",
-              inset: "6%",
+              inset: "2%",
               filter: hover && !agotado
                 ? "drop-shadow(0 18px 28px rgba(70,50,30,.22)) drop-shadow(0 6px 10px rgba(70,50,30,.14))"
                 : "drop-shadow(0 10px 18px rgba(70,50,30,.16)) drop-shadow(0 3px 6px rgba(70,50,30,.10))",
