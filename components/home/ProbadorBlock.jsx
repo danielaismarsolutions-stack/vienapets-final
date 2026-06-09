@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useEffect, useRef, useState } from "react";
 import { useRoute } from "@/components/shared/useRoute";
 import { useIsMobile } from "@/components/shared/useIsMobile";
 import { LQIP_CREAM } from "@/lib/lqip";
@@ -8,6 +9,26 @@ import { LQIP_CREAM } from "@/lib/lqip";
 export function ProbadorBlock() {
   const { go } = useRoute();
   const isMobile = useIsMobile();
+  const containerRef = useRef(null);
+  const [visible, setVisible] = useState(false);
+  const [hoverDespues, setHoverDespues] = useState(false);
+  const [reduced, setReduced] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setReduced(mq.matches);
+    const h = (e) => setReduced(e.matches);
+    mq.addEventListener("change", h);
+    return () => mq.removeEventListener("change", h);
+  }, []);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) setVisible(true); }, { threshold: 0.15 });
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
   return (
     <section style={{
       padding: isMobile ? "60px 20px" : "100px 40px",
@@ -90,22 +111,28 @@ export function ProbadorBlock() {
         </div>
 
         {/* Cajas Antes / Después */}
-        <div style={{
-          position: "relative",
-          aspectRatio: "1/1",
-          background: "var(--vp-paper)",
-          borderRadius: 4,
-          padding: 24,
-          boxShadow: "0 30px 80px rgba(74,107,58,.15)",
-          maxWidth: isMobile ? "100%" : "none",
-        }}>
+        <div
+          ref={containerRef}
+          style={{
+            position: "relative",
+            aspectRatio: "1/1",
+            background: "var(--vp-paper)",
+            borderRadius: 4,
+            padding: 24,
+            boxShadow: "0 30px 80px rgba(74,107,58,.15)",
+            maxWidth: isMobile ? "100%" : "none",
+            opacity: reduced ? 1 : (visible ? 1 : 0),
+            transform: reduced ? "none" : (visible ? "translateY(0)" : "translateY(28px)"),
+            transition: reduced ? "none" : "opacity .6s ease, transform .6s ease",
+          }}
+        >
           <div style={{
             display: "grid",
             gridTemplateColumns: "1fr 1fr",
             gap: 16,
             height: "100%",
           }}>
-            {/* Antes — escala de grises */}
+            {/* Antes — foto sin arnés, en color */}
             <div style={{
               background: "var(--vp-cream-soft)",
               borderRadius: 4,
@@ -127,13 +154,12 @@ export function ProbadorBlock() {
               </div>
               <Image
                 fill
-                src="/images/productos/capri-main.webp"
+                src="/images/productos/capri-antes.webp"
                 alt="Antes: dálmata sin arnés"
                 loading="lazy"
                 style={{
                   objectFit: "cover",
                   objectPosition: "top center",
-                  filter: "grayscale(60%)",
                 }}
                 sizes="(max-width: 768px) 40vw, 25vw"
                 placeholder="blur"
@@ -141,14 +167,21 @@ export function ProbadorBlock() {
               />
             </div>
 
-            {/* Después — en color, con borde marca */}
-            <div style={{
-              background: "var(--vp-olive-soft)",
-              borderRadius: 4,
-              position: "relative",
-              overflow: "hidden",
-              border: "2px solid var(--vp-olive)",
-            }}>
+            {/* Después — con arnés Capri, hover realzado */}
+            <div
+              onMouseEnter={() => setHoverDespues(true)}
+              onMouseLeave={() => setHoverDespues(false)}
+              style={{
+                background: "var(--vp-olive-soft)",
+                borderRadius: 4,
+                position: "relative",
+                overflow: "hidden",
+                border: hoverDespues ? "2px solid var(--vp-olive-deep)" : "2px solid var(--vp-olive)",
+                transform: reduced ? "none" : (hoverDespues ? "scale(1.03)" : "scale(1)"),
+                transition: reduced ? "none" : "transform .35s ease, border-color .25s ease",
+                willChange: "transform",
+              }}
+            >
               <div style={{
                 position: "absolute",
                 top: 12, left: 12, zIndex: 1,

@@ -74,7 +74,7 @@ function ModelCard({ model, index, onClick }) {
         style={{
           position: "relative",
           width: "100%",
-          aspectRatio: isMobile ? "1 / 1" : "4 / 5",
+          aspectRatio: "4 / 3",
           background: "var(--vp-cream)",
           flexShrink: 0,
           borderRadius: 2,
@@ -90,7 +90,7 @@ function ModelCard({ model, index, onClick }) {
               alt={`Conjunto Viena Pets modelo ${model.name}`}
               style={{
                 objectFit: "contain",
-                inset: "6%",
+                inset: "2%",
                 filter: "drop-shadow(0 14px 22px rgba(70,50,30,.18)) drop-shadow(0 4px 6px rgba(70,50,30,.12))",
                 opacity: hover ? 0 : 1,
                 transition: "opacity .5s ease",

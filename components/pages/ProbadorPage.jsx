@@ -1,14 +1,38 @@
 "use client";
 
-import { useState } from "react";
+import Image from "next/image";
+import { useEffect, useRef, useState } from "react";
 import { useRoute } from "@/components/shared/useRoute";
 import { useIsMobile } from "@/components/shared/useIsMobile";
+import { LQIP_CREAM } from "@/lib/lqip";
 
 export function ProbadorPage() {
   const { go } = useRoute();
   const isMobile = useIsMobile();
   const [selectedModel, setSelectedModel] = useState("capri");
   const [hasUpload, setHasUpload] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState(null);
+  const fileInputRef = useRef(null);
+
+  // Revocar URL de objeto al desmontar para evitar fugas de memoria.
+  useEffect(() => {
+    return () => { if (previewUrl) URL.revokeObjectURL(previewUrl); };
+  }, [previewUrl]);
+
+  const handleFileChange = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (previewUrl) URL.revokeObjectURL(previewUrl);
+    setPreviewUrl(URL.createObjectURL(file));
+    setHasUpload(true);
+  };
+
+  const handleReset = () => {
+    if (previewUrl) URL.revokeObjectURL(previewUrl);
+    setPreviewUrl(null);
+    setHasUpload(false);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
 
   return (
     <div style={{ background: "var(--vp-cream)", minHeight: "100vh" }}>
@@ -83,8 +107,16 @@ export function ProbadorPage() {
             <div className="vp-eyebrow" style={{ marginBottom: 16, color: "var(--vp-brown)" }}>
               Paso 2 · Sube una foto
             </div>
+            {/* Input real oculto */}
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              style={{ display: "none" }}
+              onChange={handleFileChange}
+            />
             <div
-              onClick={() => setHasUpload(true)}
+              onClick={() => fileInputRef.current?.click()}
               style={{
                 border: "2px dashed var(--vp-olive-muted)",
                 borderRadius: 4,
@@ -108,28 +140,23 @@ export function ProbadorPage() {
                 color: "var(--vp-brown)",
                 marginBottom: 8,
               }}>
-                Haz clic para subir o arrastra una imagen
+                {hasUpload ? "Cambiar foto" : "Haz clic para elegir una imagen"}
               </div>
-              <div style={{
-                fontSize: 13,
-                color: "var(--vp-ink-muted)",
-              }}>
+              <div style={{ fontSize: 13, color: "var(--vp-ink-muted)" }}>
                 Formatos: PNG, JPG, WEBP · Máx. 10 MB
               </div>
             </div>
 
             <div style={{
-              marginTop: 24,
-              padding: "16px 20px",
+              marginTop: 16,
+              padding: "14px 20px",
               background: "var(--vp-cream-soft)",
               fontSize: 13,
               color: "var(--vp-ink-soft)",
-              fontStyle: "italic",
               lineHeight: 1.6,
             }}>
-              Este probador está en fase beta y usa inteligencia artificial.
-              Es posible que algunos resultados no sean perfectos. Estamos
-              mejorándolo continuamente.
+              Tu foto no sale de tu dispositivo — la vista previa se genera localmente.
+              El probador con IA está en preparación.
             </div>
           </div>
 
@@ -139,44 +166,61 @@ export function ProbadorPage() {
             </div>
             <div style={{
               aspectRatio: "1/1",
-              background: hasUpload ? "var(--vp-olive-soft)" : "var(--vp-cream-soft)",
+              background: "var(--vp-cream-soft)",
               borderRadius: 4,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              flexDirection: "column",
               border: hasUpload ? "2px solid var(--vp-olive)" : "1px solid rgba(74,46,28,.1)",
-              transition: "all .4s ease",
+              transition: "border-color .4s ease",
               position: "relative",
               overflow: "hidden",
             }}>
-              {hasUpload ? (
+              {hasUpload && previewUrl ? (
+                /* Preview de la foto del usuario */
                 <>
-                  <div style={{ fontSize: 100, marginBottom: 20 }}>🐕‍🦺</div>
-                  <div className="vp-serif" style={{
-                    fontSize: 22,
-                    color: "var(--vp-brown)",
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={previewUrl}
+                    alt="Vista previa de tu foto"
+                    style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "contain", objectPosition: "center" }}
+                  />
+                  <div style={{
+                    position: "absolute",
+                    bottom: 0, left: 0, right: 0,
+                    background: "rgba(74,46,28,.72)",
+                    color: "var(--vp-paper)",
+                    padding: "12px 16px",
+                    fontSize: 13,
                     textAlign: "center",
-                    padding: "0 30px",
+                    lineHeight: 1.5,
                   }}>
-                    Vista previa con modelo<br/>
-                    <span className="vp-italic" style={{ color: "var(--vp-olive-deep)", textTransform: "capitalize" }}>
-                      {selectedModel}
-                    </span>
+                    Vista previa — el probador con IA llega pronto
                   </div>
                 </>
-              ) : (
-                <div style={{
-                  textAlign: "center",
-                  color: "var(--vp-ink-muted)",
-                  padding: "0 40px",
-                }}>
-                  <div style={{ fontSize: 60, marginBottom: 16, opacity: 0.4 }}>🖼️</div>
-                  <div className="vp-serif" style={{ fontSize: 18 }}>
-                    Sube una foto para ver el resultado
+              ) : !hasUpload ? (
+                /* Sin upload: muestra el perro real del modelo elegido */
+                <>
+                  <Image
+                    fill
+                    src={`/images/productos/${selectedModel}-main.webp`}
+                    alt={`Ejemplo real · ${selectedModel}`}
+                    style={{ objectFit: "cover", objectPosition: "top center" }}
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                    placeholder="blur"
+                    blurDataURL={LQIP_CREAM}
+                  />
+                  <div style={{
+                    position: "absolute",
+                    top: 12, left: 12,
+                    background: "var(--vp-paper)",
+                    padding: "4px 10px",
+                    fontSize: 10,
+                    letterSpacing: ".2em",
+                    textTransform: "uppercase",
+                    color: "var(--vp-brown)",
+                  }}>
+                    Ejemplo real · <span style={{ textTransform: "capitalize" }}>{selectedModel}</span>
                   </div>
-                </div>
-              )}
+                </>
+              ) : null}
             </div>
 
             {hasUpload && (
@@ -189,7 +233,7 @@ export function ProbadorPage() {
                 <button className="vp-btn olive" onClick={() => go(`/producto/${selectedModel}`)}>
                   Comprar este modelo →
                 </button>
-                <button className="vp-btn ghost" onClick={() => setHasUpload(false)}>
+                <button className="vp-btn ghost" onClick={handleReset}>
                   Probar otra foto
                 </button>
               </div>
@@ -216,7 +260,7 @@ export function ProbadorPage() {
           </h3>
           <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
             {[
-              { q: "¿Mis fotos se guardan?", a: "No. Las imágenes se procesan en el momento y se eliminan automáticamente." },
+              { q: "¿Mis fotos se guardan?", a: "No se suben a ningún servidor: la vista previa se genera en tu dispositivo. El probador con IA está en preparación." },
               { q: "¿Funciona con cualquier raza?", a: "Sí, está optimizado para perros de tamaño pequeño, mediano y grande." },
               { q: "¿Es 100% preciso?", a: "Está en fase beta y mejora cada semana. Si el resultado no convence, puedes probar otra foto o contactarnos." },
             ].map((f, i) => (

@@ -163,7 +163,7 @@ export function ProductPage({ product }) {
                     alt={heroAlt}
                     style={{
                       objectFit: "contain",
-                      inset: "7%",
+                      inset: "2%",
                       filter: "drop-shadow(0 14px 22px rgba(70,50,30,.18)) drop-shadow(0 4px 6px rgba(70,50,30,.12))",
                       animation: "vpFloat 4s ease-in-out infinite",
                     }}
@@ -211,7 +211,7 @@ export function ProductPage({ product }) {
                         src={src}
                         alt={thumbAlt}
                         loading="lazy"
-                        style={{ objectFit: "contain", inset: "8%" }}
+                        style={{ objectFit: "contain", inset: "2%" }}
                         sizes="15vw"
                         placeholder="blur"
                         blurDataURL={LQIP_CREAM}
