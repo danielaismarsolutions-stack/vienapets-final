@@ -1,9 +1,11 @@
 "use client";
 
+import Image from "next/image";
 import { Icon } from "@/components/shared/Icon";
 import { ModelSwatch } from "@/components/shared/ModelSwatch";
 import { useRoute } from "@/components/shared/useRoute";
 import { useIsMobile } from "@/components/shared/useIsMobile";
+import { LQIP_CREAM } from "@/lib/lqip";
 
 export function Hero({ model, models = [], heroStyle }) {
   const { go } = useRoute();
@@ -48,11 +50,15 @@ export function Hero({ model, models = [], heroStyle }) {
             position: "relative",
             boxShadow: "0 20px 60px rgba(42,29,18,.12)",
           }}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
+            <Image
+              fill
               src="/assets/hero-dalmata.png"
-              alt="Dálmata Viena con arnés"
-              style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "contain", objectPosition: "center", display: "block" }}
+              alt="Dálmata Viena con arnés Viena Pets"
+              style={{ objectFit: "contain", objectPosition: "center" }}
+              sizes="100vw"
+              priority
+              placeholder="blur"
+              blurDataURL={LQIP_CREAM}
             />
             <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(0,0,0,0) 60%, rgba(74,46,28,.10) 100%)", pointerEvents: "none" }} />
           </div>
@@ -64,7 +70,7 @@ export function Hero({ model, models = [], heroStyle }) {
           Diseñados en España, en ediciones limitadas.
         </p>
 
-        {/* 6. Botones de categorías */}
+        {/* 5. Botones de categorías */}
         <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginBottom: 14 }}>
           <button className="vp-btn olive" onClick={() => go("/tienda?cat=conjuntos")}>Conjuntos</button>
           <button className="vp-btn olive ghost" onClick={() => go("/tienda?cat=arneses")}>Arneses</button>
@@ -72,7 +78,7 @@ export function Hero({ model, models = [], heroStyle }) {
           <button className="vp-btn olive ghost" onClick={() => go("/tienda?cat=portabolsas")}>Portabolsas</button>
         </div>
 
-        {/* 7. Botón Probador IA */}
+        {/* 6. Botón Probador IA */}
         <div style={{ marginBottom: 24 }}>
           <button
             className="vp-btn"
@@ -88,7 +94,7 @@ export function Hero({ model, models = [], heroStyle }) {
           </button>
         </div>
 
-        {/* 8. Trust badges */}
+        {/* 7. Trust badges */}
         <div style={{ display: "flex", gap: 20, flexWrap: "wrap", fontSize: 11, color: "var(--vp-ink-muted)", letterSpacing: "0.08em", textTransform: "uppercase" }}>
           <span>✓ Envío gratuito desde 45 €</span>
           <span>✓ Diseñado en España</span>
@@ -179,11 +185,15 @@ export function Hero({ model, models = [], heroStyle }) {
             position: "relative",
             boxShadow: "0 30px 80px rgba(42,29,18,.12)",
           }}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
+            <Image
+              fill
               src="/assets/hero-dalmata.png"
-              alt="Dálmata Viena con arnés"
-              style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "contain", objectPosition: "center", display: "block" }}
+              alt="Dálmata Viena con arnés Viena Pets"
+              style={{ objectFit: "contain", objectPosition: "center" }}
+              sizes="(max-width: 768px) 100vw, 60vw"
+              priority
+              placeholder="blur"
+              blurDataURL={LQIP_CREAM}
             />
             <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(0,0,0,0) 60%, rgba(74,46,28,.10) 100%)", pointerEvents: "none" }} />
           </div>
@@ -206,8 +216,8 @@ function HeroMosaic({ models = [] }) {
             Un paseo,<br/>
             <span style={{ fontStyle: "italic" }}>una</span> ceremonia.
           </h1>
-          <div style={{ borderRadius: "180px 180px 4px 4px", overflow: "hidden", background: "var(--vp-cream-deep)", marginBottom: 24 }}>
-            <img src="/assets/hero-dalmata.png" alt="Viena" style={{ width: "100%", aspectRatio: "3/4", objectFit: "contain", objectPosition: "center", display: "block" }} />
+          <div style={{ borderRadius: "180px 180px 4px 4px", overflow: "hidden", background: "var(--vp-cream-deep)", marginBottom: 24, position: "relative", aspectRatio: "3/4" }}>
+            <Image fill src="/assets/hero-dalmata.png" alt="Viena" style={{ objectFit: "contain", objectPosition: "center" }} sizes="100vw" priority placeholder="blur" blurDataURL={LQIP_CREAM} />
           </div>
           <div style={{ background: "var(--vp-brown)", color: "var(--vp-paper)", padding: "28px 24px" }}>
             <div className="vp-eyebrow" style={{ color: "var(--vp-paper)", fontSize: 10, marginBottom: 10 }}>Tres modelos · Tres historias</div>
@@ -233,8 +243,8 @@ function HeroMosaic({ models = [] }) {
           </h1>
         </div>
 
-        <div style={{ gridRow: "1 / 3", height: 680, borderRadius: "280px 280px 4px 4px", overflow: "hidden", background: "var(--vp-cream-deep)" }}>
-          <img src="/assets/hero-dalmata.png" alt="Viena" style={{ width: "100%", height: "100%", objectFit: "contain", objectPosition: "center", display: "block" }} />
+        <div style={{ gridRow: "1 / 3", height: 680, borderRadius: "280px 280px 4px 4px", overflow: "hidden", background: "var(--vp-cream-deep)", position: "relative" }}>
+          <Image fill src="/assets/hero-dalmata.png" alt="Viena" style={{ objectFit: "contain", objectPosition: "center" }} sizes="33vw" priority placeholder="blur" blurDataURL={LQIP_CREAM} />
         </div>
 
         {models[0] && <div style={{ height: 260 }}><ModelSwatch model={models[0]} style={{ width: "100%", height: "100%", display: "block" }} /></div>}

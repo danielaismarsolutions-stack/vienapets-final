@@ -1,10 +1,12 @@
 "use client";
 
+import Image from "next/image";
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useRoute } from "@/components/shared/useRoute";
 import { useCart } from "@/components/shared/CartProvider";
 import { useIsMobile } from "@/components/shared/useIsMobile";
+import { LQIP_CREAM } from "@/lib/lqip";
 
 // La categoría llega desde el server (mapeada a la del esquema BBDD: arnes,
 // correa, portabolsas, conjunto). El filtro de UI navega por URL para que el
@@ -114,9 +116,23 @@ function ShopCard({ product, onClick }) {
       onMouseLeave={() => setHover(false)}
       style={{ cursor: agotado ? "not-allowed" : "pointer", opacity: agotado ? .55 : 1 }}
     >
-      <div onClick={onClick} style={{ position: "relative", width: "100%", aspectRatio: "4/5", overflow: "hidden", background: "var(--vp-cream-soft)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <div onClick={onClick} style={{ position: "relative", width: "100%", aspectRatio: "4/5", overflow: "hidden", background: "var(--vp-cream-soft)", borderRadius: 2, boxShadow: "0 2px 12px rgba(42,29,18,.06)" }}>
         {productImg && (
-          <img src={productImg} alt={product.name} style={{ width: "100%", height: "100%", objectFit: "contain", objectPosition: "center", display: "block", padding: 16, transform: hover && !agotado ? "scale(1.04)" : "scale(1)", transition: "transform .7s ease" }} />
+          <Image
+            fill
+            src={productImg}
+            alt={product.name}
+            loading="lazy"
+            style={{
+              objectFit: "cover",
+              objectPosition: "top center",
+              transform: hover && !agotado ? "scale(1.04)" : "scale(1)",
+              transition: "transform .7s ease",
+            }}
+            sizes="(max-width: 768px) 50vw, 33vw"
+            placeholder="blur"
+            blurDataURL={LQIP_CREAM}
+          />
         )}
         {agotado && (
           <div style={{ position: "absolute", top: 12, left: 12, background: "var(--vp-brown)", color: "var(--vp-paper)", padding: "5px 12px", fontSize: 10, letterSpacing: ".22em", textTransform: "uppercase", zIndex: 3 }}>Agotado</div>

@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Icon } from "@/components/shared/Icon";
 import { useRoute } from "@/components/shared/useRoute";
@@ -7,6 +8,8 @@ import { useCart } from "@/components/shared/CartProvider";
 import { useIsMobile } from "@/components/shared/useIsMobile";
 import { VP_SIZES, VP_HARDWARE } from "@/lib/data";
 import SizeGuide from "@/components/shared/SizeGuide";
+import { PRODUCT_IMAGES } from "@/scripts/product-images";
+import { LQIP_CREAM } from "@/lib/lqip";
 
 const TYPE_LABEL = {
   arnes: "Arnés",
@@ -83,10 +86,30 @@ export function ProductPage({ product }) {
   const currentVariant = isArnes ? variantBySize.get(size) : variantBySize.get(null);
   const canBuy = currentVariant?.in_stock === true;
 
-  const images = Array.isArray(product.images) && product.images.length > 0
-    ? product.images
-    : [meta.heroImg].filter(Boolean);
+  // Fuente de verdad: Supabase (product.images). Fallback: PRODUCT_IMAGES map.
+  // Si Supabase sólo tiene 1 imagen, completamos con la galería del map.
+  const images = useMemo(() => {
+    const supaImgs = Array.isArray(product.images) && product.images.length > 0
+      ? product.images
+      : [];
+    const mapEntry = PRODUCT_IMAGES[product.slug];
+    if (supaImgs.length >= 2) return supaImgs;
+    if (mapEntry) {
+      const main = supaImgs[0] ?? mapEntry.main;
+      return [main, ...mapEntry.gallery.map((g) => g.src)].filter(Boolean);
+    }
+    return supaImgs.length > 0 ? supaImgs : [meta.heroImg].filter(Boolean);
+  }, [product.images, product.slug, meta.heroImg]);
+
   const heroImg = images[img] ?? images[0] ?? null;
+
+  // Alt text para la imagen activa (de PRODUCT_IMAGES si disponible)
+  const heroAlt = useMemo(() => {
+    const mapEntry = PRODUCT_IMAGES[product.slug];
+    if (!mapEntry) return product.name;
+    if (img === 0) return mapEntry.mainAlt ?? product.name;
+    return mapEntry.gallery[img - 1]?.alt ?? product.name;
+  }, [product.slug, product.name, img]);
 
   const typeLabel = TYPE_LABEL[product.category] ?? "";
   const cartCategory = CART_CATEGORY[product.category] ?? product.category;
@@ -117,17 +140,67 @@ export function ProductPage({ product }) {
 
         <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: isMobile ? 28 : 80 }}>
           <div>
-            <div style={{ width: "100%", aspectRatio: "4/5", background: "var(--vp-cream-soft)", overflow: "hidden", position: "relative", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              {heroImg && <img src={heroImg} alt={product.name} style={{ width: "100%", height: "100%", objectFit: "contain", objectPosition: "center", display: "block", padding: 24 }} />}
-              <div style={{ position: "absolute", top: 16, left: 16, background: "var(--vp-paper)", padding: "6px 12px", fontSize: 10, letterSpacing: ".2em", textTransform: "uppercase", color: "var(--vp-brown)" }}>
+            {/* Imagen principal — 4:5, crossfade al cambiar de miniatura */}
+            <div style={{ width: "100%", aspectRatio: "4/5", background: "var(--vp-cream-soft)", overflow: "hidden", position: "relative", borderRadius: 2, boxShadow: "0 4px 24px rgba(42,29,18,.07)" }}>
+              {heroImg && (
+                <div key={heroImg} style={{ position: "absolute", inset: 0, animation: "vpImgFade .35s ease" }}>
+                  <Image
+                    fill
+                    src={heroImg}
+                    alt={heroAlt}
+                    style={{ objectFit: "cover", objectPosition: "top center" }}
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                    priority
+                    placeholder="blur"
+                    blurDataURL={LQIP_CREAM}
+                  />
+                </div>
+              )}
+              <div style={{ position: "absolute", top: 16, left: 16, background: "var(--vp-paper)", padding: "6px 12px", fontSize: 10, letterSpacing: ".2em", textTransform: "uppercase", color: "var(--vp-brown)", zIndex: 1 }}>
                 {typeLabel}
               </div>
             </div>
+
+            {/* Tira de miniaturas — 1:1 */}
             {images.length > 1 && (
-              <div style={{ display: "grid", gridTemplateColumns: `repeat(${Math.min(images.length, 4)}, 1fr)`, gap: 12, marginTop: 12 }}>
-                {images.slice(0, 4).map((src, i) => (
-                  <button key={src + i} onClick={() => setImg(i)} style={{ aspectRatio: "1/1", padding: 0, backgroundImage: `url(${src})`, backgroundSize: "contain", backgroundPosition: "center", backgroundRepeat: "no-repeat", backgroundColor: "var(--vp-cream-soft)", border: img === i ? "1px solid var(--vp-brown)" : "1px solid transparent", opacity: img === i ? 1 : .7, cursor: "pointer", transition: "all .2s ease" }} />
-                ))}
+              <div style={{ display: "grid", gridTemplateColumns: `repeat(${Math.min(images.length, 4)}, 1fr)`, gap: 8, marginTop: 10 }}>
+                {images.slice(0, 4).map((src, i) => {
+                  const thumbAlt = (() => {
+                    const mapEntry = PRODUCT_IMAGES[product.slug];
+                    if (!mapEntry) return product.name;
+                    if (i === 0) return mapEntry.mainAlt ?? product.name;
+                    return mapEntry.gallery[i - 1]?.alt ?? product.name;
+                  })();
+                  return (
+                    <button
+                      key={src + i}
+                      onClick={() => setImg(i)}
+                      style={{
+                        aspectRatio: "1/1",
+                        padding: 0,
+                        position: "relative",
+                        overflow: "hidden",
+                        background: "var(--vp-cream-soft)",
+                        border: img === i ? "2px solid var(--vp-brown)" : "2px solid transparent",
+                        opacity: img === i ? 1 : .7,
+                        cursor: "pointer",
+                        transition: "all .2s ease",
+                        borderRadius: 2,
+                      }}
+                    >
+                      <Image
+                        fill
+                        src={src}
+                        alt={thumbAlt}
+                        loading="lazy"
+                        style={{ objectFit: "cover", objectPosition: "top center" }}
+                        sizes="15vw"
+                        placeholder="blur"
+                        blurDataURL={LQIP_CREAM}
+                      />
+                    </button>
+                  );
+                })}
               </div>
             )}
           </div>
@@ -309,8 +382,8 @@ function ProductAccordion({ title, children }) {
 function PartsDiagram({ partsImg, name }) {
   return (
     <section style={{ marginTop: 100, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 80, alignItems: "center" }}>
-      <div style={{ position: "relative", width: "100%", height: 520, background: "var(--vp-cream-soft)", overflow: "hidden" }}>
-        <img src={partsImg} alt={`Herrajes ${name}`} style={{ width: "100%", height: "100%", objectFit: "contain", objectPosition: "center", display: "block" }} />
+      <div style={{ position: "relative", width: "100%", height: 520, background: "var(--vp-cream-soft)", overflow: "hidden", borderRadius: 2 }}>
+        <Image fill src={partsImg} alt={`Herrajes ${name}`} style={{ objectFit: "contain", objectPosition: "center" }} sizes="50vw" loading="lazy" />
       </div>
       <div>
         <div className="vp-eyebrow" style={{ marginBottom: 14 }}>— Piezas y herrajes</div>
