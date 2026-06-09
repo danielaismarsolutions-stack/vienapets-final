@@ -32,8 +32,7 @@ export function StorySection() {
             Cada pieza, <span className="vp-italic" style={{ fontStyle: "italic" }}>un dibujo</span>.
           </h2>
           <div style={{ marginTop: 32, display: "flex", flexDirection: "column", gap: 18, fontSize: 16, color: "var(--vp-ink-soft)", lineHeight: 1.75, maxWidth: 520 }}>
-            <p>Lucía Larrondobuno buscaba algo que no existía: accesorios para perros con estampados de autor, pensados como moda. No lo encontró, así que lo creó.</p>
-            <p>Viena Pets nace como una marca de diseño de autor: cada colección empieza con un estampado original de Lucía y se produce en ediciones limitadas. Cuidado en el detalle, exclusividad en el resultado.</p>
+            <p>Estampados de autor convertidos en accesorios para perros. Cada colección parte de un dibujo original y se produce en ediciones limitadas: exclusividad en cada detalle.</p>
           </div>
           <div style={{ display: "flex", gap: 40, marginTop: 40 }}>
             <div>
@@ -49,7 +48,7 @@ export function StorySection() {
               <div style={{ fontSize: 11, letterSpacing: ".2em", textTransform: "uppercase", color: "var(--vp-ink-muted)", marginTop: 6 }}>Plástico en envíos</div>
             </div>
           </div>
-          <button className="vp-btn" style={{ marginTop: 40 }} onClick={() => go("/historia")}>Conoce a Lucía <Icon.Arrow style={{ width: 14, height: 14 }} /></button>
+          <button className="vp-btn" style={{ marginTop: 40 }} onClick={() => go("/historia")}>Conoce la marca <Icon.Arrow style={{ width: 14, height: 14 }} /></button>
         </div>
       </div>
     </section>

@@ -24,7 +24,7 @@ export function ModelsSection({ models = [] }) {
           </h2>
         </div>
         <p style={{ fontSize: 15, color: "var(--vp-ink-soft)", lineHeight: 1.65, maxWidth: 360, paddingBottom: 10 }}>
-          Tres estampados originales firmados por Lucía. Cada modelo es una pieza de autor: un diseño exclusivo que no encontrarás en ninguna otra marca.
+          Tres estampados originales de autor. Cada modelo es una pieza única: un diseño exclusivo que no encontrarás en ninguna otra marca.
         </p>
       </div>
 

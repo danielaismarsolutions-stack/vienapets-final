@@ -19,7 +19,7 @@ export function HomePage({ models = [], heroModelId = "capri", heroStyle = "sing
   return (
     <>
       <Hero model={heroModel} models={models} heroStyle={heroStyle} />
-      <CategoryRow />
+      {/* CategoryRow eliminado — la nav de categorías del hero es el único acceso */}
       <PromoPackSection models={models} />
       <ProbadorBlock />
       <ValueProps />
