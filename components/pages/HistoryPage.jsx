@@ -1,7 +1,9 @@
 "use client";
 
+import Image from "next/image";
 import { useRoute } from "@/components/shared/useRoute";
 import { useIsMobile } from "@/components/shared/useIsMobile";
+import { LQIP_CREAM } from "@/lib/lqip";
 
 export function HistoryPage() {
   useRoute();
@@ -17,9 +19,18 @@ export function HistoryPage() {
               <span className="vp-italic" style={{ fontStyle: "italic" }}>Viena Pets</span>.
             </h1>
           </div>
-          <div style={{ width: "100%", height: isMobile ? 280 : 560, borderRadius: "300px 300px 4px 4px", overflow: "hidden", background: "var(--vp-cream-deep)" }}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/images/editorial/grupo-duo-1.webp" alt="Dálmata y galgo juntos con arneses Viena Pets Capri y Peachy" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center center", display: "block" }} />
+          {/* Foto editorial duo en arco — object-position ajustado para ver los dos perros */}
+          <div style={{ width: "100%", height: isMobile ? 280 : 560, borderRadius: "300px 300px 4px 4px", overflow: "hidden", background: "var(--vp-cream-deep)", position: "relative" }}>
+            <Image
+              fill
+              src="/images/editorial/grupo-duo-1.webp"
+              alt="Dálmata y galgo juntos con arneses Viena Pets Capri y Peachy"
+              style={{ objectFit: "cover", objectPosition: "center 30%" }}
+              sizes={isMobile ? "100vw" : "50vw"}
+              priority
+              placeholder="blur"
+              blurDataURL={LQIP_CREAM}
+            />
           </div>
         </div>
 

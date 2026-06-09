@@ -1,7 +1,9 @@
 "use client";
 
+import Image from "next/image";
 import { useRoute } from "@/components/shared/useRoute";
 import { useIsMobile } from "@/components/shared/useIsMobile";
+import { LQIP_CREAM } from "@/lib/lqip";
 
 export function ProbadorBlock() {
   const { go } = useRoute();
@@ -87,6 +89,7 @@ export function ProbadorBlock() {
           </button>
         </div>
 
+        {/* Cajas Antes / Después */}
         <div style={{
           position: "relative",
           aspectRatio: "1/1",
@@ -102,6 +105,7 @@ export function ProbadorBlock() {
             gap: 16,
             height: "100%",
           }}>
+            {/* Antes — escala de grises */}
             <div style={{
               background: "var(--vp-cream-soft)",
               borderRadius: 4,
@@ -121,9 +125,23 @@ export function ProbadorBlock() {
               }}>
                 Antes
               </div>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/images/productos/capri-main.webp" alt="Dálmata sentado al sol con arnés Viena Pets Capri de rayas verdes y rosas" loading="lazy" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center", display: "block", filter: "grayscale(60%)" }} />
+              <Image
+                fill
+                src="/images/productos/capri-main.webp"
+                alt="Antes: dálmata sin arnés"
+                loading="lazy"
+                style={{
+                  objectFit: "cover",
+                  objectPosition: "top center",
+                  filter: "grayscale(60%)",
+                }}
+                sizes="(max-width: 768px) 40vw, 25vw"
+                placeholder="blur"
+                blurDataURL={LQIP_CREAM}
+              />
             </div>
+
+            {/* Después — en color, con borde marca */}
             <div style={{
               background: "var(--vp-olive-soft)",
               borderRadius: 4,
@@ -144,8 +162,19 @@ export function ProbadorBlock() {
               }}>
                 Después
               </div>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/images/productos/capri-main.webp" alt="Dálmata sentado al sol con arnés Viena Pets Capri de rayas verdes y rosas" loading="lazy" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center", display: "block" }} />
+              <Image
+                fill
+                src="/images/productos/capri-main.webp"
+                alt="Después: dálmata con arnés Viena Pets Capri de rayas"
+                loading="lazy"
+                style={{
+                  objectFit: "cover",
+                  objectPosition: "top center",
+                }}
+                sizes="(max-width: 768px) 40vw, 25vw"
+                placeholder="blur"
+                blurDataURL={LQIP_CREAM}
+              />
             </div>
           </div>
         </div>

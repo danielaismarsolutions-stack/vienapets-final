@@ -1,8 +1,17 @@
 "use client";
 
+import Image from "next/image";
 import { useState } from "react";
 import { ModelSwatch } from "@/components/shared/ModelSwatch";
 import { useRoute } from "@/components/shared/useRoute";
+import { LQIP_CREAM } from "@/lib/lqip";
+
+// Imágenes principales de cada modelo (webp editoriales)
+const MODEL_HERO = {
+  capri:  "/images/productos/capri-main.webp",
+  peachy: "/images/productos/peachy-main.webp",
+  daisy:  "/images/productos/daisy-main.webp",
+};
 
 export function ModelsSection({ models = [] }) {
   const { go } = useRoute();
@@ -45,6 +54,8 @@ export function ModelsSection({ models = [] }) {
 
 function ModelCard({ model, index, onClick }) {
   const [hover, setHover] = useState(false);
+  const heroSrc = MODEL_HERO[model.name?.toLowerCase()] ?? model.heroImg;
+
   return (
     <article
       onClick={onClick}
@@ -52,28 +63,36 @@ function ModelCard({ model, index, onClick }) {
       onMouseLeave={() => setHover(false)}
       style={{ cursor: "pointer", display: "flex", flexDirection: "column", width: "100%" }}
     >
-      {/* Imagen full-width — la img está en flujo normal para que el wrapper tenga altura real */}
+      {/* Contenedor 4:5 — ratio de ficha de producto */}
       <div style={{
         position: "relative",
         width: "100%",
+        aspectRatio: "4 / 5",
         overflow: "hidden",
         background: "var(--vp-cream-soft)",
         flexShrink: 0,
+        borderRadius: 2,
+        boxShadow: "0 4px 24px rgba(42,29,18,.07)",
       }}>
-        <img
-          src={model.heroImg}
-          alt={model.name}
-          style={{
-            display: "block",
-            width: "100%",
-            aspectRatio: "1 / 1",
-            objectFit: "cover",
-            objectPosition: "center",
-            transform: hover ? "scale(1.03)" : "scale(1)",
-            transition: "transform .8s cubic-bezier(.2,.7,.2,1)",
-            opacity: hover ? 0 : 1,
-          }}
-        />
+        {heroSrc && (
+          <Image
+            fill
+            src={heroSrc}
+            alt={`Modelo ${model.name} — Viena Pets`}
+            style={{
+              objectFit: "cover",
+              objectPosition: "top center",
+              transform: hover ? "scale(1.03)" : "scale(1)",
+              transition: "transform .8s cubic-bezier(.2,.7,.2,1)",
+              opacity: hover ? 0 : 1,
+            }}
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            placeholder="blur"
+            blurDataURL={LQIP_CREAM}
+          />
+        )}
+
+        {/* Hover: swatch de color del modelo */}
         <div style={{ position: "absolute", inset: 0, opacity: hover ? 1 : 0, transition: "opacity .5s ease" }}>
           <ModelSwatch model={model} style={{ width: "100%", height: "100%" }} />
           <div style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center" }}>
@@ -82,12 +101,13 @@ function ModelCard({ model, index, onClick }) {
             </div>
           </div>
         </div>
+
         <div style={{ position: "absolute", top: 16, left: 16, fontSize: 11, color: "var(--vp-brown)", background: "var(--vp-paper)", padding: "4px 10px", letterSpacing: ".2em", textTransform: "uppercase" }}>
           0{index} / 03
         </div>
       </div>
 
-      {/* Texto siempre debajo de la imagen */}
+      {/* Texto debajo de la imagen */}
       <div style={{ paddingTop: 16, flex: 1 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 6 }}>
           <div className="vp-serif" style={{ fontSize: "clamp(20px, 3vw, 28px)", color: "var(--vp-brown)", letterSpacing: ".01em" }}>
