@@ -15,35 +15,59 @@ export function Hero({ model, models = [], heroStyle }) {
     return <HeroMosaic models={models} />;
   }
 
-  // MOBILE: layout plano — imagen entre el lema y el texto descriptivo
+  // MOBILE: CTAs sobre el pliegue — imagen reducida debajo
   if (isMobile) {
     return (
-      <section style={{ padding: "40px 20px 52px", background: "var(--vp-cream)" }}>
+      <section style={{ padding: "12px 20px 0", background: "var(--vp-cream)", minHeight: "100svh" }}>
         {/* 1. Eyebrow / logo / Madrid */}
-        <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 14 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 10 }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/assets/logo-viena-pets-oficial.png" alt="" style={{ height: 28, width: "auto", opacity: .9 }} />
+          <img src="/assets/logo-viena-pets-oficial.png" alt="" style={{ height: 26, width: "auto", opacity: .9 }} />
           <span style={{ height: 1, flex: 1, maxWidth: 80, background: "var(--vp-olive-deep)", opacity: .35 }} />
           <span className="vp-eyebrow" style={{ color: "var(--vp-olive-deep)", fontSize: 10 }}>Madrid</span>
         </div>
 
         {/* 2. Lema */}
         <h1 className="vp-display" style={{
-          fontSize: "clamp(32px, 9vw, 44px)",
+          fontSize: "clamp(28px, 8vw, 38px)",
           color: "var(--vp-brown)",
           lineHeight: 1.05,
-          margin: "0 0 24px 0",
+          margin: "0 0 16px 0",
           letterSpacing: "-0.02em",
         }}>
           Para perros con estilo<br/>
           y dueños con <span className="vp-italic" style={{ color: "var(--vp-olive-deep)" }}>buen gusto</span>.
         </h1>
 
-        {/* 3. Imagen del dálmata */}
-        <div style={{ width: "100%", marginBottom: 28 }}>
+        {/* 3. Botones de categorías — por encima del pliegue */}
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 10 }}>
+          <button className="vp-btn olive" onClick={() => go("/tienda?cat=conjuntos")}>Conjuntos</button>
+          <button className="vp-btn olive ghost" onClick={() => go("/tienda?cat=arneses")}>Arneses</button>
+          <button className="vp-btn olive ghost" onClick={() => go("/tienda?cat=correas")}>Correas</button>
+          <button className="vp-btn olive ghost" onClick={() => go("/tienda?cat=portabolsas")}>Portabolsas</button>
+        </div>
+
+        {/* 4. Botón Probador IA */}
+        <div style={{ marginBottom: 16 }}>
+          <button
+            className="vp-btn"
+            onClick={() => go("/probador")}
+            style={{ position: "relative", background: "var(--vp-brown)", color: "var(--vp-paper)", borderColor: "var(--vp-brown)", paddingRight: 22 }}
+          >
+            <span aria-hidden="true" style={{ fontSize: 14, lineHeight: 1, marginRight: 2 }}>✦</span>
+            Probador IA
+            <span aria-hidden="true" style={{ fontSize: 14, lineHeight: 1, marginLeft: 4 }}>→</span>
+            <span style={{ position: "absolute", top: -8, right: -10, background: "var(--vp-olive-deep)", color: "var(--vp-paper)", fontSize: 9, fontFamily: "var(--font-mono)", fontWeight: 500, padding: "3px 7px", letterSpacing: ".18em", textTransform: "uppercase", borderRadius: 2, lineHeight: 1 }}>
+              Nuevo
+            </span>
+          </button>
+        </div>
+
+        {/* 5. Imagen del dálmata — más compacta, puede verse parcialmente */}
+        <div style={{ width: "100%", marginBottom: 20 }}>
           <div style={{
             width: "100%",
-            aspectRatio: "4/5",
+            aspectRatio: "4/3",
             borderRadius: "var(--radius-arch)",
             background: "var(--vp-cream-deep)",
             overflow: "hidden",
@@ -64,38 +88,14 @@ export function Hero({ model, models = [], heroStyle }) {
           </div>
         </div>
 
-        {/* 4. Texto descriptivo */}
-        <p style={{ fontSize: 14, color: "var(--vp-ink-soft)", lineHeight: 1.65, margin: "0 0 28px 0" }}>
+        {/* 6. Texto descriptivo */}
+        <p style={{ fontSize: 13, color: "var(--vp-ink-soft)", lineHeight: 1.65, margin: "0 0 20px 0" }}>
           Arneses, correas y portabolsas con diseños exclusivos.
           Diseñados en España, en ediciones limitadas.
         </p>
 
-        {/* 5. Botones de categorías */}
-        <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginBottom: 14 }}>
-          <button className="vp-btn olive" onClick={() => go("/tienda?cat=conjuntos")}>Conjuntos</button>
-          <button className="vp-btn olive ghost" onClick={() => go("/tienda?cat=arneses")}>Arneses</button>
-          <button className="vp-btn olive ghost" onClick={() => go("/tienda?cat=correas")}>Correas</button>
-          <button className="vp-btn olive ghost" onClick={() => go("/tienda?cat=portabolsas")}>Portabolsas</button>
-        </div>
-
-        {/* 6. Botón Probador IA */}
-        <div style={{ marginBottom: 24 }}>
-          <button
-            className="vp-btn"
-            onClick={() => go("/probador")}
-            style={{ position: "relative", background: "var(--vp-brown)", color: "var(--vp-paper)", borderColor: "var(--vp-brown)", paddingRight: 22 }}
-          >
-            <span aria-hidden="true" style={{ fontSize: 14, lineHeight: 1, marginRight: 2 }}>✦</span>
-            Probador IA
-            <span aria-hidden="true" style={{ fontSize: 14, lineHeight: 1, marginLeft: 4 }}>→</span>
-            <span style={{ position: "absolute", top: -8, right: -10, background: "var(--vp-olive-deep)", color: "var(--vp-paper)", fontSize: 9, fontFamily: "var(--font-mono)", fontWeight: 500, padding: "3px 7px", letterSpacing: ".18em", textTransform: "uppercase", borderRadius: 2, lineHeight: 1 }}>
-              Nuevo
-            </span>
-          </button>
-        </div>
-
         {/* 7. Trust badges */}
-        <div style={{ display: "flex", gap: 20, flexWrap: "wrap", fontSize: 11, color: "var(--vp-ink-muted)", letterSpacing: "0.08em", textTransform: "uppercase" }}>
+        <div style={{ display: "flex", gap: 16, flexWrap: "wrap", fontSize: 10, color: "var(--vp-ink-muted)", letterSpacing: "0.08em", textTransform: "uppercase", paddingBottom: 40 }}>
           <span>✓ Envío gratuito desde 45 €</span>
           <span>✓ Diseñado en España</span>
           <span>✓ 15 días de devolución</span>

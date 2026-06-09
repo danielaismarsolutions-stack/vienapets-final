@@ -68,18 +68,18 @@ function ModelCard({ model, index, onClick }) {
       onMouseMove={isMobile ? undefined : onMouseMove}
       style={{ cursor: "pointer", display: "flex", flexDirection: "column", width: "100%" }}
     >
-      {/* Contenedor 4:5 — ratio de ficha de producto */}
+      {/* En móvil: 1:1 (conjunto entero visible con contain); desktop: 4:5 */}
       <div
-        ref={ref}
+        ref={isMobile ? undefined : ref}
         style={{
           position: "relative",
           width: "100%",
-          aspectRatio: "4 / 5",
-          background: "var(--vp-cream-soft)",
+          aspectRatio: isMobile ? "1 / 1" : "4 / 5",
+          background: "var(--vp-cream)",
           flexShrink: 0,
           borderRadius: 2,
           boxShadow: "0 4px 24px rgba(42,29,18,.07)",
-          willChange: "transform",
+          willChange: isMobile ? "auto" : "transform",
         }}
       >
         {heroSrc && (
