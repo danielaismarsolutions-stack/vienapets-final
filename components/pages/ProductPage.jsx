@@ -149,7 +149,7 @@ export function ProductPage({ product }) {
               onMouseLeave={isMobile ? undefined : tiltLeave}
               style={{
                 width: "100%", aspectRatio: "4/5",
-                background: "var(--vp-cream-soft)",
+                background: "var(--vp-cream)",
                 overflow: "hidden", position: "relative", borderRadius: 2,
                 boxShadow: "0 4px 24px rgba(42,29,18,.07)",
                 willChange: "transform",
@@ -198,7 +198,7 @@ export function ProductPage({ product }) {
                         padding: 0,
                         position: "relative",
                         overflow: "hidden",
-                        background: "var(--vp-cream-soft)",
+                        background: "var(--vp-cream)",
                         border: img === i ? "2px solid var(--vp-brown)" : "2px solid transparent",
                         opacity: img === i ? 1 : .7,
                         cursor: "pointer",
