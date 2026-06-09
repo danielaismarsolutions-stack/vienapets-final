@@ -6,6 +6,7 @@ import { Icon } from "@/components/shared/Icon";
 import { useRoute } from "@/components/shared/useRoute";
 import { useCart } from "@/components/shared/CartProvider";
 import { useIsMobile } from "@/components/shared/useIsMobile";
+import { useTilt } from "@/lib/useTilt";
 import { VP_SIZES, VP_HARDWARE } from "@/lib/data";
 import SizeGuide from "@/components/shared/SizeGuide";
 import { PRODUCT_IMAGES } from "@/scripts/product-images";
@@ -37,6 +38,7 @@ export function ProductPage({ product }) {
   // Estado: índice de imagen + variante seleccionada.
   const [img, setImg] = useState(0);
   const [sizeModalOpen, setSizeModalOpen] = useState(false);
+  const { ref: tiltRef, onMouseMove: tiltMove, onMouseLeave: tiltLeave } = useTilt(7);
 
   // Refs para gestión de foco del modal de tallas.
   const closeBtnRef = useRef(null);
@@ -140,15 +142,31 @@ export function ProductPage({ product }) {
 
         <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: isMobile ? 28 : 80 }}>
           <div>
-            {/* Imagen principal — 4:5, crossfade al cambiar de miniatura */}
-            <div style={{ width: "100%", aspectRatio: "4/5", background: "var(--vp-cream-soft)", overflow: "hidden", position: "relative", borderRadius: 2, boxShadow: "0 4px 24px rgba(42,29,18,.07)" }}>
+            {/* Imagen principal — 4:5, recorte de estudio con contain + tilt 3D */}
+            <div
+              ref={tiltRef}
+              onMouseMove={isMobile ? undefined : tiltMove}
+              onMouseLeave={isMobile ? undefined : tiltLeave}
+              style={{
+                width: "100%", aspectRatio: "4/5",
+                background: "var(--vp-cream-soft)",
+                overflow: "hidden", position: "relative", borderRadius: 2,
+                boxShadow: "0 4px 24px rgba(42,29,18,.07)",
+                willChange: "transform",
+              }}
+            >
               {heroImg && (
                 <div key={heroImg} style={{ position: "absolute", inset: 0, animation: "vpImgFade .35s ease" }}>
                   <Image
                     fill
                     src={heroImg}
                     alt={heroAlt}
-                    style={{ objectFit: "cover", objectPosition: "top center" }}
+                    style={{
+                      objectFit: "contain",
+                      inset: "7%",
+                      filter: "drop-shadow(0 14px 22px rgba(70,50,30,.18)) drop-shadow(0 4px 6px rgba(70,50,30,.12))",
+                      animation: "vpFloat 4s ease-in-out infinite",
+                    }}
                     sizes="(max-width: 768px) 100vw, 50vw"
                     priority
                     placeholder="blur"
@@ -193,7 +211,7 @@ export function ProductPage({ product }) {
                         src={src}
                         alt={thumbAlt}
                         loading="lazy"
-                        style={{ objectFit: "cover", objectPosition: "top center" }}
+                        style={{ objectFit: "contain", inset: "8%" }}
                         sizes="15vw"
                         placeholder="blur"
                         blurDataURL={LQIP_CREAM}

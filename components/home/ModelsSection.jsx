@@ -4,13 +4,15 @@ import Image from "next/image";
 import { useState } from "react";
 import { ModelSwatch } from "@/components/shared/ModelSwatch";
 import { useRoute } from "@/components/shared/useRoute";
+import { useIsMobile } from "@/components/shared/useIsMobile";
+import { useTilt } from "@/lib/useTilt";
 import { LQIP_CREAM } from "@/lib/lqip";
 
-// Imágenes principales de cada modelo (webp editoriales)
+// Imágenes de estudio por modelo (recortes transparentes sobre crema de marca)
 const MODEL_HERO = {
-  capri:  "/images/productos/capri-main.webp",
-  peachy: "/images/productos/peachy-main.webp",
-  daisy:  "/images/productos/daisy-main.webp",
+  capri:  "/images/productos/capri-conjunto.webp",
+  peachy: "/images/productos/peachy-conjunto.webp",
+  daisy:  "/images/productos/daisy-conjunto.webp",
 };
 
 export function ModelsSection({ models = [] }) {
@@ -54,42 +56,51 @@ export function ModelsSection({ models = [] }) {
 
 function ModelCard({ model, index, onClick }) {
   const [hover, setHover] = useState(false);
+  const isMobile = useIsMobile();
+  const { ref, onMouseMove, onMouseLeave } = useTilt(9);
   const heroSrc = MODEL_HERO[model.name?.toLowerCase()] ?? model.heroImg;
 
   return (
     <article
       onClick={onClick}
       onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}
+      onMouseLeave={() => { setHover(false); if (!isMobile) onMouseLeave(); }}
+      onMouseMove={isMobile ? undefined : onMouseMove}
       style={{ cursor: "pointer", display: "flex", flexDirection: "column", width: "100%" }}
     >
       {/* Contenedor 4:5 — ratio de ficha de producto */}
-      <div style={{
-        position: "relative",
-        width: "100%",
-        aspectRatio: "4 / 5",
-        overflow: "hidden",
-        background: "var(--vp-cream-soft)",
-        flexShrink: 0,
-        borderRadius: 2,
-        boxShadow: "0 4px 24px rgba(42,29,18,.07)",
-      }}>
+      <div
+        ref={ref}
+        style={{
+          position: "relative",
+          width: "100%",
+          aspectRatio: "4 / 5",
+          background: "var(--vp-cream-soft)",
+          flexShrink: 0,
+          borderRadius: 2,
+          boxShadow: "0 4px 24px rgba(42,29,18,.07)",
+          willChange: "transform",
+        }}
+      >
         {heroSrc && (
-          <Image
-            fill
-            src={heroSrc}
-            alt={`Modelo ${model.name} — Viena Pets`}
-            style={{
-              objectFit: "cover",
-              objectPosition: "top center",
-              transform: hover ? "scale(1.03)" : "scale(1)",
-              transition: "transform .8s cubic-bezier(.2,.7,.2,1)",
-              opacity: hover ? 0 : 1,
-            }}
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            placeholder="blur"
-            blurDataURL={LQIP_CREAM}
-          />
+          <div style={{ position: "absolute", inset: 0 }}>
+            <Image
+              fill
+              src={heroSrc}
+              alt={`Conjunto Viena Pets modelo ${model.name}`}
+              style={{
+                objectFit: "contain",
+                inset: "6%",
+                filter: "drop-shadow(0 14px 22px rgba(70,50,30,.18)) drop-shadow(0 4px 6px rgba(70,50,30,.12))",
+                opacity: hover ? 0 : 1,
+                transition: "opacity .5s ease",
+                animation: "vpFloat 4s ease-in-out infinite",
+              }}
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              placeholder="blur"
+              blurDataURL={LQIP_CREAM}
+            />
+          </div>
         )}
 
         {/* Hover: swatch de color del modelo */}
