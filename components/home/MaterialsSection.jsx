@@ -16,7 +16,7 @@ export function MaterialsSection({ models = [] }) {
             </h2>
           </div>
           <p style={{ fontSize: 16, color: "var(--vp-ink-soft)", lineHeight: 1.75, alignSelf: "center", maxWidth: 480 }}>
-            Cada colección empieza con un estampado original diseñado por Lucía, traducido a tejido en ediciones limitadas. Tres patrones que no encontrarás en ninguna otra parte — y que, cuando se agotan, no se reeditan.
+            Cada colección empieza con un estampado original exclusivo, traducido a tejido en ediciones limitadas. Tres patrones que no encontrarás en ninguna otra parte — y que, cuando se agotan, no se reeditan.
           </p>
         </div>
 
@@ -56,7 +56,7 @@ export function MaterialsSection({ models = [] }) {
             <div className="vp-serif vp-italic" style={{ fontSize: isMobile ? 16 : 22, color: "var(--vp-brown)", lineHeight: 1.45, fontStyle: "italic" }}>
               &ldquo;No diseño accesorios. Diseño piezas para perros que tienen estilo propio.&rdquo;
             </div>
-            <div style={{ fontSize: 11, letterSpacing: ".18em", textTransform: "uppercase", color: "var(--vp-ink-muted)", marginTop: 12 }}>— Lucía Larrondobuno Verdejo, fundadora</div>
+            <div style={{ fontSize: 11, letterSpacing: ".18em", textTransform: "uppercase", color: "var(--vp-ink-muted)", marginTop: 12 }}>— Viena Pets</div>
           </div>
         </div>
       </div>

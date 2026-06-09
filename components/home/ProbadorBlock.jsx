@@ -107,13 +107,10 @@ export function ProbadorBlock() {
               borderRadius: 4,
               position: "relative",
               overflow: "hidden",
-              display: "flex",
-              alignItems: "flex-end",
-              justifyContent: "center",
             }}>
               <div style={{
                 position: "absolute",
-                top: 12, left: 12,
+                top: 12, left: 12, zIndex: 1,
                 fontFamily: "var(--font-mono)",
                 fontSize: 10,
                 letterSpacing: "0.2em",
@@ -124,21 +121,19 @@ export function ProbadorBlock() {
               }}>
                 Antes
               </div>
-              <div style={{ fontSize: 80, paddingBottom: 30 }}>🐕</div>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/images/productos/capri-main.webp" alt="Dálmata sentado al sol con arnés Viena Pets Capri de rayas verdes y rosas" loading="lazy" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center", display: "block", filter: "grayscale(60%)" }} />
             </div>
             <div style={{
               background: "var(--vp-olive-soft)",
               borderRadius: 4,
               position: "relative",
               overflow: "hidden",
-              display: "flex",
-              alignItems: "flex-end",
-              justifyContent: "center",
               border: "2px solid var(--vp-olive)",
             }}>
               <div style={{
                 position: "absolute",
-                top: 12, left: 12,
+                top: 12, left: 12, zIndex: 1,
                 fontFamily: "var(--font-mono)",
                 fontSize: 10,
                 letterSpacing: "0.2em",
@@ -149,7 +144,8 @@ export function ProbadorBlock() {
               }}>
                 Después
               </div>
-              <div style={{ fontSize: 80, paddingBottom: 30 }}>🐕‍🦺</div>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/images/productos/capri-main.webp" alt="Dálmata sentado al sol con arnés Viena Pets Capri de rayas verdes y rosas" loading="lazy" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center", display: "block" }} />
             </div>
           </div>
         </div>

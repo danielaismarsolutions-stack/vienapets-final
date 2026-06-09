@@ -59,14 +59,9 @@ export function Hero({ model, models = [], heroStyle }) {
         </div>
 
         {/* 4. Texto descriptivo */}
-        <p style={{ fontSize: 14, color: "var(--vp-ink-soft)", lineHeight: 1.65, margin: "0 0 12px 0" }}>
-          Arneses, correas y portabolsas con diseños exclusivos firmados por Lucía.
+        <p style={{ fontSize: 14, color: "var(--vp-ink-soft)", lineHeight: 1.65, margin: "0 0 28px 0" }}>
+          Arneses, correas y portabolsas con diseños exclusivos.
           Diseñados en España, en ediciones limitadas.
-        </p>
-
-        {/* 5. Firma */}
-        <p className="vp-eyebrow" style={{ fontSize: 11, color: "var(--vp-brown)", margin: "0 0 20px 0", letterSpacing: ".16em" }}>
-          — Una colección de Lucía Larrondobuno Verdejo
         </p>
 
         {/* 6. Botones de categorías */}
@@ -138,13 +133,9 @@ export function Hero({ model, models = [], heroStyle }) {
             y dueños con <span className="vp-italic" style={{ color: "var(--vp-olive-deep)" }}>buen gusto</span>.
           </h1>
 
-          <p style={{ fontSize: 17, color: "var(--vp-ink-soft)", lineHeight: 1.7, maxWidth: 480, margin: "0 0 24px 0" }}>
-            Arneses, correas y portabolsas con diseños exclusivos firmados por Lucía.
+          <p style={{ fontSize: 17, color: "var(--vp-ink-soft)", lineHeight: 1.7, maxWidth: 480, margin: "0 0 40px 0" }}>
+            Arneses, correas y portabolsas con diseños exclusivos.
             Diseñados en España, en ediciones limitadas.
-          </p>
-
-          <p className="vp-eyebrow" style={{ fontSize: 11, color: "var(--vp-brown)", margin: "0 0 40px 0", letterSpacing: ".16em" }}>
-            — Una colección de Lucía Larrondobuno Verdejo
           </p>
 
           <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginBottom: 18 }}>
