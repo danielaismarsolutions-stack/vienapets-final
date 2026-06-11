@@ -99,8 +99,12 @@ img { max-width: 100%; display: block; }
   background: var(--vp-brown);
   color: var(--vp-paper);
   cursor: pointer;
-  transition: background .25s ease, color .25s ease, border-color .25s ease, transform .25s ease;
+  transition: transform 200ms ease, background-color 200ms ease, box-shadow 200ms ease, border-color 200ms ease, color 200ms ease;
   border-radius: 0;
+}
+.vp-btn:active { transform: scale(0.97); }
+@media (hover: hover) {
+  .vp-btn:hover { box-shadow: 0 8px 24px rgba(129,103,84,0.25); }
 }
 .vp-btn:hover { background: var(--vp-ink); border-color: var(--vp-ink); }
 .vp-btn.ghost { background: transparent; color: var(--vp-brown); }

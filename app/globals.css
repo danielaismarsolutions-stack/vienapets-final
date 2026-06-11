@@ -1,6 +1,12 @@
 /* Tokens del legacy — fuente de verdad de variables CSS */
 @import "../styles/tokens.css";
 
+/* Smooth scroll global */
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}
+
 /* Animaciones y scrollbar — extraídas del <style> inline del legacy/Viena Pets.html */
 @keyframes vpFadeIn {
   from { opacity: 0; transform: translateY(8px); }

@@ -5,6 +5,7 @@ import { useState } from "react";
 import { ModelSwatch } from "@/components/shared/ModelSwatch";
 import { useRoute } from "@/components/shared/useRoute";
 import { useTilt } from "@/lib/useTilt";
+import { useReveal } from "@/lib/hooks/useReveal";
 import { LQIP_CREAM } from "@/lib/lqip";
 import styles from "./ModelsSection.module.css";
 
@@ -57,15 +58,19 @@ export function ModelsSection({ models = [] }) {
 function ModelCard({ model, index, onClick }) {
   const [hover, setHover] = useState(false);
   const { ref, onMouseMove, onMouseLeave } = useTilt(9);
+  const [revealRef, visible] = useReveal();
   const heroSrc = MODEL_HERO[model.name?.toLowerCase()] ?? model.heroImg;
+  const delay = (index - 1) * 120;
 
   return (
     <article
+      ref={revealRef}
       onClick={onClick}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => { setHover(false); onMouseLeave(); }}
       onMouseMove={onMouseMove}
-      className={styles.card}
+      className={`${styles.card} ${styles.reveal} ${visible ? styles.visible : ""}`}
+      style={{ transitionDelay: `${delay}ms` }}
     >
       {/* Imagen del modelo: 4/3 desktop, 4/5 mobile (CSS module) */}
       <div
@@ -103,7 +108,7 @@ function ModelCard({ model, index, onClick }) {
           </div>
         </div>
 
-        <div style={{ position: "absolute", top: 16, left: 16, fontSize: 11, color: "var(--vp-brown)", background: "var(--vp-paper)", padding: "4px 10px", letterSpacing: ".2em", textTransform: "uppercase" }}>
+        <div className={styles.modelEyebrow} style={{ position: "absolute", top: 16, left: 16, background: "var(--vp-paper)", padding: "4px 10px" }}>
           0{index} / 03
         </div>
       </div>

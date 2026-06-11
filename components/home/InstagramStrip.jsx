@@ -1,9 +1,11 @@
 "use client";
 
 import Image from "next/image";
+import { useReveal } from "@/lib/hooks/useReveal";
 
 export function InstagramStrip() {
   const igUrl = "https://www.instagram.com/vienapets/";
+  const [sectionRef, sectionVisible] = useReveal();
 
   // 6 tiles uniformes según brief visual — 4:5 vertical
   const imgs = [
@@ -16,7 +18,7 @@ export function InstagramStrip() {
   ];
 
   return (
-    <section style={{ padding: "0 0 80px" }}>
+    <section ref={sectionRef} style={{ padding: "0 0 80px", opacity: sectionVisible ? 1 : 0, transform: sectionVisible ? "translateY(0)" : "translateY(24px)", transition: "opacity 700ms ease-out, transform 700ms ease-out" }}>
       <div style={{ padding: "0 clamp(20px, 3vw, 40px)", maxWidth: 1400, margin: "0 auto", textAlign: "center", marginBottom: 36 }}>
         <div className="vp-eyebrow" style={{ marginBottom: 16 }}>— Instagram</div>
         <h3 className="vp-display" style={{ fontSize: "clamp(28px, 4vw, 48px)", color: "var(--vp-brown)", margin: 0 }}>
