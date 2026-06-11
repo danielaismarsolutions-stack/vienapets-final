@@ -11,6 +11,7 @@ export function SizeGuideTable({ variant = "probador" }) {
     <section
       ref={ref}
       className={`${styles.wrapper} ${styles.reveal} ${visible ? styles.visible : ""}`}
+      data-variant={variant}
     >
       <p className={styles.eyebrow}>Guía de tallas</p>
       <h2 className={styles.title}>

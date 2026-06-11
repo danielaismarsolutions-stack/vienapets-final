@@ -109,7 +109,7 @@ function ModelCard({ model, index, onClick }) {
         </div>
 
         <div className={styles.modelEyebrow} style={{ position: "absolute", top: 16, left: 16, background: "var(--vp-paper)", padding: "4px 10px" }}>
-          0{index} / 03
+          MODELO 0{index} / 03
         </div>
       </div>
 
@@ -126,6 +126,14 @@ function ModelCard({ model, index, onClick }) {
         <div className={styles.modelSubtitle}>
           {model.subtitle}
         </div>
+        {/* Elementos extra solo visibles en mobile */}
+        <div className={styles.mobileSwatches}>
+          <span style={{ width: 32, height: 32, borderRadius: "50%", background: model.hex?.primary, display: "inline-block", border: "1px solid rgba(74,46,28,.15)" }} />
+          <span style={{ width: 32, height: 32, borderRadius: "50%", background: model.hex?.secondary, display: "inline-block", border: "1px solid rgba(74,46,28,.15)" }} />
+        </div>
+        <button className={`vp-btn ${styles.mobileCta}`} onClick={onClick}>
+          DESCUBRIR {model.name.toUpperCase()}
+        </button>
       </div>
     </article>
   );
