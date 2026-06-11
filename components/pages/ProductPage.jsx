@@ -9,6 +9,7 @@ import { useIsMobile } from "@/components/shared/useIsMobile";
 import { useTilt } from "@/lib/useTilt";
 import { VP_SIZES, VP_HARDWARE } from "@/lib/data";
 import SizeGuide from "@/components/shared/SizeGuide";
+import { SizeGuideTable } from "@/components/shared/SizeGuideTable";
 import { PRODUCT_IMAGES } from "@/scripts/product-images";
 import { LQIP_CREAM } from "@/lib/lqip";
 
@@ -322,6 +323,10 @@ export function ProductPage({ product }) {
               </button>
             </div>
 
+            {product.category === "conjunto" && (
+              <SizeGuideTable variant="product" />
+            )}
+
             <div style={{ marginTop: 28, display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12, fontSize: 12, color: "var(--vp-ink-soft)" }}>
               <div style={{ display: "flex", gap: 8, alignItems: "center" }}><Icon.Truck style={{ width: 16, height: 16, color: "var(--vp-brown)" }}/>Envío desde 45 €</div>
               <div style={{ display: "flex", gap: 8, alignItems: "center" }}><Icon.Leaf style={{ width: 16, height: 16, color: "var(--vp-brown)" }}/>Diseñado en España</div>
@@ -355,7 +360,7 @@ export function ProductPage({ product }) {
           </div>
         </div>
 
-        {meta.partsImg && <PartsDiagram partsImg={meta.partsImg} name={product.name} />}
+        {product.model && <DetallesSection model={product.model} modelName={product.name} />}
       </div>
 
       {sizeModalOpen && (
@@ -397,30 +402,30 @@ function ProductAccordion({ title, children }) {
   );
 }
 
-function PartsDiagram({ partsImg, name }) {
+function DetallesSection({ model, modelName }) {
+  const mainSrc = `/images/productos/${model}-detalle.webp`;
+  const fallbackSrc = `/images/productos/${model}-main.webp`;
+  const [src, setSrc] = useState(mainSrc);
+
   return (
-    <section style={{ marginTop: 100, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 80, alignItems: "center" }}>
-      <div style={{ position: "relative", width: "100%", height: 520, background: "var(--vp-cream-soft)", overflow: "hidden", borderRadius: 2 }}>
-        <Image fill src={partsImg} alt={`Herrajes ${name}`} style={{ objectFit: "contain", objectPosition: "center" }} sizes="50vw" loading="lazy" />
-      </div>
-      <div>
-        <div className="vp-eyebrow" style={{ marginBottom: 14 }}>— Piezas y herrajes</div>
-        <h3 className="vp-display" style={{ fontSize: 52, color: "var(--vp-brown)", margin: 0, lineHeight: .95 }}>
-          Cada pieza,<br/>en su sitio.
-        </h3>
-        <div style={{ marginTop: 32, display: "flex", flexDirection: "column", gap: 18 }}>
-          {VP_HARDWARE.map((h, i) => (
-            <div key={i} style={{ display: "grid", gridTemplateColumns: "36px 1fr", gap: 16, alignItems: "center", paddingBottom: 16, borderBottom: "1px solid rgba(74,46,28,.12)" }}>
-              <div style={{ color: "var(--vp-brown)" }}>
-                <span style={{ fontFamily: "var(--font-mono)", fontSize: 12, letterSpacing: ".1em" }}>0{i + 1}</span>
-              </div>
-              <div>
-                <div className="vp-serif" style={{ fontSize: 18, color: "var(--vp-brown)" }}>{h.es}</div>
-                <div style={{ fontSize: 12, color: "var(--vp-ink-muted)", marginTop: 2 }}>{h.note}</div>
-              </div>
-            </div>
-          ))}
-        </div>
+    <section style={{ padding: "80px 32px", textAlign: "center", maxWidth: 880, margin: "0 auto" }}>
+      <p style={{ fontSize: 11, letterSpacing: "0.3em", textTransform: "uppercase", color: "#A89684", marginBottom: 24 }}>— Detalles</p>
+      <h2 className="vp-display" style={{ fontFamily: "var(--vp-serif)", fontSize: "clamp(32px, 5vw, 48px)", color: "var(--vp-brown)", marginBottom: 16, lineHeight: 1.05 }}>
+        Herrajes en marrón mate
+      </h2>
+      <p style={{ fontSize: 16, lineHeight: 1.6, color: "var(--vp-brown)", maxWidth: "48ch", margin: "0 auto 48px" }}>
+        Acabado cobre cálido en cada pieza, coherente con la paleta del modelo.
+      </p>
+      <div style={{ position: "relative", width: "100%", aspectRatio: "16/9", borderRadius: 8, overflow: "hidden", background: "var(--vp-cream)" }}>
+        <Image
+          src={src}
+          alt={`Detalle de herrajes ${modelName}`}
+          fill
+          sizes="(max-width: 768px) 100vw, 640px"
+          style={{ objectFit: "cover", objectPosition: "center" }}
+          loading="lazy"
+          onError={() => setSrc(fallbackSrc)}
+        />
       </div>
     </section>
   );
