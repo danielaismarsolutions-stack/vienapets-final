@@ -9,6 +9,7 @@ import { MaterialsSection } from "./MaterialsSection";
 import { TestimonialsSection } from "./TestimonialsSection";
 import { FAQSection } from "./FAQSection";
 import { InstagramStrip } from "./InstagramStrip";
+import { SizeGuideTable } from "@/components/shared/SizeGuideTable";
 
 // Composer del home. Variante "boutique" del legacy (única que se migra).
 // Recibe `models` desde el Server Component padre (app/page.jsx) que los
@@ -21,7 +22,9 @@ export function HomePage({ models = [], heroModelId = "capri", heroStyle = "sing
       <Hero model={heroModel} models={models} heroStyle={heroStyle} />
       {/* CategoryRow eliminado — la nav de categorías del hero es el único acceso */}
       <PromoPackSection models={models} />
+      <SizeGuideTable variant="conjuntos" />
       <ProbadorBlock />
+      <SizeGuideTable variant="probador" />
       <ValueProps />
       <ModelsSection models={models} />
       <StorySection />

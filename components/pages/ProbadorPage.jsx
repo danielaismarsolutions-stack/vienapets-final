@@ -165,7 +165,7 @@ export function ProbadorPage() {
               Paso 3 · Resultado
             </div>
             <div style={{
-              aspectRatio: "1/1",
+              aspectRatio: isMobile ? "3/4" : "4/5",
               background: "var(--vp-cream-soft)",
               borderRadius: 4,
               border: hasUpload ? "2px solid var(--vp-olive)" : "1px solid rgba(74,46,28,.1)",
@@ -202,7 +202,7 @@ export function ProbadorPage() {
                     fill
                     src={`/images/productos/${selectedModel}-main.webp`}
                     alt={`Ejemplo real · ${selectedModel}`}
-                    style={{ objectFit: "cover", objectPosition: "top center" }}
+                    style={{ objectFit: "cover", objectPosition: "center 40%" }}
                     sizes="(max-width: 768px) 100vw, 50vw"
                     placeholder="blur"
                     blurDataURL={LQIP_CREAM}
