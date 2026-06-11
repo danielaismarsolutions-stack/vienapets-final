@@ -1,0 +1,79 @@
+.card {
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.imageWrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  background: var(--vp-cream);
+  flex-shrink: 0;
+  border-radius: 2px;
+  box-shadow: 0 4px 24px rgba(42, 29, 18, 0.07);
+  will-change: transform;
+}
+
+.textBlock {
+  padding-top: 16px;
+  flex: 1;
+}
+
+.modelName {
+  font-size: clamp(20px, 3vw, 28px);
+  color: var(--vp-brown);
+  letter-spacing: 0.01em;
+}
+
+.modelPrice {
+  font-size: clamp(15px, 2vw, 20px);
+  color: var(--vp-brown);
+}
+
+.modelSubtitle {
+  font-size: 12px;
+  color: var(--vp-ink-muted);
+  margin-top: 4px;
+  letter-spacing: 0.08em;
+}
+
+@media (max-width: 768px) {
+  .card {
+    align-items: center;
+    gap: 0;
+    padding: 48px 0;
+  }
+
+  .imageWrap {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    padding: 8%;
+    box-sizing: border-box;
+    will-change: auto;
+  }
+
+  .textBlock {
+    width: 100%;
+    padding: 16px 24px 0;
+    text-align: center;
+  }
+
+  .textBlock > div {
+    justify-content: center;
+  }
+
+  .modelName {
+    font-size: clamp(20px, 7vw, 32px);
+  }
+
+  .modelPrice {
+    font-size: clamp(14px, 4vw, 18px);
+  }
+
+  .modelSubtitle {
+    font-size: 15px;
+    line-height: 1.55;
+  }
+}
