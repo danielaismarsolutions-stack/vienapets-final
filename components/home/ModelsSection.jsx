@@ -4,9 +4,9 @@ import Image from "next/image";
 import { useState } from "react";
 import { ModelSwatch } from "@/components/shared/ModelSwatch";
 import { useRoute } from "@/components/shared/useRoute";
-import { useIsMobile } from "@/components/shared/useIsMobile";
 import { useTilt } from "@/lib/useTilt";
 import { LQIP_CREAM } from "@/lib/lqip";
+import styles from "./ModelsSection.module.css";
 
 // Imágenes de estudio por modelo (recortes transparentes sobre crema de marca)
 const MODEL_HERO = {
@@ -56,7 +56,6 @@ export function ModelsSection({ models = [] }) {
 
 function ModelCard({ model, index, onClick }) {
   const [hover, setHover] = useState(false);
-  const isMobile = useIsMobile();
   const { ref, onMouseMove, onMouseLeave } = useTilt(9);
   const heroSrc = MODEL_HERO[model.name?.toLowerCase()] ?? model.heroImg;
 
@@ -64,23 +63,14 @@ function ModelCard({ model, index, onClick }) {
     <article
       onClick={onClick}
       onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => { setHover(false); if (!isMobile) onMouseLeave(); }}
-      onMouseMove={isMobile ? undefined : onMouseMove}
-      style={{ cursor: "pointer", display: "flex", flexDirection: "column", width: "100%" }}
+      onMouseLeave={() => { setHover(false); onMouseLeave(); }}
+      onMouseMove={onMouseMove}
+      className={styles.card}
     >
-      {/* En móvil: 1:1 (conjunto entero visible con contain); desktop: 4:5 */}
+      {/* Imagen del modelo: 4/3 desktop, 4/5 mobile (CSS module) */}
       <div
-        ref={isMobile ? undefined : ref}
-        style={{
-          position: "relative",
-          width: "100%",
-          aspectRatio: "4 / 3",
-          background: "var(--vp-cream)",
-          flexShrink: 0,
-          borderRadius: 2,
-          boxShadow: "0 4px 24px rgba(42,29,18,.07)",
-          willChange: isMobile ? "auto" : "transform",
-        }}
+        ref={ref}
+        className={styles.imageWrap}
       >
         {heroSrc && (
           <div style={{ position: "absolute", inset: 0 }}>
@@ -119,16 +109,16 @@ function ModelCard({ model, index, onClick }) {
       </div>
 
       {/* Texto debajo de la imagen */}
-      <div style={{ paddingTop: 16, flex: 1 }}>
+      <div className={styles.textBlock}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 6 }}>
-          <div className="vp-serif" style={{ fontSize: "clamp(20px, 3vw, 28px)", color: "var(--vp-brown)", letterSpacing: ".01em" }}>
+          <div className={`vp-serif ${styles.modelName}`}>
             Modelo <span className="vp-italic" style={{ fontStyle: "italic" }}>{model.name}</span>
           </div>
-          <div className="vp-serif" style={{ fontSize: "clamp(15px, 2vw, 20px)", color: "var(--vp-brown)" }}>
+          <div className={`vp-serif ${styles.modelPrice}`}>
             €{model.priceHarness}
           </div>
         </div>
-        <div style={{ fontSize: 12, color: "var(--vp-ink-muted)", marginTop: 4, letterSpacing: ".08em" }}>
+        <div className={styles.modelSubtitle}>
           {model.subtitle}
         </div>
       </div>

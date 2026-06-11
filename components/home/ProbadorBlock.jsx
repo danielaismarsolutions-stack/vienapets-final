@@ -130,7 +130,6 @@ export function ProbadorBlock() {
             display: "grid",
             gridTemplateColumns: "1fr 1fr",
             gap: 16,
-            height: "100%",
           }}>
             {/* Antes — foto sin arnés, en color */}
             <div style={{
@@ -138,6 +137,7 @@ export function ProbadorBlock() {
               borderRadius: 4,
               position: "relative",
               overflow: "hidden",
+              aspectRatio: "9 / 16",
             }}>
               <div style={{
                 position: "absolute",
@@ -158,6 +158,7 @@ export function ProbadorBlock() {
                 alt="Antes: dálmata sin arnés"
                 loading="lazy"
                 style={{
+                  display: "block",
                   objectFit: "cover",
                   objectPosition: "top center",
                 }}
@@ -176,6 +177,7 @@ export function ProbadorBlock() {
                 borderRadius: 4,
                 position: "relative",
                 overflow: "hidden",
+                aspectRatio: "9 / 16",
                 border: hoverDespues ? "2px solid var(--vp-olive-deep)" : "2px solid var(--vp-olive)",
                 transform: reduced ? "none" : (hoverDespues ? "scale(1.03)" : "scale(1)"),
                 transition: reduced ? "none" : "transform .35s ease, border-color .25s ease",
@@ -201,6 +203,7 @@ export function ProbadorBlock() {
                 alt="Después: dálmata con arnés Viena Pets Capri de rayas"
                 loading="lazy"
                 style={{
+                  display: "block",
                   objectFit: "cover",
                   objectPosition: "top center",
                 }}
