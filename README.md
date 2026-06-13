@@ -2,7 +2,7 @@
 
 Tienda online de **Viena Pets** — arneses, correas y portabolsas de diseño de autor diseñados en España, en ediciones limitadas. Tres modelos: Capri, Peachy, Daisy.
 
-Stack: **Next.js 14** (App Router) · JavaScript · CSS modules + tokens · Supabase (Sprint 2) · Stripe Checkout (Sprint 3) · Vercel.
+Stack: **Next.js 14** (App Router) · JavaScript · CSS modules + tokens · Supabase (Sprint 2) · Stripe Checkout (Sprint 3) · Webhook + persistencia de pedidos (Sprint 4) · Vercel.
 
 ---
 
@@ -22,10 +22,19 @@ Stack: **Next.js 14** (App Router) · JavaScript · CSS modules + tokens · Supa
   "Pagar con Stripe" crea una sesión de **Stripe Checkout hosted** (vía
   `/api/checkout`, con validación de stock en servidor, `automatic_tax`,
   cupones y recogida de dirección España) y redirige a Stripe. Al volver,
-  `/exito` verifica el pago contra Stripe y vacía el carrito. Envío plano
+  `/exito` muestra el pedido y vacía el carrito. Envío plano
   **5,90 €**, gratis a partir de **60 €**.
-- **Sprint 4 — Post-pago** (siguiente): webhook de Stripe + descuento de stock
-  + tablas `orders` / `order_items` + email de confirmación / factura.
+- **Sprint 4 — Post-pago: webhook, persistencia, stock, facturas** ✅ completado.
+  Tablas `orders` y `order_items` (RLS sin acceso público, sólo `service_role`)
+  + numeración correlativa **VP-2026-XXXX** (secuencia + `generate_order_number()`).
+  El endpoint **`/api/webhook`** recibe los eventos de Stripe, **verifica la
+  firma** (`STRIPE_WEBHOOK_SECRET`) sobre el cuerpo crudo y, al confirmarse el
+  pago, persiste el pedido y **descuenta el stock real de forma atómica** vía la
+  RPC transaccional `process_paid_order`. Es **idempotente**: un *resend* del
+  mismo evento no duplica el pedido ni vuelve a descontar inventario. Cada pago
+  genera una **factura PDF automática** (Stripe Invoicing). `/exito` consulta el
+  pedido en Supabase por `session_id` y muestra el correlativo.
+  Fuera de alcance: emails transaccionales (Sprint 5+), tracking/envío, refunds.
 
 ---
 
@@ -46,6 +55,7 @@ cp .env.local.example .env.local
 # y las de Stripe (Sprint 3, test mode):
 #   NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
 #   STRIPE_SECRET_KEY=sk_test_...      # solo server-side, nunca al cliente
+#   STRIPE_WEBHOOK_SECRET=whsec_...    # Sprint 4: firma de /api/webhook (server)
 #   NEXT_PUBLIC_SITE_URL=http://localhost:3000   # usado en success/cancel URLs
 
 # 3. Arrancar el dev server
@@ -75,9 +85,10 @@ vienapets-final/
 │   ├── producto/[modelo]/page.jsx # Ficha de producto (capri | peachy | daisy)
 │   ├── carrito/page.jsx          # Cesta (revisión antes de pagar)
 │   ├── checkout/page.jsx         # Resumen + "Pagar con Stripe" (Checkout hosted)
-│   ├── exito/page.jsx            # Confirmación post-pago (verifica con Stripe)
-│   ├── api/checkout/route.js         # Crea la sesión de Stripe Checkout
-│   ├── api/checkout/verify/route.js  # Verifica el pago de una sesión
+│   ├── exito/page.jsx            # Confirmación post-pago (lee el pedido de Supabase)
+│   ├── api/checkout/route.js         # Crea la sesión de Stripe Checkout (+ invoice_creation)
+│   ├── api/checkout/order/route.js   # Consulta el pedido persistido por session_id
+│   ├── api/webhook/route.js          # Recibe eventos Stripe: persiste pedido + stock
 │   ├── historia/page.jsx
 │   ├── modelos/page.jsx
 │   ├── probador/page.jsx         # Mockup del probador IA
@@ -179,18 +190,72 @@ pública no responde, el producto se crea sin imagen (no bloquea).
    - Caducidad: cualquier fecha futura (ej. `12/34`)
    - CVC: cualquier 3 dígitos (ej. `123`)
    - Dirección/código postal: cualquiera (España)
-4. Tras pagar vuelves a `/exito`, que verifica el pago con Stripe, muestra el
-   número de pedido y **vacía el carrito**.
+4. Tras pagar vuelves a `/exito`, que consulta el pedido en Supabase por
+   `session_id`, muestra el **número correlativo VP-2026-XXXX** y **vacía el
+   carrito**. Si el webhook aún no lo ha procesado, reintenta cada 3 s (máx 30 s).
 5. Puedes comprobar la sesión completada en el **Dashboard de Stripe** (test
-   mode) → Payments / Checkout sessions.
+   mode) → Payments / Checkout sessions, y la **factura PDF** en Invoices.
 
 > El envío es 5,90 € y pasa a **gratis** automáticamente cuando el subtotal
 > llega a 60 €. Los cupones se habilitan con `allow_promotion_codes`: Lucía los
 > crea en el Dashboard de Stripe.
 
-> **Aún no implementado (Sprint 4):** webhook, descuento de stock, persistencia
-> del pedido en Supabase y email/factura. En este sprint el pago es real (test
-> mode) pero no descuenta inventario.
+---
+
+## Flujo de un pedido (Sprint 4)
+
+El ciclo completo de una compra, de extremo a extremo:
+
+1. **Carrito → Checkout.** El cliente revisa la cesta y pulsa *Pagar con Stripe*.
+   `POST /api/checkout` revalida stock y precios en servidor (nunca se fía del
+   cliente), calcula el envío y crea una **sesión de Stripe Checkout hosted** con
+   `automatic_tax`, recogida de dirección (ES) e **`invoice_creation` activado**
+   (genera factura PDF automática con los datos fiscales de Lucía).
+2. **Pago en Stripe.** El cliente paga en la página hosted de Stripe. Stripe
+   redirige a `/exito?session_id=cs_...`.
+3. **Webhook (fuente de verdad).** Stripe envía `checkout.session.completed` a
+   **`POST /api/webhook`**. El endpoint:
+   - Lee el **cuerpo crudo** y **verifica la firma** con `STRIPE_WEBHOOK_SECRET`.
+     Sin firma válida no procesa nada.
+   - Sólo si `payment_status === 'paid'`, recupera los `line_items`, los **mapea
+     a variantes por `stripe_price_id`** y llama a la RPC `process_paid_order`.
+   - La RPC, en **una sola transacción**: hace `INSERT … ON CONFLICT
+     (stripe_session_id) DO NOTHING` como **primera** operación (guarda de
+     idempotencia); si no devuelve `id`, el pedido ya existía y retorna sin tocar
+     nada. Si lo crea, asigna **`order_number` (VP-2026-XXXX)**, inserta los
+     `order_items` y **descuenta el stock atómicamente** (`UPDATE … WHERE
+     stock >= quantity`). Si el stock es insuficiente (oversell en carrera),
+     **registra un aviso y NO revierte**: el pago ya está hecho y Lucía lo
+     gestiona manualmente desde Supabase Studio.
+   - Pagos asíncronos: `async_payment_succeeded` se trata igual; `async_payment_failed`
+     persiste el pedido con `status='payment_failed'` para que Lucía lo vea.
+4. **Confirmación.** `/exito` llama a `GET /api/checkout/order?session_id=…`
+   (que usa `service_role`, las tablas de pedidos no tienen acceso público) y
+   muestra el correlativo, el email y el total. Reintenta si el webhook aún no
+   ha persistido (latencia normal).
+5. **Factura.** Stripe genera y envía la **factura PDF** automáticamente. Visible
+   en Dashboard → Invoices.
+
+**Idempotencia:** reenviar el mismo evento (Dashboard → Webhooks → *Resend*) no
+duplica el pedido ni descuenta stock dos veces; el `INSERT … ON CONFLICT DO
+NOTHING` inicial corta el flujo antes de tocar items o inventario.
+
+### Verificación en producción (runbook)
+
+Tras desplegar la rama, smoke test end-to-end (test mode):
+
+1. Compra real con `4242 4242 4242 4242` (caducidad futura, CVC cualquiera).
+2. **Vercel → Logs**: el webhook responde `200` y loguea `Pedido creado VP-2026-0001`.
+3. **Supabase Studio**: `orders` tiene la fila con `VP-2026-0001`; `order_items`
+   las líneas; `variants.stock` decrementado en las cantidades compradas.
+4. **Stripe Dashboard → Invoices**: factura generada para esa sesión.
+5. **`/exito`**: muestra `VP-2026-0001`, email y total.
+6. **Idempotencia**: Dashboard → Webhooks → endpoint → el evento → *Resend*.
+   Verifica que NO se crea un segundo pedido ni se descuenta stock de nuevo.
+
+> La lógica de base de datos (alta de pedido, decremento atómico, idempotencia,
+> oversell y `payment_failed`) está verificada ejecutando `process_paid_order`
+> directamente contra la base de datos; ver el commit de verificación de Sprint 4.
 
 ---
 
