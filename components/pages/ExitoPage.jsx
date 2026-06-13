@@ -74,7 +74,9 @@ export function ExitoPage() {
 
         <div style={{ marginTop: 32, padding: 20, background: "var(--vp-cream-soft)", display: "inline-block", textAlign: "left" }}>
           <div style={{ fontSize: 11, letterSpacing: ".2em", textTransform: "uppercase", color: "var(--vp-ink-muted)" }}>Número de pedido</div>
-          <div className="vp-serif" style={{ fontSize: 16, color: "var(--vp-brown)", marginTop: 4, wordBreak: "break-all" }}>{state.orderId}</div>
+          {/* Sprint 3: referencia corta y legible a partir del session_id. En Sprint 4,
+              al persistir pedidos en Supabase, será un correlativo real (VP-2026-0001). */}
+          <div className="vp-serif" style={{ fontSize: 16, color: "var(--vp-brown)", marginTop: 4 }}>#{state.orderId.slice(-8).toUpperCase()}</div>
           {eur(state.total) && (
             <div style={{ marginTop: 12, fontSize: 13, color: "var(--vp-ink-soft)" }}>
               Total: <b style={{ color: "var(--vp-brown)" }}>{eur(state.total)}</b> · IVA incluido
