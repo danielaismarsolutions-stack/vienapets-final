@@ -8,16 +8,19 @@
 // en la UI ya existente. La lógica de envío vive aquí para que /carrito y el
 // drawer muestren lo mismo que cobrará Stripe.
 import { createContext, useContext, useEffect, useState } from "react";
+import {
+  FREE_SHIPPING_THRESHOLD_CENTS,
+  shippingCents,
+} from "@/lib/cart/shipping";
+
+// Re-export por compatibilidad: algunos componentes leen el umbral desde aquí.
+export { FREE_SHIPPING_THRESHOLD_CENTS };
 
 const CartCtx = createContext(null);
 
 // Clave versionada: al introducir variantId/price_cents invalidamos los
 // carritos antiguos (formato 'vp_cart') que no llevaban esos campos.
 const STORAGE_KEY = "vienapets-cart-v1";
-
-// Reglas de envío (Sprint 3): plano 5,90 € · gratis a partir de 60 €.
-export const FREE_SHIPPING_THRESHOLD_CENTS = 6000;
-export const FLAT_SHIPPING_CENTS = 590;
 
 // Céntimos de un item: price_cents manda; fallback desde price (EUR) por compat.
 function itemCents(it) {
@@ -69,10 +72,7 @@ export function CartProvider({ children }) {
   const subtotal = items.reduce((s, i) => s + (i.price ?? itemCents(i) / 100) * i.qty, 0);
   // Subtotal/envío/total en céntimos (fuente de verdad para el pedido).
   const subtotal_cents = items.reduce((s, i) => s + itemCents(i) * i.qty, 0);
-  const shipping_cents =
-    items.length === 0 || subtotal_cents >= FREE_SHIPPING_THRESHOLD_CENTS
-      ? 0
-      : FLAT_SHIPPING_CENTS;
+  const shipping_cents = shippingCents(subtotal_cents, items.length > 0);
   const total_cents = subtotal_cents + shipping_cents;
 
   return (
