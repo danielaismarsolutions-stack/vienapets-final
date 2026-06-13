@@ -119,18 +119,21 @@ export function ProductPage({ product }) {
   const swatch = meta.hex?.primary ?? "#816754";
 
   const handleAdd = () => {
-    if (!canBuy) return;
+    if (!canBuy || !currentVariant) return;
     add({
+      // variantId es la identidad de línea y lo que el checkout valida en Supabase.
+      variantId: currentVariant.id,
       modelId: product.model,
       slug: product.slug,
       name: product.name,
       type: typeLabel,
-      price: product.price_eur,
+      price: product.price_eur, // EUR para presentación
+      price_cents: product.price_cents, // céntimos para el cálculo del pedido
       img: heroImg,
       swatch,
       size: isArnes ? size : null,
       category: cartCategory,
-      sku: currentVariant?.sku ?? null,
+      sku: currentVariant.sku ?? null,
     });
   };
 
