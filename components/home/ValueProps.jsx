@@ -8,7 +8,7 @@ export function ValueProps() {
   const values = [
     { icon: Icon.Scissors, title: "Diseño de autor", text: "Cada estampado es un diseño original exclusivo de Viena Pets." },
     { icon: Icon.Leaf,     title: "Edición limitada", text: "Series cortas y numeradas. Cuando se agotan, no se reeditan." },
-    { icon: Icon.Truck,    title: "Envío gratuito", text: "Envío gratuito en pedidos desde 45 €. Preparamos cada pedido con mimo." },
+    { icon: Icon.Truck,    title: "Envío gratuito", text: "Envío gratuito en pedidos desde 60 €. Preparamos cada pedido con mimo." },
     { icon: Icon.Heart,    title: "Ajuste a medida", text: "Cuatro tallas y múltiples puntos de ajuste para cada perro." },
   ];
   return (

@@ -15,8 +15,17 @@ Stack: **Next.js 14** (App Router) · JavaScript · CSS modules + tokens · Supa
   + 21 variantes seeded. Home, `/tienda`, `/modelos` y `/producto/[slug]`
   consultan Supabase desde Server Components con `revalidate = 60`.
   Stock visible (stock − stock_reserved) y banner "Agotado" funcionando.
-- **Sprint 3 — Stripe** (siguiente): Checkout hosted + webhook + descuento
-  stock + tablas `orders` / `order_items`.
+- **Sprint 3 — Carrito y Stripe Checkout** ✅ completado.
+  Catálogo sincronizado a Stripe (12 products + 21 prices, test mode) con
+  `scripts/sync-products-to-stripe.js`. Carrito persistente con `variantId` y
+  precios en céntimos. `/carrito` y `/checkout` enchufados al store. El botón
+  "Pagar con Stripe" crea una sesión de **Stripe Checkout hosted** (vía
+  `/api/checkout`, con validación de stock en servidor, `automatic_tax`,
+  cupones y recogida de dirección España) y redirige a Stripe. Al volver,
+  `/exito` verifica el pago contra Stripe y vacía el carrito. Envío plano
+  **5,90 €**, gratis a partir de **60 €**.
+- **Sprint 4 — Post-pago** (siguiente): webhook de Stripe + descuento de stock
+  + tablas `orders` / `order_items` + email de confirmación / factura.
 
 ---
 
@@ -30,10 +39,14 @@ npm install
 
 # 2. Crear archivo de variables locales
 cp .env.local.example .env.local
-# Rellena las 3 variables de Supabase (proyecto Dublin eu-west-1):
+# Rellena las variables de Supabase (proyecto Dublin eu-west-1):
 #   NEXT_PUBLIC_SUPABASE_URL=...
 #   NEXT_PUBLIC_SUPABASE_ANON_KEY=...
 #   SUPABASE_SERVICE_ROLE_KEY=...      # solo server-side, nunca al cliente
+# y las de Stripe (Sprint 3, test mode):
+#   NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
+#   STRIPE_SECRET_KEY=sk_test_...      # solo server-side, nunca al cliente
+#   NEXT_PUBLIC_SITE_URL=http://localhost:3000   # usado en success/cancel URLs
 
 # 3. Arrancar el dev server
 npm run dev
@@ -60,7 +73,11 @@ vienapets-final/
 │   ├── icon.png                  # Favicon (servido automáticamente por Next)
 │   ├── tienda/page.jsx           # Catálogo (replica legacy ?cat=)
 │   ├── producto/[modelo]/page.jsx # Ficha de producto (capri | peachy | daisy)
-│   ├── checkout/page.jsx         # Checkout (UI estática — botón Pagar disabled)
+│   ├── carrito/page.jsx          # Cesta (revisión antes de pagar)
+│   ├── checkout/page.jsx         # Resumen + "Pagar con Stripe" (Checkout hosted)
+│   ├── exito/page.jsx            # Confirmación post-pago (verifica con Stripe)
+│   ├── api/checkout/route.js         # Crea la sesión de Stripe Checkout
+│   ├── api/checkout/verify/route.js  # Verifica el pago de una sesión
 │   ├── historia/page.jsx
 │   ├── modelos/page.jsx
 │   ├── probador/page.jsx         # Mockup del probador IA
@@ -77,6 +94,9 @@ vienapets-final/
 │   │                             # sistema visual — no editables)
 │   ├── supabase/                 # client.js (browser), public.js (server
 │   │                             # anon), server.js (service_role)
+│   ├── stripe/                   # server.js (SDK con secret key), client.js
+│   │                             # (loadStripe singleton para el navegador)
+│   ├── cart/shipping.js          # Reglas de envío (gratis ≥60€) cliente+servidor
 │   └── queries/products.js       # getAllProducts, getProductsByCategory,
 │                                 # getProductBySlug, getProductWithVariants,
 │                                 # getAllProductSlugs, getModelsView
@@ -98,7 +118,7 @@ vienapets-final/
 
 - **Tipografías** (DM Serif Display, Cormorant Garamond, Jost, JetBrains Mono) cargadas vía `next/font/google` y enlazadas a las variables `--font-*-loaded` que `tokens.css` consume.
 - **Router:** `useRoute()` (en `components/shared/useRoute.jsx`) es un adaptador sobre `next/navigation` que mantiene la API `{ route, go }` del legacy para no refactorizar los componentes migrados.
-- **Carrito:** `CartProvider` con persistencia en `localStorage` (`vp_cart`), idéntico al legacy.
+- **Carrito:** `CartProvider` con persistencia en `localStorage`. Desde Sprint 3 la clave es `vienapets-cart-v1` y cada línea guarda `variantId` + `price_cents` (necesarios para el checkout); los importes se calculan en céntimos.
 - **Suspense boundaries** alrededor de `Navbar`, `Footer`, `CartDrawer` y `{children}` — necesarios porque `useRoute` consume `useSearchParams`.
 
 ---
@@ -131,6 +151,49 @@ filtra automáticamente y desaparece de toda la web.
 
 ---
 
+## Sincronizar el catálogo a Stripe (Sprint 3)
+
+Cuando se añaden o editan productos/variantes en Supabase hay que reflejarlos
+en Stripe (crear sus `Product` y `Price`). El script es **idempotente**: si la
+fila ya tiene `stripe_product_id` / `stripe_price_id` no duplica, sólo actualiza.
+
+```bash
+# Requiere STRIPE_SECRET_KEY, NEXT_PUBLIC_SUPABASE_URL,
+# SUPABASE_SERVICE_ROLE_KEY y NEXT_PUBLIC_SITE_URL en el entorno.
+node scripts/sync-products-to-stripe.js
+```
+
+Crea cada `Price` con `tax_behavior=inclusive` (el precio ya lleva IVA) y guarda
+los IDs de vuelta en Supabase. Las imágenes se incluyen *best-effort*: si la URL
+pública no responde, el producto se crea sin imagen (no bloquea).
+
+---
+
+## Cómo probar el checkout (Sprint 3)
+
+1. `npm run dev` y abre la tienda. Añade productos a la cesta y ve a `/carrito`.
+2. Pulsa **Tramitar pedido** → `/checkout` → **Pagar con Stripe**. Te redirige a
+   Stripe Checkout (hosted).
+3. Paga con la **tarjeta de prueba** de Stripe (test mode):
+   - Nº tarjeta: **4242 4242 4242 4242**
+   - Caducidad: cualquier fecha futura (ej. `12/34`)
+   - CVC: cualquier 3 dígitos (ej. `123`)
+   - Dirección/código postal: cualquiera (España)
+4. Tras pagar vuelves a `/exito`, que verifica el pago con Stripe, muestra el
+   número de pedido y **vacía el carrito**.
+5. Puedes comprobar la sesión completada en el **Dashboard de Stripe** (test
+   mode) → Payments / Checkout sessions.
+
+> El envío es 5,90 € y pasa a **gratis** automáticamente cuando el subtotal
+> llega a 60 €. Los cupones se habilitan con `allow_promotion_codes`: Lucía los
+> crea en el Dashboard de Stripe.
+
+> **Aún no implementado (Sprint 4):** webhook, descuento de stock, persistencia
+> del pedido en Supabase y email/factura. En este sprint el pago es real (test
+> mode) pero no descuenta inventario.
+
+---
+
 ## Pendientes conocidos
 
 - El `Navbar` enlaza a `/cuidado`, que aún no existe (404). Lo mismo ocurría en el legacy. Decidir en próximo sprint: crear página o quitar el link.
@@ -146,7 +209,7 @@ Lee `CLAUDE.md` antes de tocar nada. Resumen crítico:
 - ❌ **Sin lenguaje prohibido** (atelier, artesanal, handmade, taller, narrativa del dálmata Viena como origen).
 - ❌ Sin Tailwind, sin shadcn, sin librerías de UI.
 - ❌ Sin TypeScript.
-- ❌ Sin botones "Comprar" reales hasta Sprint 3.
+- ✅ Checkout real con Stripe Checkout hosted (Sprint 3) — nunca Stripe Elements.
 - ✅ Precios siempre con IVA incluido en presentación.
 - ✅ Paleta marrón cálida (`#816754` / `--vp-brown` `#4A2E1C`). Verde olivo descartado.
 - ✅ Todo el copy en español, tono cálido pero profesional.

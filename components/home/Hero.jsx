@@ -96,7 +96,7 @@ export function Hero({ model, models = [], heroStyle }) {
 
         {/* 7. Trust badges */}
         <div style={{ display: "flex", gap: 16, flexWrap: "wrap", fontSize: 10, color: "var(--vp-ink-muted)", letterSpacing: "0.08em", textTransform: "uppercase", paddingBottom: 40 }}>
-          <span>✓ Envío gratuito desde 45 €</span>
+          <span>✓ Envío gratuito desde 60 €</span>
           <span>✓ Diseñado en España</span>
           <span>✓ 15 días de devolución</span>
         </div>
@@ -169,7 +169,7 @@ export function Hero({ model, models = [], heroStyle }) {
           </div>
 
           <div style={{ display: "flex", gap: 28, flexWrap: "wrap", fontSize: 12, color: "var(--vp-ink-muted)", letterSpacing: "0.08em", textTransform: "uppercase" }}>
-            <span>✓ Envío gratuito desde 45 €</span>
+            <span>✓ Envío gratuito desde 60 €</span>
             <span>✓ Diseñado en España</span>
             <span>✓ 15 días de devolución</span>
           </div>
@@ -266,7 +266,7 @@ function HeroMosaic({ models = [] }) {
 }
 
 function Ticker() {
-  const items = ["Diseños exclusivos firmados", "✶", "Diseñado en España", "✶", "Edición limitada", "✶", "Envío gratuito desde 45 €", "✶"];
+  const items = ["Diseños exclusivos firmados", "✶", "Diseñado en España", "✶", "Edición limitada", "✶", "Envío gratuito desde 60 €", "✶"];
   const row = [...items, ...items, ...items];
   return (
     <div style={{ marginTop: 80, borderTop: "1px solid rgba(74,46,28,.2)", borderBottom: "1px solid rgba(74,46,28,.2)", padding: "16px 0", overflow: "hidden" }}>

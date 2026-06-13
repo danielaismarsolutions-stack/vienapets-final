@@ -331,7 +331,7 @@ export function ProductPage({ product }) {
             )}
 
             <div style={{ marginTop: 28, display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12, fontSize: 12, color: "var(--vp-ink-soft)" }}>
-              <div style={{ display: "flex", gap: 8, alignItems: "center" }}><Icon.Truck style={{ width: 16, height: 16, color: "var(--vp-brown)" }}/>Envío desde 45 €</div>
+              <div style={{ display: "flex", gap: 8, alignItems: "center" }}><Icon.Truck style={{ width: 16, height: 16, color: "var(--vp-brown)" }}/>Envío gratis desde 60 €</div>
               <div style={{ display: "flex", gap: 8, alignItems: "center" }}><Icon.Leaf style={{ width: 16, height: 16, color: "var(--vp-brown)" }}/>Diseñado en España</div>
               <div style={{ display: "flex", gap: 8, alignItems: "center" }}><Icon.Check style={{ width: 16, height: 16, color: "var(--vp-brown)" }}/>15 días dev.</div>
             </div>
