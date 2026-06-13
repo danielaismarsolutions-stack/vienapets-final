@@ -65,7 +65,7 @@ export function CartDrawer() {
               <span className="vp-serif" style={{ fontSize: 20, color: "var(--vp-brown)" }}>Total</span>
               <span className="vp-serif" style={{ fontSize: 20, color: "var(--vp-brown)" }}>€{subtotal.toFixed(2)}</span>
             </div>
-            <button className="vp-btn full" onClick={() => { setOpen(false); go("/checkout"); }}>Finalizar compra <Icon.Arrow style={{ width: 14, height: 14 }} /></button>
+            <button className="vp-btn full" onClick={() => { setOpen(false); go("/carrito"); }}>Ver la cesta <Icon.Arrow style={{ width: 14, height: 14 }} /></button>
           </div>
         )}
       </aside>
