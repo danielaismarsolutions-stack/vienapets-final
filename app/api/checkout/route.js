@@ -94,7 +94,16 @@ export async function POST(req) {
       billing_address_collection: "required",
       shipping_address_collection: { allowed_countries: ["ES"] },
       phone_number_collection: { enabled: true },
-      invoice_creation: { enabled: true },
+      // Stripe Invoicing: cada pago genera una factura PDF automática con los
+      // datos fiscales de Lucía (configurados en el Dashboard de Stripe).
+      invoice_creation: {
+        enabled: true,
+        invoice_data: {
+          description: "Pedido VienaPets",
+          footer: "Gracias por tu compra en VienaPets. Diseños exclusivos diseñados en España.",
+          metadata: { source: "vienapets-web" },
+        },
+      },
       shipping_options: [
         {
           shipping_rate_data: {
