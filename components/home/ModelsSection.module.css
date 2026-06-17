@@ -71,12 +71,10 @@
     width: 100vw;
     position: relative;
     left: 50%;
-    right: 50%;
     margin-left: -50vw;
-    margin-right: -50vw;
-    aspect-ratio: 4 / 5;
+    aspect-ratio: 4 / 3;
     min-height: unset;
-    padding: 8%;
+    padding: 0;
     box-sizing: border-box;
     border-radius: 0;
     box-shadow: none;
