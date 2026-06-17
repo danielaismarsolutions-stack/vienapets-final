@@ -19,7 +19,7 @@ const MODEL_HERO = {
 export function ModelsSection({ models = [] }) {
   const { go } = useRoute();
   return (
-    <section style={{ padding: "clamp(60px, 10vw, 140px) clamp(20px, 3vw, 40px) clamp(32px, 6vw, 80px)", position: "relative" }}>
+    <section style={{ padding: "clamp(60px, 10vw, 140px) clamp(20px, 3vw, 40px) clamp(32px, 6vw, 80px)", position: "relative", overflowX: "clip" }}>
       <div style={{
         maxWidth: 1400,
         margin: "0 auto clamp(40px, 6vw, 80px)",

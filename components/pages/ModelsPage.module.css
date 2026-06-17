@@ -1,0 +1,144 @@
+/* /modelos — grid responsive de los 3 modelos */
+
+.page {
+  padding: 40px 40px 80px;
+}
+
+.inner {
+  max-width: 1500px;
+  margin: 0 auto;
+}
+
+.header {
+  margin-bottom: 48px;
+  border-bottom: 1px solid rgba(74, 46, 28, 0.2);
+  padding-bottom: 32px;
+}
+
+/* Grid: 3 columnas en desktop */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 40px;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+}
+
+.imageWrap {
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  background: var(--vp-cream-soft);
+  overflow: hidden;
+  border-radius: 2px;
+  position: relative;
+}
+
+.imageWrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  display: block;
+}
+
+.textBlock {
+  padding: 20px 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.modelName {
+  font-size: clamp(28px, 3vw, 40px);
+  color: var(--vp-brown);
+  letter-spacing: 0.01em;
+  margin: 0;
+}
+
+.subtitle {
+  font-size: 13px;
+  color: var(--vp-ink-muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.swatches {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.swatch {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid rgba(74, 46, 28, 0.15);
+  display: inline-block;
+}
+
+.cta {
+  margin-top: 4px;
+  align-self: flex-start;
+}
+
+/* Tablet: 2 columnas, tercera en fila propia centrada */
+@media (max-width: 1023px) and (min-width: 640px) {
+  .page {
+    padding: 32px 24px 64px;
+  }
+
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 32px;
+  }
+
+  /* La 3ª tarjeta ocupa toda la fila y se centra */
+  .card:nth-child(3) {
+    grid-column: 1 / -1;
+    max-width: 480px;
+    justify-self: center;
+    width: 100%;
+  }
+}
+
+/* Mobile: 1 columna */
+@media (max-width: 639px) {
+  .page {
+    padding: 24px 20px 60px;
+  }
+
+  .header {
+    margin-bottom: 32px;
+    padding-bottom: 24px;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  .imageWrap {
+    aspect-ratio: 4 / 3;
+  }
+
+  .modelName {
+    font-size: clamp(32px, 10vw, 48px);
+  }
+
+  .textBlock {
+    align-items: center;
+    text-align: center;
+  }
+
+  .swatches {
+    justify-content: center;
+  }
+
+  .cta {
+    align-self: center;
+  }
+}

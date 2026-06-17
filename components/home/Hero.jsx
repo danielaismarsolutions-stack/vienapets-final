@@ -63,11 +63,13 @@ export function Hero({ model, models = [], heroStyle }) {
           </button>
         </div>
 
-        {/* 5. Imagen del dálmata — más compacta, puede verse parcialmente */}
+        {/* 5. Imagen hero — portrait 9:16, mínimo 600px, máx 100vh */}
         <div style={{ width: "100%", marginBottom: 20 }}>
           <div style={{
             width: "100%",
-            aspectRatio: "4/3",
+            aspectRatio: "4/5",
+            minHeight: 600,
+            maxHeight: "100vh",
             borderRadius: "var(--radius-arch)",
             background: "var(--vp-cream-deep)",
             overflow: "hidden",
@@ -76,9 +78,9 @@ export function Hero({ model, models = [], heroStyle }) {
           }}>
             <Image
               fill
-              src="/assets/hero-dalmata.png"
-              alt="Dálmata Viena con arnés Viena Pets"
-              style={{ objectFit: "contain", objectPosition: "center" }}
+              src="/images/hero/hero-lucia-dalmata.jpg"
+              alt="Lucía, fundadora de Viena Pets, con su dálmata en casa"
+              style={{ objectFit: "cover", objectPosition: "center 35%" }}
               sizes="100vw"
               priority
               placeholder="blur"
@@ -178,7 +180,7 @@ export function Hero({ model, models = [], heroStyle }) {
         <div style={{ position: "relative", width: "100%" }}>
           <div style={{
             width: "100%",
-            aspectRatio: "4/5",
+            aspectRatio: "3/4",
             borderRadius: "var(--radius-arch)",
             background: "var(--vp-cream-deep)",
             overflow: "hidden",
@@ -187,11 +189,12 @@ export function Hero({ model, models = [], heroStyle }) {
           }}>
             <Image
               fill
-              src="/assets/hero-dalmata.png"
-              alt="Dálmata Viena con arnés Viena Pets"
-              style={{ objectFit: "contain", objectPosition: "center" }}
+              src="/images/hero/hero-lucia-dalmata.jpg"
+              alt="Lucía, fundadora de Viena Pets, con su dálmata en casa"
+              style={{ objectFit: "cover", objectPosition: "center 35%" }}
               sizes="(max-width: 768px) 100vw, 60vw"
               priority
+              quality={85}
               placeholder="blur"
               blurDataURL={LQIP_CREAM}
             />
@@ -217,7 +220,7 @@ function HeroMosaic({ models = [] }) {
             <span style={{ fontStyle: "italic" }}>una</span> ceremonia.
           </h1>
           <div style={{ borderRadius: "180px 180px 4px 4px", overflow: "hidden", background: "var(--vp-cream-deep)", marginBottom: 24, position: "relative", aspectRatio: "3/4" }}>
-            <Image fill src="/assets/hero-dalmata.png" alt="Viena" style={{ objectFit: "contain", objectPosition: "center" }} sizes="100vw" priority placeholder="blur" blurDataURL={LQIP_CREAM} />
+            <Image fill src="/images/hero/hero-lucia-dalmata.jpg" alt="Lucía, fundadora de Viena Pets, con su dálmata en casa" style={{ objectFit: "cover", objectPosition: "center 35%" }} sizes="100vw" priority placeholder="blur" blurDataURL={LQIP_CREAM} />
           </div>
           <div style={{ background: "var(--vp-brown)", color: "var(--vp-paper)", padding: "28px 24px" }}>
             <div className="vp-eyebrow" style={{ color: "var(--vp-paper)", fontSize: 10, marginBottom: 10 }}>Tres modelos · Tres historias</div>
@@ -244,7 +247,7 @@ function HeroMosaic({ models = [] }) {
         </div>
 
         <div style={{ gridRow: "1 / 3", height: 680, borderRadius: "280px 280px 4px 4px", overflow: "hidden", background: "var(--vp-cream-deep)", position: "relative" }}>
-          <Image fill src="/assets/hero-dalmata.png" alt="Viena" style={{ objectFit: "contain", objectPosition: "center" }} sizes="33vw" priority placeholder="blur" blurDataURL={LQIP_CREAM} />
+          <Image fill src="/images/hero/hero-lucia-dalmata.jpg" alt="Lucía, fundadora de Viena Pets, con su dálmata en casa" style={{ objectFit: "cover", objectPosition: "center 35%" }} sizes="33vw" priority placeholder="blur" blurDataURL={LQIP_CREAM} />
         </div>
 
         {models[0] && <div style={{ height: 260 }}><ModelSwatch model={models[0]} style={{ width: "100%", height: "100%", display: "block" }} /></div>}
