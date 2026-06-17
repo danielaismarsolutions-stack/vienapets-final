@@ -96,13 +96,26 @@ export function ProductPage({ product }) {
       ? product.images
       : [];
     const mapEntry = PRODUCT_IMAGES[product.slug];
-    if (supaImgs.length >= 2) return supaImgs;
+    if (supaImgs.length >= 2) {
+      // Para conjuntos: garantizar que la foto producto-puro (sobre fondo crema)
+      // sea siempre la primera imagen de la galería.
+      // TODO: solución definitiva → añadir {modelo}-conjunto.webp como primera
+      // entrada del array images[] en Supabase para cada producto de categoría conjunto.
+      if (product.category === "conjunto" && mapEntry?.main) {
+        const productPura = mapEntry.main;
+        if (supaImgs[0] !== productPura) {
+          const rest = supaImgs.filter((s) => s !== productPura);
+          return [productPura, ...rest].slice(0, 4);
+        }
+      }
+      return supaImgs;
+    }
     if (mapEntry) {
       const main = supaImgs[0] ?? mapEntry.main;
       return [main, ...mapEntry.gallery.map((g) => g.src)].filter(Boolean);
     }
     return supaImgs.length > 0 ? supaImgs : [meta.heroImg].filter(Boolean);
-  }, [product.images, product.slug, meta.heroImg]);
+  }, [product.images, product.slug, product.category, meta.heroImg]);
 
   const heroImg = images[img] ?? images[0] ?? null;
 
