@@ -67,12 +67,14 @@
     padding: 96px 0;
   }
 
-  /* Imagen a sangre: rompe el padding del contenedor padre */
+  /* Imagen a sangre: rompe el padding del contenedor padre.
+     align-self:flex-start neutraliza el centrado flex antes del margen.
+     calc(50% - 50vw) = -padding_sección exacto a cualquier ancho mobile. */
   .imageWrap {
     width: 100vw;
     position: relative;
-    left: 50%;
-    margin-left: -50vw;
+    align-self: flex-start;
+    margin-left: calc(50% - 50vw);
     aspect-ratio: 1 / 1;
     min-height: unset;
     padding: 0;
