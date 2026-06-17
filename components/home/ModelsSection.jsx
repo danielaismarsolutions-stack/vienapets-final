@@ -72,7 +72,12 @@ function ModelCard({ model, index, onClick }) {
       className={`${styles.card} ${styles.reveal} ${visible ? styles.visible : ""}`}
       style={{ transitionDelay: `${delay}ms` }}
     >
-      {/* Imagen del modelo: 4/3 desktop, 4/5 mobile (CSS module) */}
+      {/* Contador de modelo: en flujo normal sobre la imagen en mobile, oculto en desktop */}
+      <div className={styles.mobileCounter}>
+        MODELO 0{index} / 03
+      </div>
+
+      {/* Imagen del modelo: 4/3 desktop, 1/1 mobile (CSS module) */}
       <div
         ref={ref}
         className={styles.imageWrap}
