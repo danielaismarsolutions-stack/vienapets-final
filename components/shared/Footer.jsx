@@ -2,6 +2,7 @@
 
 import { Icon } from "./Icon";
 import { useRoute } from "./useRoute";
+import { PRIVACY_URL } from "@/lib/legal-info";
 
 export function Footer() {
   const { go } = useRoute();
@@ -49,7 +50,7 @@ export function Footer() {
       <div style={{ maxWidth: 1400, margin: "60px auto 0", paddingTop: 32, borderTop: "1px solid rgba(74,46,28,.15)", display: "flex", justifyContent: "space-between", fontSize: 11, color: "var(--vp-ink-muted)", letterSpacing: "0.1em", textTransform: "uppercase", flexWrap: "wrap", gap: 16 }}>
         <div>© 2026 Viena Pets · Madrid · Envío gratuito a partir de 60 €</div>
         <div style={{ display: "flex", gap: 24, flexWrap: "wrap" }}>
-          <span style={{ cursor: "pointer" }}>Política de privacidad</span>
+          <span style={{ cursor: "pointer" }} onClick={() => go(PRIVACY_URL)}>Política de privacidad</span>
           <span style={{ cursor: "pointer" }}>Términos</span>
           <span style={{ cursor: "pointer" }}>Envíos</span>
         </div>

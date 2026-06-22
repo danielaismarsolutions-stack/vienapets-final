@@ -35,6 +35,15 @@ Stack: **Next.js 14** (App Router) · JavaScript · CSS modules + tokens · Supa
   genera una **factura PDF automática** (Stripe Invoicing). `/exito` consulta el
   pedido en Supabase por `session_id` y muestra el correlativo.
   Fuera de alcance: emails transaccionales (Sprint 5+), tracking/envío, refunds.
+- **Sprint 5 — Emails transaccionales (Brevo)** ✅ completado.
+  Dos emails automáticos vía **Brevo** (API transaccional, sin SDK): **confirmación
+  de pedido** (disparada por el webhook de Stripe) y **notificación de envío**
+  (disparada por un *Database Webhook* de Supabase cuando Lucía marca el pedido
+  como `shipped`). Tracking de envíos en la tabla **`order_emails`** con
+  `UNIQUE(order_id, email_type)` que garantiza **idempotencia** (nunca se envía
+  dos veces el mismo email). Plantillas HTML responsive con estilos inline.
+  También se publica la **Política de Privacidad** provisional en `/privacidad`.
+  Ver [Emails transaccionales (Sprint 5)](#emails-transaccionales-sprint-5).
 
 ---
 
@@ -57,6 +66,12 @@ cp .env.local.example .env.local
 #   STRIPE_SECRET_KEY=sk_test_...      # solo server-side, nunca al cliente
 #   STRIPE_WEBHOOK_SECRET=whsec_...    # Sprint 4: firma de /api/webhook (server)
 #   NEXT_PUBLIC_SITE_URL=http://localhost:3000   # usado en success/cancel URLs
+# y las de Brevo (Sprint 5, emails transaccionales — solo server-side):
+#   BREVO_API_KEY=xkeysib-...          # nunca al cliente
+#   BREVO_SENDER_EMAIL=noreply@vienapets.com
+#   BREVO_SENDER_NAME=VienaPets
+#   BREVO_REPLY_TO_EMAIL=lucia@vienapets.com
+#   SUPABASE_WEBHOOK_SECRET=...        # secreto compartido del Database Webhook de envío
 
 # 3. Arrancar el dev server
 npm run dev
@@ -259,10 +274,85 @@ Tras desplegar la rama, smoke test end-to-end (test mode):
 
 ---
 
+## Emails transaccionales (Sprint 5)
+
+Dos emails automáticos vía **Brevo** (API transaccional `https://api.brevo.com/v3/smtp/email`,
+con `fetch` nativo, sin SDK). El cliente vive en `lib/brevo/client.js` (`server-only`);
+la `BREVO_API_KEY` **nunca** llega al navegador.
+
+| Email | Disparador | Dónde |
+|-------|-----------|-------|
+| **Confirmación de pedido** | Webhook de Stripe `checkout.session.completed`, tras crear el pedido | `app/api/webhook/route.js` → `sendOrderConfirmation()` |
+| **Notificación de envío** | *Database Webhook* de Supabase cuando `orders.status` pasa a `shipped` | `app/api/internal/order-shipped/route.js` → `sendShipmentNotification()` |
+
+**Plantillas** (`lib/emails/templates/`): `confirmation.js` y `shipment.js` devuelven
+`{ subject, html }`. HTML con **estilos 100% inline**, ancho 600px, fuentes safe
+(Georgia/Arial — las Google Fonts del sitio no cargan en email), paleta marrón
+`#816754`. El footer legal (datos fiscales, dirección postal y link a la política
+de privacidad) sale de `lib/legal-info.js`.
+
+**Idempotencia y auditoría.** Cada envío se registra en la tabla `order_emails`
+(migración `003`) con `UNIQUE(order_id, email_type)`. El envío "reclama" su fila
+con un `INSERT`; si choca contra el constraint, **se aborta sin reenviar**. Así,
+un *resend* del webhook de Stripe o un doble disparo del webhook de Supabase
+**no envían el email dos veces**. Se guarda el `brevo_message_id`, el `status`
+(`sent`/`failed`) y el `error_message` para diagnóstico desde Supabase Studio.
+
+> El email **nunca rompe el flujo de negocio**: `sendOrderConfirmation` /
+> `sendShipmentNotification` no lanzan y el webhook responde igualmente. Pedido > email.
+
+### Configurar el Database Webhook de envío (paso manual de Lucía / admin)
+
+El email de envío se dispara desde Supabase, **no** desde un panel propio (no hay
+panel admin — CLAUDE.md §8). Hay que crear **una vez** un Database Webhook:
+
+1. Genera un secreto y añádelo como variable de entorno en Vercel:
+   `SUPABASE_WEBHOOK_SECRET=<una-cadena-larga-aleatoria>` (Production + Preview).
+   Vuelve a desplegar para que la API route lo lea.
+2. En **Supabase Dashboard → Database → Webhooks → _Create a new hook_**:
+   - **Name:** `order-shipped`
+   - **Table:** `orders`
+   - **Events:** `UPDATE`
+   - **Conditions / filter:** `status = 'shipped'`
+   - **Type:** HTTP Request · **Method:** `POST`
+   - **URL:** `https://vienapets-final.vercel.app/api/internal/order-shipped`
+     (= `NEXT_PUBLIC_SITE_URL` + `/api/internal/order-shipped`)
+   - **HTTP Headers:** `x-webhook-secret` = el mismo valor de `SUPABASE_WEBHOOK_SECRET`
+3. Guarda. La ruta valida el header; si falta o no coincide responde `401`.
+
+**Flujo de Lucía para notificar un envío** (desde Supabase Studio → Table Editor →
+`orders`): edita la fila del pedido, rellena `carrier` (p. ej. `SEUR`) y
+`tracking_number`, y cambia `status` a `shipped`. El webhook llama a la API y se
+envía el email. Si cambia a `shipped` **sin** rellenar `carrier`/`tracking_number`,
+la ruta lo ignora (no envía nada) hasta que estén completos; conviene rellenar
+primero el tracking y dejar `status` para el final.
+
+### Verificación (runbook Sprint 5)
+
+Validado de extremo a extremo contra Brevo y la base de datos real (datos de
+prueba insertados y luego eliminados):
+
+- **Envío real Brevo:** confirmación y envío entregados con `messageId` válido.
+- **Confirmación:** `sendOrderConfirmation` inserta `order_emails`
+  (`email_type='confirmation'`, `status='sent'`, `brevo_message_id`, `sent_at`).
+- **Idempotencia:** segunda llamada (≡ *resend* del webhook) → `skipped (already_exists)`,
+  **no** se envía un segundo email.
+- **Envío sin tracking:** `skipped (missing_tracking)`; con `carrier`+`tracking` → `sent`.
+- **Seguridad del endpoint:** sin header → `401`, header incorrecto → `401`,
+  header correcto → `200`.
+
+> Smoke test en producción (compra real con tarjeta `4242 4242 4242 4242`):
+> requiere el despliegue en Vercel con `SUPABASE_WEBHOOK_SECRET` configurado y el
+> Database Webhook creado (pasos de arriba). Tras la compra, comprueba en `orders`
+> el pedido `VP-2026-XXXX`, en `order_emails` la fila `confirmation`/`sent`, y el
+> email en la bandeja del comprador (revisa spam).
+
+---
+
 ## Pendientes conocidos
 
 - El `Navbar` enlaza a `/cuidado`, que aún no existe (404). Lo mismo ocurría en el legacy. Decidir en próximo sprint: crear página o quitar el link.
-- Páginas legales reales (privacidad, términos, envíos) — el footer las lista como spans sin destino, igual que en el legacy. Pendiente para Sprint posterior.
+- Páginas legales: `/privacidad` ya existe (versión **provisional**, Sprint 5, pendiente de revisión legal definitiva). Faltan **términos** y **envíos**, que el footer aún lista como spans sin destino. Pendiente para Sprint posterior.
 - Migración a `next/image` para optimización de imágenes — fuera del scope de Sprint 1.
 
 ---
