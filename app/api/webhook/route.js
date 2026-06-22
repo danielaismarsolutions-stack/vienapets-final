@@ -17,6 +17,7 @@
 import { NextResponse } from "next/server";
 import { getStripe } from "@/lib/stripe/server";
 import { getServiceSupabase } from "@/lib/supabase/server";
+import { sendOrderConfirmation } from "@/lib/emails/send";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -121,6 +122,15 @@ async function persistPaidOrder(stripe, session) {
         "El pago está hecho; NO se revierte. Revisar manualmente en Supabase Studio."
     );
   }
+
+  // Email de confirmación (Sprint 5). El pedido ya está creado y es lo único
+  // crítico: el envío del email es idempotente (UNIQUE en order_emails) y NUNCA
+  // lanza, así que un fallo de Brevo no rompe el webhook ni provoca un reintento
+  // de Stripe que duplicaría nada.
+  const emailResult = await sendOrderConfirmation(data.order_id);
+  console.log(`[webhook] Email confirmación ${data.order_number}: ${emailResult.status}` +
+    (emailResult.reason ? ` (${emailResult.reason})` : "") +
+    (emailResult.error ? ` — ${emailResult.error}` : ""));
 }
 
 // Pago asíncrono fallido: registramos el pedido como 'payment_failed' para que
