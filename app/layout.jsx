@@ -7,6 +7,7 @@ import { Navbar } from "@/components/shared/Navbar";
 import { Footer } from "@/components/shared/Footer";
 import { CartDrawer } from "@/components/shared/CartDrawer";
 import { PageFade } from "@/components/shared/PageFade";
+import { CookieBanner } from "@/components/CookieBanner";
 
 // Tipografías de marca cargadas vía next/font/google.
 // Cada una expone su CSS variable, que tokens.css consume en --font-* .
@@ -67,6 +68,7 @@ export default function RootLayout({ children }) {
           <Suspense fallback={null}>
             <CartDrawer />
           </Suspense>
+          <CookieBanner />
         </Providers>
       </body>
     </html>
