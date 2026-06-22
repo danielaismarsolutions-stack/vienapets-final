@@ -2,7 +2,8 @@
 
 import { Icon } from "./Icon";
 import { useRoute } from "./useRoute";
-import { PRIVACY_URL } from "@/lib/legal-info";
+import { LEGAL_NAME, LEGAL_NIF } from "@/lib/legal-info";
+import { CookiePreferencesButton } from "@/components/CookiePreferencesButton";
 
 export function Footer() {
   const { go } = useRoute();
@@ -48,16 +49,26 @@ export function Footer() {
       </div>
 
       <div style={{ maxWidth: 1400, margin: "60px auto 0", paddingTop: 32, borderTop: "1px solid rgba(74,46,28,.15)", display: "flex", justifyContent: "space-between", fontSize: 11, color: "var(--vp-ink-muted)", letterSpacing: "0.1em", textTransform: "uppercase", flexWrap: "wrap", gap: 16 }}>
-        <div>© 2026 Viena Pets · Madrid · Envío gratuito a partir de 60 €</div>
-        <div style={{ display: "flex", gap: 24, flexWrap: "wrap" }}>
-          <span style={{ cursor: "pointer" }} onClick={() => go(PRIVACY_URL)}>Política de privacidad</span>
-          <span style={{ cursor: "pointer" }}>Términos</span>
-          <span style={{ cursor: "pointer" }}>Envíos</span>
+        <div>© 2026 {LEGAL_NAME} · NIF {LEGAL_NIF}</div>
+        <div style={{ display: "flex", gap: 24, flexWrap: "wrap", alignItems: "center" }}>
+          <span style={legalLinkStyle} onClick={() => go("/aviso-legal")}>Aviso legal</span>
+          <span style={legalLinkStyle} onClick={() => go("/privacidad")}>Política de privacidad</span>
+          <span style={legalLinkStyle} onClick={() => go("/condiciones")}>Condiciones de venta</span>
+          <span style={legalLinkStyle} onClick={() => go("/cookies")}>Política de cookies</span>
+          <CookiePreferencesButton style={legalLinkStyle} />
+          <a href="https://ec.europa.eu/consumers/odr" target="_blank" rel="noopener noreferrer" style={{ ...legalLinkStyle, color: "inherit", textDecoration: "none" }}>Resolución de litigios (ODR)</a>
         </div>
       </div>
     </footer>
   );
 }
+
+const legalLinkStyle = {
+  cursor: "pointer",
+  letterSpacing: "0.1em",
+  textTransform: "uppercase",
+  fontSize: 11,
+};
 
 function FooterCol({ title, links, go }) {
   return (
