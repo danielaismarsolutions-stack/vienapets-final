@@ -351,8 +351,6 @@ prueba insertados y luego eliminados):
 
 ## Pendientes conocidos
 
-- El `Navbar` enlaza a `/cuidado`, que aún no existe (404). Lo mismo ocurría en el legacy. Decidir en próximo sprint: crear página o quitar el link.
-- Páginas legales: `/privacidad` ya existe (versión **provisional**, Sprint 5, pendiente de revisión legal definitiva). Faltan **términos** y **envíos**, que el footer aún lista como spans sin destino. Pendiente para Sprint posterior.
 - Migración a `next/image` para optimización de imágenes — fuera del scope de Sprint 1.
 
 ---
