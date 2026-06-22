@@ -44,6 +44,14 @@ Stack: **Next.js 14** (App Router) · JavaScript · CSS modules + tokens · Supa
   dos veces el mismo email). Plantillas HTML responsive con estilos inline.
   También se publica la **Política de Privacidad** provisional en `/privacidad`.
   Ver [Emails transaccionales (Sprint 5)](#emails-transaccionales-sprint-5).
+- **Sprint 6 — Páginas legales y banner de cookies** ✅ completado.
+  Cuatro páginas legales con texto **provisional** (banner de aviso en todas):
+  `/aviso-legal` (LSSI-CE), `/condiciones` (RDL 1/2007), `/privacidad` (RGPD,
+  ampliada) y `/cookies`. **Banner de consentimiento** propio (sin librerías
+  externas) con **Google Consent Mode v2**: por defecto todo `denied`, persistencia
+  en `localStorage` y botón «Preferencias de cookies» en el footer. **No** se carga
+  Google Analytics todavía: solo queda la infraestructura lista. El footer enlaza
+  las 4 páginas + ODR. Ver [Páginas legales y cookies (Sprint 6)](#páginas-legales-y-cookies-sprint-6).
 
 ---
 
@@ -274,6 +282,62 @@ Tras desplegar la rama, smoke test end-to-end (test mode):
 
 ---
 
+## Páginas legales y cookies (Sprint 6)
+
+Cuatro páginas legales bajo `app/`, todas con **texto provisional** y un **banner
+de aviso** obligatorio (`⚠️ Documento provisional pendiente de revisión legal`):
+
+| Ruta | Contenido | Base normativa |
+|------|-----------|----------------|
+| `/aviso-legal` | Identificación del titular, actividad, propiedad intelectual, responsabilidad | LSSI-CE (Ley 34/2002) |
+| `/condiciones` | Compra, precios con IVA, pagos, envíos, desistimiento 30 días, garantía 3 años, ODR | RDL 1/2007 |
+| `/privacidad` | Responsable, datos, finalidades, encargados, derechos, cookies | RGPD / LOPDGDD |
+| `/cookies` | Tipos de cookies, tabla de uso actual, gestión del consentimiento | LSSI-CE art. 22 |
+
+- **Datos del titular**: todas leen de `lib/legal-info.js` (fuente única; sin env vars).
+- **Estética coherente**: `components/legal/LegalUI.jsx` aporta `LegalPage`,
+  `ProvisionalBanner`, `H2/H3/P/UL`, `LegalLink` y `LegalTable` (Cormorant + Jost,
+  paleta marrón, container 720px).
+- **Encargados de tratamiento** (privacidad §5): SmartFlow Labs (operador del sitio)
+  con Brevo como **sub-encargado**; además Stripe, Supabase y Vercel.
+
+### Banner de cookies + Consent Mode v2
+
+- `components/CookieBanner.jsx` (`'use client'`): banner **discreto** en la parte
+  inferior, **no bloqueante** (sin backdrop). Botones **Aceptar todo** / **Rechazar
+  todo** / **Personalizar** (toggles por categoría; *Esenciales* forzadas ON).
+- `lib/consent.js`: lógica + **Google Consent Mode v2**. Por defecto todo `denied`
+  (`ad_storage`, `ad_user_data`, `ad_personalization`, `analytics_storage`); al
+  elegir, se emite `gtag('consent','update', …)`. La elección se guarda en
+  `localStorage` bajo `vienapets-consent-v1` (`{ analytics, marketing, timestamp }`).
+- **No se carga Google Analytics todavía.** `lib/consent.js` solo prepara la cola
+  estándar de Consent Mode (`dataLayer`/`gtag` shim, sin descargar `gtag.js`).
+  Cuando se integre GA en un sprint posterior, recogerá el consentimiento ya
+  almacenado sin tocar este código.
+- **Reabrir preferencias**: `components/CookiePreferencesButton.jsx` (en el footer)
+  dispara el evento `vienapets:open-cookie-preferences`, que escucha el banner.
+
+### Cuando lleguen los textos definitivos (Iubenda u otro)
+
+Los textos actuales son **provisionales**. Para sustituirlos por los definitivos
+(generados por un proveedor como Iubenda, o redactados por asesoría legal):
+
+1. **Datos fiscales**: si cambian, edita únicamente `lib/legal-info.js`; se propagan
+   a las 4 páginas y al footer de los emails.
+2. **Texto de cada página**: reemplaza el contenido JSX de
+   `app/<pagina>/page.jsx`. Si el proveedor entrega HTML/embed, puedes renderizarlo
+   dentro de `LegalPage` (mantén el `title` y `updated`).
+3. **Quitar el aviso provisional**: una vez revisados los textos, elimina
+   `<ProvisionalBanner />` (o deja de pasarlo) — está centralizado en
+   `components/legal/LegalUI.jsx`, así que el cambio es único. **No** lo quites
+   antes de tener los textos validados.
+4. **Cookies reales**: cuando se active GA/Pixel, actualiza la tabla de `/cookies`
+   con las cookies de terceros y carga el script **solo** si el consentimiento
+   correspondiente está `granted` (leer con `readConsent()` de `lib/consent.js`).
+5. Actualiza la fecha `LAST_UPDATED` de cada página.
+
+---
+
 ## Emails transaccionales (Sprint 5)
 
 Dos emails automáticos vía **Brevo** (API transaccional `https://api.brevo.com/v3/smtp/email`,
@@ -351,8 +415,6 @@ prueba insertados y luego eliminados):
 
 ## Pendientes conocidos
 
-- El `Navbar` enlaza a `/cuidado`, que aún no existe (404). Lo mismo ocurría en el legacy. Decidir en próximo sprint: crear página o quitar el link.
-- Páginas legales: `/privacidad` ya existe (versión **provisional**, Sprint 5, pendiente de revisión legal definitiva). Faltan **términos** y **envíos**, que el footer aún lista como spans sin destino. Pendiente para Sprint posterior.
 - Migración a `next/image` para optimización de imágenes — fuera del scope de Sprint 1.
 
 ---
