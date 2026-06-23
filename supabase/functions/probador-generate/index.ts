@@ -55,7 +55,9 @@ Deno.serve(async (req) => {
     const refBase64 = btoa(String.fromCharCode(...new Uint8Array(refBuf)))
     const refMime = refResp.headers.get('content-type') || 'image/webp'
 
-    // Limpiar prefijo data: si viene
+    // Extraer MIME real del prefijo data: si viene; default razonable jpeg
+    const mimeMatch = image_base64.match(/^data:(image\/(?:jpeg|jpg|png|webp));base64,/)
+    const clientMime = mimeMatch ? mimeMatch[1].replace('image/jpg', 'image/jpeg') : 'image/jpeg'
     const cleanImage = image_base64.replace(/^data:image\/\w+;base64,/, '')
 
     // 3. Llamar a Gemini 2.5 Flash Image
@@ -75,7 +77,7 @@ Deno.serve(async (req) => {
           contents: [{
             parts: [
               { text: prompt },
-              { inline_data: { mime_type: 'image/jpeg', data: cleanImage } },
+              { inline_data: { mime_type: clientMime, data: cleanImage } },
               { inline_data: { mime_type: refMime, data: refBase64 } },
             ],
           }],

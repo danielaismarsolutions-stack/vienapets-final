@@ -33,6 +33,21 @@ Deno.serve(async (req) => {
     let remaining_uses = 3
     if (existing) {
       remaining_uses = Math.max(0, existing.max_uses - existing.uses_count)
+
+      // Si el usuario sube de nivel de consentimiento (false -> true), registrarlo con timestamp
+      const updates: Record<string, unknown> = {}
+      if (newsletter_consent === true && !existing.newsletter_consent) {
+        updates.newsletter_consent = true
+        updates.newsletter_consent_at = new Date().toISOString()
+      }
+      if (marketing_image_consent === true && !existing.marketing_image_consent) {
+        updates.marketing_image_consent = true
+        updates.marketing_image_consent_at = new Date().toISOString()
+      }
+      if (Object.keys(updates).length > 0) {
+        const { error: updErr } = await supabase.from('probador_leads').update(updates).eq('email', email)
+        if (updErr) console.error('Consent update error:', updErr)
+      }
     } else {
       const { error: insertErr } = await supabase.from('probador_leads').insert({
         email,
