@@ -4,7 +4,6 @@ import Image from "next/image";
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useRoute } from "@/components/shared/useRoute";
-import { useCart } from "@/components/shared/CartProvider";
 import { useIsMobile } from "@/components/shared/useIsMobile";
 import { useTilt } from "@/lib/useTilt";
 import { LQIP_CREAM } from "@/lib/lqip";
@@ -25,15 +24,6 @@ const TYPE_LABEL = {
   correa: "Correa",
   portabolsas: "Portabolsas",
   conjunto: "Conjunto completo",
-};
-
-// Categoría usada por el carrito (Sprint 1) — se mantiene la enum del legacy
-// para no romper el flujo del CartProvider hasta Sprint 3.
-const CART_CATEGORY = {
-  arnes: "harness",
-  correa: "leash",
-  portabolsas: "bag",
-  conjunto: "conjunto",
 };
 
 export function ShopPage({ products = [], initialCategory = null }) {
@@ -105,12 +95,9 @@ export function ShopPage({ products = [], initialCategory = null }) {
 function ShopCard({ product, onClick }) {
   const [hover, setHover] = useState(false);
   const isMobile = useIsMobile();
-  const { add } = useCart();
   const { ref, onMouseMove, onMouseLeave } = useTilt(8);
   const productImg = product.image || product.meta?.heroImg || null;
-  const swatch = product.meta?.hex?.primary ?? "#816754";
   const typeLabel = TYPE_LABEL[product.category] ?? "";
-  const cartCategory = CART_CATEGORY[product.category] ?? product.category;
   const agotado = product.in_stock === false;
 
   return (
@@ -173,18 +160,8 @@ function ShopCard({ product, onClick }) {
           }}>
             <button onClick={(e) => {
               e.stopPropagation();
-              add({
-                modelId: product.model,
-                slug: product.slug,
-                name: product.name,
-                type: typeLabel,
-                price: product.price_eur,
-                img: productImg,
-                swatch,
-                size: product.category === "arnes" ? "M" : null,
-                category: cartCategory,
-              });
-            }} className="vp-btn full small" style={{ background: "var(--vp-paper)", color: "var(--vp-brown)", border: "1px solid var(--vp-brown)" }}>Añadir a la cesta</button>
+              onClick(e);
+            }} className="vp-btn full small" style={{ background: "var(--vp-paper)", color: "var(--vp-brown)", border: "1px solid var(--vp-brown)" }}>Ver producto</button>
           </div>
         )}
       </div>
