@@ -327,10 +327,11 @@ Los textos actuales son **provisionales**. Para sustituirlos por los definitivos
 2. **Texto de cada página**: reemplaza el contenido JSX de
    `app/<pagina>/page.jsx`. Si el proveedor entrega HTML/embed, puedes renderizarlo
    dentro de `LegalPage` (mantén el `title` y `updated`).
-3. **Quitar el aviso provisional**: una vez revisados los textos, elimina
-   `<ProvisionalBanner />` (o deja de pasarlo) — está centralizado en
-   `components/legal/LegalUI.jsx`, así que el cambio es único. **No** lo quites
-   antes de tener los textos validados.
+3. **Aviso provisional**: desde el Sprint 7 las páginas legales ya **no** muestran
+   el banner provisional (la marca lanza con estos textos). El componente
+   `ProvisionalBanner` se conserva en `components/legal/LegalUI.jsx` como pieza
+   reutilizable por si en el futuro hay que volver a marcar algún documento como
+   provisional; basta con volver a renderizarlo dentro de `LegalPage`.
 4. **Cookies reales**: cuando se active GA/Pixel, actualiza la tabla de `/cookies`
    con las cookies de terceros y carga el script **solo** si el consentimiento
    correspondiente está `granted` (leer con `readConsent()` de `lib/consent.js`).

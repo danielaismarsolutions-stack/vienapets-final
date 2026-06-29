@@ -8,9 +8,10 @@ import { LEGAL_CONTACT_EMAIL } from "@/lib/legal-info";
 // container de 720px. Son componentes de servidor (sin hooks): los enlaces
 // internos usan <a href> normal (navegación completa, suficiente para legales).
 //
-// IMPORTANTE: el banner provisional es obligatorio en TODAS las páginas legales
-// mientras los textos no estén revisados por asesoría (CLAUDE.md §9). No se
-// elimina sin sustituir por textos definitivos.
+// NOTA: el componente ProvisionalBanner se conserva como pieza reutilizable por
+// si en el futuro hay que volver a marcar algún documento como provisional. A
+// partir del Sprint 7 ya no se renderiza en las páginas legales (la marca lanza
+// con estos textos), pero se mantiene disponible para reutilizar.
 
 const BROWN = "var(--vp-brown)";
 
@@ -165,8 +166,7 @@ export function LegalTable({ head, rows }) {
 
 /**
  * Envoltorio estándar de una página legal: fondo crema, container 720px,
- * titular Cormorant, banner provisional arriba, fecha de actualización, el
- * contenido y un banner provisional sobrio al pie.
+ * titular Cormorant, fecha de actualización y el contenido.
  */
 export function LegalPage({ title, updated, children }) {
   return (
@@ -186,8 +186,6 @@ export function LegalPage({ title, updated, children }) {
           {title}
         </h1>
 
-        <ProvisionalBanner />
-
         {updated && (
           <p style={{ fontSize: 14, color: "var(--vp-ink-muted)", margin: "0 0 8px", fontStyle: "italic" }}>
             Última actualización: {updated}
@@ -195,8 +193,6 @@ export function LegalPage({ title, updated, children }) {
         )}
 
         {children}
-
-        <ProvisionalBanner sober />
       </article>
     </main>
   );
