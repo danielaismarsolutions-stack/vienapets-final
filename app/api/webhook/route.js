@@ -88,7 +88,12 @@ async function persistPaidOrder(stripe, session) {
   });
   const lineItems = full.line_items?.data ?? [];
 
-  const items = await mapLineItemsToVariants(lineItems);
+  // Manifiesto de conjuntos escrito por /api/checkout (modelo:talla:cantidad,...).
+  // Stripe no transporta la talla en una line item de precio fijo, así que el
+  // descuento de los componentes del conjunto se reconstruye desde aquí.
+  const conjuntos = parseConjManifest(full.metadata?.conj);
+
+  const items = await buildOrderItems(lineItems, conjuntos);
 
   const supabase = getServiceSupabase();
   const { data, error } = await supabase.rpc("process_paid_order", {
@@ -158,50 +163,139 @@ async function persistFailedOrder(session) {
   }
 }
 
-// Mapea cada line_item de Stripe a su variante en Supabase por stripe_price_id
-// (acordado en Paso 1: no se toca el flujo de precios). Devuelve el array que
-// consume la RPC: {variant_id, product_name, size, price_cents, quantity}.
-async function mapLineItemsToVariants(lineItems) {
-  const priceIds = [
-    ...new Set(lineItems.map((li) => li.price?.id).filter(Boolean)),
-  ];
-  if (priceIds.length === 0) return [];
+// Parsea el manifiesto de conjuntos "modelo:talla:cantidad,..." a objetos
+// {model, size, qty}. Tolerante a entradas vacías o malformadas.
+function parseConjManifest(raw) {
+  if (!raw) return [];
+  return String(raw)
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean)
+    .map((part) => {
+      const [model, size, qty] = part.split(":");
+      return { model, size, qty: Math.max(1, parseInt(qty, 10) || 1) };
+    })
+    .filter((m) => m.model && m.size);
+}
 
+// Construye el array de items que consume la RPC process_paid_order. Cada item:
+//   { variant_id, product_name, size, price_cents, quantity, stock_targets }
+// stock_targets es la lista de variantes a descontar:
+//   · Producto suelto → la propia variante.
+//   · Conjunto        → arnés (talla elegida) + correa + portabolsas del modelo.
+// Las líneas de conjunto se reconstruyen desde el manifiesto (la talla no viaja
+// en Stripe), por eso se EXCLUYEN del mapeo por line_item para no duplicarlas.
+async function buildOrderItems(lineItems, conjuntos) {
   const supabase = getServiceSupabase();
-  const { data: variants, error } = await supabase
-    .from("variants")
-    .select("id, size, stripe_price_id, product:products(name, price_cents)")
-    .in("stripe_price_id", priceIds);
+  const items = [];
 
-  if (error) {
-    throw new Error(`No se pudieron mapear variantes: ${error.message}`);
+  // --- 1) Productos sueltos: mapeo line_item → variante por stripe_price_id ---
+  const priceIds = [...new Set(lineItems.map((li) => li.price?.id).filter(Boolean))];
+  let byPrice = new Map();
+  if (priceIds.length > 0) {
+    const { data: variants, error } = await supabase
+      .from("variants")
+      .select("id, size, stripe_price_id, product:products(name, price_cents, category)")
+      .in("stripe_price_id", priceIds);
+    if (error) {
+      throw new Error(`No se pudieron mapear variantes: ${error.message}`);
+    }
+    byPrice = new Map((variants || []).map((v) => [v.stripe_price_id, v]));
   }
 
-  const byPrice = new Map((variants || []).map((v) => [v.stripe_price_id, v]));
-
-  return lineItems.map((li) => {
+  for (const li of lineItems) {
     const v = byPrice.get(li.price?.id);
+    const quantity = li.quantity ?? 1;
     if (!v) {
       // No debería ocurrir (todo price proviene del catálogo). Lo registramos
-      // y guardamos el item sin variant_id: el pedido conserva el histórico,
-      // pero no se descuenta stock de algo que no identificamos.
+      // y guardamos el item sin variant_id ni descuento de stock.
       console.warn(`[webhook] price_id ${li.price?.id} sin variante asociada en Supabase.`);
-      return {
+      items.push({
         variant_id: null,
         product_name: li.description ?? "Producto",
         size: null,
         price_cents: li.price?.unit_amount ?? null,
-        quantity: li.quantity ?? 1,
-      };
+        quantity,
+        stock_targets: [],
+      });
+      continue;
     }
-    return {
+    // Los conjuntos se gestionan por manifiesto (descuento de componentes). Si
+    // hay manifiesto, se omite aquí la línea del bundle para no duplicarla. Si
+    // por algún motivo faltara (metadata perdida/truncada), NO se descarta: se
+    // registra como item normal —descontará el stock del propio SKU del conjunto
+    // como red de seguridad— para no perder el pedido del histórico.
+    if (v.product?.category === "conjunto" && conjuntos.length > 0) continue;
+    items.push({
       variant_id: v.id,
       product_name: v.product?.name ?? li.description ?? "Producto",
       size: v.size ?? null,
       price_cents: v.product?.price_cents ?? li.price?.unit_amount ?? null,
-      quantity: li.quantity ?? 1,
-    };
-  });
+      quantity,
+      stock_targets: [{ variant_id: v.id, quantity }],
+    });
+  }
+
+  // --- 2) Conjuntos: order_item del bundle + descuento de los 3 componentes ---
+  if (conjuntos.length > 0) {
+    const models = [...new Set(conjuntos.map((m) => m.model))];
+    const { data: prods, error } = await supabase
+      .from("products")
+      .select("id, name, model, category, price_cents, variants(id, size)")
+      .eq("active", true)
+      .in("model", models)
+      .in("category", ["arnes", "correa", "portabolsas", "conjunto"]);
+    if (error) {
+      throw new Error(`No se pudieron resolver los componentes del conjunto: ${error.message}`);
+    }
+
+    const conjByModel = new Map();    // model -> {variantId, name, price_cents}
+    const harnessByKey = new Map();   // `${model}:${size}` -> variantId
+    const leashByModel = new Map();   // model -> variantId
+    const bagByModel = new Map();     // model -> variantId
+    for (const p of prods || []) {
+      if (p.category === "conjunto") {
+        const v = (p.variants || [])[0];
+        conjByModel.set(p.model, { variantId: v?.id ?? null, name: p.name, price_cents: p.price_cents });
+      } else if (p.category === "arnes") {
+        for (const v of p.variants || []) {
+          if (v.size) harnessByKey.set(`${p.model}:${v.size}`, v.id);
+        }
+      } else if (p.category === "correa") {
+        leashByModel.set(p.model, (p.variants || [])[0]?.id ?? null);
+      } else if (p.category === "portabolsas") {
+        bagByModel.set(p.model, (p.variants || [])[0]?.id ?? null);
+      }
+    }
+
+    for (const m of conjuntos) {
+      const conj = conjByModel.get(m.model);
+      const targets = [
+        { variant_id: harnessByKey.get(`${m.model}:${m.size}`) ?? null, quantity: m.qty },
+        { variant_id: leashByModel.get(m.model) ?? null, quantity: m.qty },
+        { variant_id: bagByModel.get(m.model) ?? null, quantity: m.qty },
+      ].filter((t) => t.variant_id);
+
+      if (targets.length < 3) {
+        // Falta algún componente en el catálogo: no podemos descontar todo. El
+        // pago ya está hecho; registramos para revisión manual y continuamos.
+        console.warn(
+          `[webhook] Conjunto ${m.model} talla ${m.size}: sólo ${targets.length}/3 componentes resueltos. Revisar catálogo.`
+        );
+      }
+
+      items.push({
+        variant_id: conj?.variantId ?? null,
+        product_name: conj?.name ?? `Conjunto ${m.model}`,
+        size: m.size,
+        price_cents: conj?.price_cents ?? null,
+        quantity: m.qty,
+        stock_targets: targets,
+      });
+    }
+  }
+
+  return items;
 }
 
 // Normaliza la dirección de envío de la sesión a un jsonb estable. Stripe ha
