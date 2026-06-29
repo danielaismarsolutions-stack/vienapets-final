@@ -15,7 +15,7 @@
 // Next 14 App Router: runtime nodejs (el SDK de Stripe no corre en edge) y
 // force-dynamic para no cachear. El cuerpo se lee con req.text().
 import { NextResponse } from "next/server";
-import { getStripe } from "@/lib/stripe/server";
+import { getStripe, priceIdOf, STRIPE_PRICE_COLUMN } from "@/lib/stripe/server";
 import { getServiceSupabase } from "@/lib/supabase/server";
 import { sendOrderConfirmation } from "@/lib/emails/send";
 
@@ -193,14 +193,16 @@ async function buildOrderItems(lineItems, conjuntos) {
   const priceIds = [...new Set(lineItems.map((li) => li.price?.id).filter(Boolean))];
   let byPrice = new Map();
   if (priceIds.length > 0) {
+    // Los price IDs del evento provienen de la sesión de Checkout, que usa la
+    // columna del modo activo (test/live). Mapeamos por esa misma columna.
     const { data: variants, error } = await supabase
       .from("variants")
-      .select("id, size, stripe_price_id, product:products(name, price_cents, category)")
-      .in("stripe_price_id", priceIds);
+      .select("id, size, stripe_price_id, stripe_price_id_live, product:products(name, price_cents, category)")
+      .in(STRIPE_PRICE_COLUMN, priceIds);
     if (error) {
       throw new Error(`No se pudieron mapear variantes: ${error.message}`);
     }
-    byPrice = new Map((variants || []).map((v) => [v.stripe_price_id, v]));
+    byPrice = new Map((variants || []).map((v) => [priceIdOf(v), v]));
   }
 
   for (const li of lineItems) {
