@@ -40,7 +40,11 @@ export function CheckoutPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          items: items.map((it) => ({ variantId: it.variantId, qty: it.qty })),
+          items: items.map((it) => ({
+            variantId: it.variantId,
+            qty: it.qty,
+            harnessSize: it.harnessSize ?? null,
+          })),
         }),
       });
       const data = await res.json();

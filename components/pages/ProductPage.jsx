@@ -35,6 +35,10 @@ export function ProductPage({ product }) {
   const isMobile = useIsMobile();
   const meta = product.meta ?? {};
   const isArnes = product.category === "arnes";
+  const isConjunto = product.category === "conjunto";
+  // Arnés y Conjunto eligen talla. En el conjunto la talla es la del arnés:
+  // determina de qué arnés del modelo se descontará stock al comprar.
+  const needsSize = isArnes || isConjunto;
 
   // Estado: índice de imagen + variante seleccionada.
   const [img, setImg] = useState(0);
@@ -79,15 +83,34 @@ export function ProductPage({ product }) {
     return m;
   }, [product.variants]);
 
+  // Disponibilidad por talla. Arnés: stock de su propia variante. Conjunto:
+  // unidades de set que se pueden formar con los componentes (arnés talla +
+  // correa + portabolsas), que llega como product.conjunto_sizes desde el server.
+  const availableBySize = useMemo(() => {
+    const m = new Map();
+    if (isArnes) {
+      for (const s of ALL_SIZES) m.set(s, (variantBySize.get(s)?.in_stock === true));
+    } else if (isConjunto) {
+      const sizes = product.conjunto_sizes ?? {};
+      for (const s of ALL_SIZES) m.set(s, (sizes[s] ?? 0) > 0);
+    }
+    return m;
+  }, [isArnes, isConjunto, variantBySize, product.conjunto_sizes]);
+
   const initialSize = useMemo(() => {
-    if (!isArnes) return null;
-    const inStock = ALL_SIZES.find((s) => variantBySize.get(s)?.in_stock);
+    if (!needsSize) return null;
+    const inStock = ALL_SIZES.find((s) => availableBySize.get(s));
     return inStock ?? "M";
-  }, [isArnes, variantBySize]);
+  }, [needsSize, availableBySize]);
 
   const [size, setSize] = useState(initialSize);
+  // El conjunto se vende con el SKU del bundle (variante talla única = null),
+  // que aporta el precio y el stripe_price_id; el stock se descuenta luego de
+  // los componentes. El arnés usa la variante de la talla elegida.
   const currentVariant = isArnes ? variantBySize.get(size) : variantBySize.get(null);
-  const canBuy = currentVariant?.in_stock === true;
+  const canBuy = isConjunto
+    ? (availableBySize.get(size) === true && !!currentVariant)
+    : currentVariant?.in_stock === true;
 
   // Fuente de verdad: Supabase (product.images). Fallback: PRODUCT_IMAGES map.
   // Si Supabase sólo tiene 1 imagen, completamos con la galería del map.
@@ -144,7 +167,11 @@ export function ProductPage({ product }) {
       price_cents: product.price_cents, // céntimos para el cálculo del pedido
       img: heroImg,
       swatch,
-      size: isArnes ? size : null,
+      // size: talla mostrada en la cesta (arnés y conjunto).
+      size: needsSize ? size : null,
+      // harnessSize: talla del arnés del conjunto; viaja hasta el webhook para
+      // descontar el arnés correcto del modelo. null para productos sueltos.
+      harnessSize: isConjunto ? size : null,
       category: cartCategory,
       sku: currentVariant.sku ?? null,
     });
@@ -270,10 +297,10 @@ export function ProductPage({ product }) {
 
             <div style={{ height: 1, background: "rgba(74,46,28,.15)", margin: "36px 0 28px" }} />
 
-            {isArnes && (
+            {needsSize && (
               <div style={{ marginBottom: 28 }}>
                 <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 12, alignItems: "center", flexWrap: "wrap", gap: 8 }}>
-                  <span className="vp-eyebrow">Talla · {size ?? "—"}</span>
+                  <span className="vp-eyebrow">{isConjunto ? "Talla del arnés" : "Talla"} · {size ?? "—"}</span>
                   <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
                     <a onClick={openSizeModal} style={{ fontSize: 11, letterSpacing: ".2em", textTransform: "uppercase", borderBottom: "1px solid var(--vp-brown)", color: "var(--vp-brown)", cursor: "pointer" }}>Guía de tallas</a>
                     <a onClick={() => go("/guia-de-tallas")} style={{ fontSize: 11, letterSpacing: ".2em", textTransform: "uppercase", borderBottom: "1px solid var(--vp-brown)", color: "var(--vp-brown)", cursor: "pointer" }}>Ver completa</a>
@@ -282,8 +309,7 @@ export function ProductPage({ product }) {
                 </div>
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 8 }}>
                   {ALL_SIZES.map((s) => {
-                    const v = variantBySize.get(s);
-                    const out = !v || !v.in_stock;
+                    const out = !availableBySize.get(s);
                     const selected = size === s;
                     return (
                       <button
@@ -319,7 +345,7 @@ export function ProductPage({ product }) {
               </div>
             )}
 
-            {!isArnes && currentVariant && !canBuy && (
+            {!needsSize && currentVariant && !canBuy && (
               <div style={{ marginBottom: 20, padding: "10px 14px", background: "var(--vp-cream-soft)", color: "var(--vp-brown)", fontSize: 12, letterSpacing: ".2em", textTransform: "uppercase" }}>
                 Agotado temporalmente
               </div>

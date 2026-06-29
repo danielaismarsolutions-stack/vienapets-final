@@ -48,9 +48,14 @@ export function CartProvider({ children }) {
   }, [items, hydrated]);
 
   // Identidad de línea: el variantId es único por variante (talla incluida).
-  // Fallback al esquema legacy (modelo-categoría-talla) si no viniera.
+  // Excepción: el conjunto usa el mismo variantId (SKU del bundle) para todas
+  // las tallas, así que añadimos harnessSize para separar líneas (M vs L).
+  // Sólo se añade cuando existe, para no alterar las claves de productos sueltos.
+  // Fallback al esquema legacy (modelo-categoría-talla) si no viniera variantId.
   const itemKey = (item) =>
-    item.variantId || `${item.modelId}-${item.category || "unknown"}-${item.size || ""}`;
+    item.variantId
+      ? item.variantId + (item.harnessSize ? `::${item.harnessSize}` : "")
+      : `${item.modelId}-${item.category || "unknown"}-${item.size || ""}`;
 
   const add = (item) => {
     const key = itemKey(item);
