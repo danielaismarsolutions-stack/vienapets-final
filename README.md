@@ -203,6 +203,54 @@ pública no responde, el producto se crea sin imagen (no bloquea).
 
 ---
 
+## Switch a Stripe LIVE (Sprint 7)
+
+El catálogo existe en **Stripe test** y en **Stripe live** a la vez. En Supabase
+hay columnas duplicadas:
+
+| Dato            | Columna TEST         | Columna LIVE              |
+| --------------- | -------------------- | ------------------------- |
+| Stripe Product  | `stripe_product_id`  | `stripe_product_id_live`  |
+| Stripe Price    | `stripe_price_id`    | `stripe_price_id_live`    |
+
+Las columnas `_live` se rellenan con `node scripts/sync-products-to-stripe-live.js`
+(usa `STRIPE_SECRET_KEY_LIVE`; ver cabecera del script).
+
+Qué columna lee la app lo decide la variable **`NEXT_PUBLIC_STRIPE_MODE`** a
+través del helper `lib/stripe/mode.js`:
+
+```js
+STRIPE_MODE    = process.env.NEXT_PUBLIC_STRIPE_MODE === 'live' ? 'live' : 'test';
+PRICE_COLUMN   = STRIPE_MODE === 'live' ? 'stripe_price_id_live'   : 'stripe_price_id';
+PRODUCT_COLUMN = STRIPE_MODE === 'live' ? 'stripe_product_id_live' : 'stripe_product_id';
+```
+
+- Por defecto (variable **ausente** o cualquier valor que no sea exactamente
+  `live`) la app opera en **test**. El switch es deliberadamente explícito.
+- Las queries usan alias PostgREST (`stripe_price_id:<columna>`), así que el
+  resto del código sigue leyendo `v.stripe_price_id` sin cambios.
+
+### Procedimiento de switch (hacer cuando se quiera pasar a producción)
+
+> ⚠️ NO basta con cambiar `NEXT_PUBLIC_STRIPE_MODE`: hay que cambiar también las
+> claves de Stripe y el secreto del webhook, o la app intentará cobrar en live
+> con price_ids/claves de test (y fallará).
+
+En **Vercel → Project → Settings → Environment Variables** (Production):
+
+1. `NEXT_PUBLIC_STRIPE_MODE` = `live`
+2. `STRIPE_SECRET_KEY` = la clave **`sk_live_…`**
+3. `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` = la clave **`pk_live_…`**
+4. `STRIPE_WEBHOOK_SECRET` = el *signing secret* del endpoint **live**
+   (Dashboard live → Developers → Webhooks → endpoint de `/api/webhook`).
+5. **Redeploy** para que las variables surtan efecto.
+
+Para **volver a test** (rollback): revertir las 4 variables a sus valores
+`test` / quitar `NEXT_PUBLIC_STRIPE_MODE` y redeploy. Los datos de ambos modos
+conviven en Supabase, no se pierde nada.
+
+---
+
 ## Cómo probar el checkout (Sprint 3)
 
 1. `npm run dev` y abre la tienda. Añade productos a la cesta y ve a `/carrito`.

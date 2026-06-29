@@ -18,6 +18,7 @@ import { NextResponse } from "next/server";
 import { getStripe } from "@/lib/stripe/server";
 import { getServiceSupabase } from "@/lib/supabase/server";
 import { sendOrderConfirmation } from "@/lib/emails/send";
+import { PRICE_COLUMN } from "@/lib/stripe/mode";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -195,8 +196,10 @@ async function buildOrderItems(lineItems, conjuntos) {
   if (priceIds.length > 0) {
     const { data: variants, error } = await supabase
       .from("variants")
-      .select("id, size, stripe_price_id, product:products(name, price_cents, category)")
-      .in("stripe_price_id", priceIds);
+      // Alias para que `v.stripe_price_id` apunte a la columna del modo activo;
+      // el filtro .in() NO admite alias, por eso usa PRICE_COLUMN directamente.
+      .select(`id, size, stripe_price_id:${PRICE_COLUMN}, product:products(name, price_cents, category)`)
+      .in(PRICE_COLUMN, priceIds);
     if (error) {
       throw new Error(`No se pudieron mapear variantes: ${error.message}`);
     }

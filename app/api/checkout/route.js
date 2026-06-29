@@ -23,6 +23,7 @@ import { NextResponse } from "next/server";
 import { getStripe } from "@/lib/stripe/server";
 import { getServiceSupabase } from "@/lib/supabase/server";
 import { shippingCents } from "@/lib/cart/shipping";
+import { PRICE_COLUMN } from "@/lib/stripe/mode";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -63,7 +64,8 @@ export async function POST(req) {
   const supabase = getServiceSupabase();
   const { data: variants, error } = await supabase
     .from("variants")
-    .select("id, sku, size, stripe_price_id, stock, stock_reserved, product:products(name, active, price_cents, category, model)")
+    // Alias para que `v.stripe_price_id` apunte a la columna del modo activo (test/live).
+    .select(`id, sku, size, stripe_price_id:${PRICE_COLUMN}, stock, stock_reserved, product:products(name, active, price_cents, category, model)`)
     .in("id", variantIds);
   if (error) {
     return NextResponse.json({ error: "No se pudo validar la cesta." }, { status: 500 });
