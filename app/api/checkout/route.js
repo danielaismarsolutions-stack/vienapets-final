@@ -20,7 +20,7 @@
 // aquí es una guarda de UX: la verdad transaccional es el WHERE stock >= qty de
 // la RPC.
 import { NextResponse } from "next/server";
-import { getStripe } from "@/lib/stripe/server";
+import { getStripe, priceIdOf } from "@/lib/stripe/server";
 import { getServiceSupabase } from "@/lib/supabase/server";
 import { shippingCents } from "@/lib/cart/shipping";
 
@@ -63,7 +63,7 @@ export async function POST(req) {
   const supabase = getServiceSupabase();
   const { data: variants, error } = await supabase
     .from("variants")
-    .select("id, sku, size, stripe_price_id, stock, stock_reserved, product:products(name, active, price_cents, category, model)")
+    .select("id, sku, size, stripe_price_id, stripe_price_id_live, stock, stock_reserved, product:products(name, active, price_cents, category, model)")
     .in("id", variantIds);
   if (error) {
     return NextResponse.json({ error: "No se pudo validar la cesta." }, { status: 500 });
@@ -81,7 +81,7 @@ export async function POST(req) {
     if (!v.product?.active) {
       return NextResponse.json({ error: `"${v.product?.name ?? "Producto"}" ya no está disponible.` }, { status: 400 });
     }
-    if (!v.stripe_price_id) {
+    if (!priceIdOf(v)) {
       return NextResponse.json({ error: `"${v.product?.name ?? "Producto"}" no está listo para la venta.` }, { status: 409 });
     }
     if (v.product?.category === "conjunto") {
@@ -173,7 +173,8 @@ export async function POST(req) {
         );
       }
     }
-    qtyByPrice.set(v.stripe_price_id, (qtyByPrice.get(v.stripe_price_id) || 0) + e.qty);
+    const priceId = priceIdOf(v);
+    qtyByPrice.set(priceId, (qtyByPrice.get(priceId) || 0) + e.qty);
     subtotal_cents += (v.product?.price_cents ?? 0) * e.qty;
   }
   const line_items = [...qtyByPrice].map(([price, quantity]) => ({ price, quantity }));
@@ -232,6 +233,10 @@ export async function POST(req) {
     });
     return NextResponse.json({ sessionId: session.id, url: session.url });
   } catch (err) {
+    // Log server-side para diagnosticar (no se expone al cliente). Las causas
+    // típicas: price_id de otro modo (test/live), Stripe Tax sin dirección de
+    // origen, o invoice_creation sin datos fiscales en el Dashboard.
+    console.error("[checkout] stripe.checkout.sessions.create falló:", err?.type, err?.code, err?.message);
     return NextResponse.json({ error: "No se pudo iniciar el pago." }, { status: 502 });
   }
 }
