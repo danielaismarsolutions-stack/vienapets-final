@@ -1,7 +1,10 @@
 import { ShopPage } from "@/components/pages/ShopPage";
 import { getAllProducts, getProductsByCategory } from "@/lib/queries/products";
 
-export const revalidate = 60;
+// Stock en tiempo real: el listado NO se cachea (antes ISR revalidate=60). Así
+// el badge "Agotado" refleja al instante la disponibilidad real, incluida la
+// derivada de componentes en los conjuntos.
+export const dynamic = "force-dynamic";
 
 // Mapeo de la categoría legible en URL (?cat=arneses) a la del esquema
 // Supabase (products.category). Coincide con CategoryRow / hero CTAs.

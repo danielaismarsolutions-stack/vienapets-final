@@ -29,6 +29,7 @@ export const dynamic = "force-dynamic";
 
 const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "").replace(/\/$/, "");
 const VALID_SIZES = ["XS", "S", "M", "L"];
+const cap = (s) => (s ? s[0].toUpperCase() + s.slice(1) : s);
 
 export async function POST(req) {
   let body;
@@ -92,14 +93,32 @@ export async function POST(req) {
     }
   }
 
-  // Disponibilidad de los componentes para los modelos de conjunto presentes.
-  const harnessAvail = new Map(); // `${model}:${size}` -> disponible
-  const leashAvail = new Map();   // model -> disponible
-  const bagAvail = new Map();     // model -> disponible
+  // Demanda agregada por VARIANTE física (la que realmente descuenta el webhook).
+  // Un mismo SKU puede recibir demanda de varias fuentes en la misma cesta: p. ej.
+  // una correa Capri suelta y la correa incluida en un Conjunto Capri descuentan
+  // ambas de COR-CAPRI. Validamos la SUMA contra el disponible (stock - reserved)
+  // para impedir el oversell que antes solo afloraba en el webhook tras el pago.
+  const demandByVariant = new Map(); // variantId -> unidades pedidas
+  const availByVariant = new Map();  // variantId -> disponible
+  const labelByVariant = new Map();  // variantId -> etiqueta legible para el error
+  const addDemand = (variantId, qty) =>
+    demandByVariant.set(variantId, (demandByVariant.get(variantId) || 0) + qty);
+
+  // Disponibilidad y etiqueta de los productos sueltos (ya traídos en `byId`).
+  for (const v of byId.values()) {
+    availByVariant.set(v.id, Math.max(0, (v.stock ?? 0) - (v.stock_reserved ?? 0)));
+    labelByVariant.set(v.id, `${v.product?.name ?? "Producto"}${v.size ? ` (talla ${v.size})` : ""}`);
+  }
+
+  // Componentes de los conjuntos presentes: modelo/talla → variante física (id),
+  // con su disponible y etiqueta, igual que reconstruye el webhook al descontar.
+  const harnessByKey = new Map(); // `${model}:${size}` -> variantId
+  const leashByModel = new Map(); // model -> variantId
+  const bagByModel = new Map();   // model -> variantId
   if (conjModels.size > 0) {
     const { data: comps, error: compErr } = await supabase
       .from("products")
-      .select("model, category, variants(size, stock, stock_reserved)")
+      .select("model, category, variants(id, size, stock, stock_reserved)")
       .eq("active", true)
       .in("model", [...conjModels])
       .in("category", ["arnes", "correa", "portabolsas"]);
@@ -108,55 +127,64 @@ export async function POST(req) {
     }
     for (const p of comps || []) {
       for (const cv of p.variants || []) {
-        const avail = Math.max(0, (cv.stock ?? 0) - (cv.stock_reserved ?? 0));
+        availByVariant.set(cv.id, Math.max(0, (cv.stock ?? 0) - (cv.stock_reserved ?? 0)));
         if (p.category === "arnes") {
-          if (cv.size) harnessAvail.set(`${p.model}:${cv.size}`, avail);
+          if (cv.size) {
+            harnessByKey.set(`${p.model}:${cv.size}`, cv.id);
+            labelByVariant.set(cv.id, `Arnés ${cap(p.model)} (talla ${cv.size})`);
+          }
         } else if (p.category === "correa") {
-          leashAvail.set(p.model, avail);
+          leashByModel.set(p.model, cv.id);
+          labelByVariant.set(cv.id, `Correa ${cap(p.model)}`);
         } else if (p.category === "portabolsas") {
-          bagAvail.set(p.model, avail);
+          bagByModel.set(p.model, cv.id);
+          labelByVariant.set(cv.id, `Portabolsas ${cap(p.model)}`);
         }
       }
     }
   }
 
-  // Demanda agregada de componentes por los conjuntos del carrito (la correa y
-  // el portabolsas son comunes a todas las tallas de un mismo modelo).
-  const demandHarness = new Map();
-  const demandLeash = new Map();
-  const demandBag = new Map();
+  // Acumula demanda: los productos sueltos sobre su propia variante; los conjuntos
+  // sobre sus tres componentes (arnés de la talla + correa + portabolsas del modelo).
   for (const e of entries) {
     const v = byId.get(e.variantId);
-    if (v.product?.category !== "conjunto") continue;
-    const m = v.product.model;
-    const hk = `${m}:${e.harnessSize}`;
-    demandHarness.set(hk, (demandHarness.get(hk) || 0) + e.qty);
-    demandLeash.set(m, (demandLeash.get(m) || 0) + e.qty);
-    demandBag.set(m, (demandBag.get(m) || 0) + e.qty);
+    if (v.product?.category === "conjunto") {
+      const m = v.product.model;
+      const targets = [
+        { id: harnessByKey.get(`${m}:${e.harnessSize}`), label: `Arnés ${cap(m)} (talla ${e.harnessSize})` },
+        { id: leashByModel.get(m), label: `Correa ${cap(m)}` },
+        { id: bagByModel.get(m), label: `Portabolsas ${cap(m)}` },
+      ];
+      for (const t of targets) {
+        if (!t.id) {
+          // Falta un componente activo en el catálogo: el conjunto no se puede formar.
+          return NextResponse.json(
+            { error: `No se puede completar el conjunto ${cap(m)}: falta ${t.label}.` },
+            { status: 409 }
+          );
+        }
+        addDemand(t.id, e.qty);
+      }
+    } else {
+      addDemand(e.variantId, e.qty);
+    }
   }
-  for (const [hk, need] of demandHarness) {
-    if ((harnessAvail.get(hk) ?? 0) < need) {
-      const [m, s] = hk.split(":");
+
+  // Validación única: ninguna variante puede tener demanda total > disponible.
+  for (const [variantId, need] of demandByVariant) {
+    const avail = availByVariant.get(variantId) ?? 0;
+    if (need > avail) {
+      const label = labelByVariant.get(variantId) ?? "un producto de tu cesta";
       return NextResponse.json(
-        { error: `Stock insuficiente para el conjunto ${m} (arnés talla ${s}).` },
+        { error: `Stock insuficiente de ${label}. Disponibles: ${avail}, en tu cesta: ${need}.` },
         { status: 409 }
       );
     }
   }
-  for (const [m, need] of demandLeash) {
-    if ((leashAvail.get(m) ?? 0) < need) {
-      return NextResponse.json({ error: `Stock insuficiente para el conjunto ${m} (correa).` }, { status: 409 });
-    }
-  }
-  for (const [m, need] of demandBag) {
-    if ((bagAvail.get(m) ?? 0) < need) {
-      return NextResponse.json({ error: `Stock insuficiente para el conjunto ${m} (portabolsas).` }, { status: 409 });
-    }
-  }
 
   // Line items (mezclados por price: Stripe rechaza el mismo price repetido) +
-  // subtotal + manifiesto de conjuntos. Los productos sueltos validan su propio
-  // stock; los conjuntos ya se validaron por componentes arriba.
+  // subtotal + manifiesto de conjuntos. El stock ya se validó arriba de forma
+  // agregada por variante física (sueltos + componentes de conjuntos).
   const qtyByPrice = new Map();
   let subtotal_cents = 0;
   const conjManifestParts = [];
@@ -164,14 +192,6 @@ export async function POST(req) {
     const v = byId.get(e.variantId);
     if (v.product?.category === "conjunto") {
       conjManifestParts.push(`${v.product.model}:${e.harnessSize}:${e.qty}`);
-    } else {
-      const available = Math.max(0, (v.stock ?? 0) - (v.stock_reserved ?? 0));
-      if (available < e.qty) {
-        return NextResponse.json(
-          { error: `Stock insuficiente de "${v.product?.name}"${v.size ? ` (talla ${v.size})` : ""}. Quedan ${available}.` },
-          { status: 409 }
-        );
-      }
     }
     const priceId = priceIdOf(v);
     qtyByPrice.set(priceId, (qtyByPrice.get(priceId) || 0) + e.qty);
