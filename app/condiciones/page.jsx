@@ -83,17 +83,12 @@ export default function Page() {
       </P>
 
       <H2>5. Envíos</H2>
-      <UL>
-        <li>Ámbito de envío: España peninsular.</li>
-        <li>
-          Tarifa de envío: 5,90 €. El envío es <strong>gratuito</strong> para
-          pedidos cuyo importe sea igual o superior a 60 €.
-        </li>
-        <li>
-          Plazo de entrega estimado: 3 a 7 días hábiles desde la confirmación del
-          pago.
-        </li>
-      </UL>
+      <P>
+        Envíos a España peninsular mediante SEUR. Plazo orientativo: 3-5 días
+        hábiles desde la confirmación del pago. Tarifa única: 5,90 €. Envío
+        gratuito en pedidos superiores a 60 €. Recibirás un email con el número
+        de seguimiento en cuanto tu pedido salga de nuestras instalaciones.
+      </P>
       <P>
         Los plazos son orientativos y pueden variar por causas ajenas a Viena Pets
         (incidencias del transportista, periodos de alta demanda, etc.).
