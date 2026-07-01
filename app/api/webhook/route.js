@@ -17,7 +17,7 @@
 import { NextResponse } from "next/server";
 import { getStripe, priceIdOf, STRIPE_PRICE_COLUMN } from "@/lib/stripe/server";
 import { getServiceSupabase } from "@/lib/supabase/server";
-import { sendOrderConfirmation } from "@/lib/emails/send";
+import { sendOrderConfirmation, sendInternalOrderNotification } from "@/lib/emails/send";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -128,14 +128,43 @@ async function persistPaidOrder(stripe, session) {
     );
   }
 
-  // Email de confirmación (Sprint 5). El pedido ya está creado y es lo único
-  // crítico: el envío del email es idempotente (UNIQUE en order_emails) y NUNCA
-  // lanza, así que un fallo de Brevo no rompe el webhook ni provoca un reintento
-  // de Stripe que duplicaría nada.
-  const emailResult = await sendOrderConfirmation(data.order_id);
-  console.log(`[webhook] Email confirmación ${data.order_number}: ${emailResult.status}` +
-    (emailResult.reason ? ` (${emailResult.reason})` : "") +
-    (emailResult.error ? ` — ${emailResult.error}` : ""));
+  // Emails (Sprint 5 + aviso operativo interno). El pedido ya está creado y es
+  // lo único crítico: ambos envíos son idempotentes (UNIQUE en order_emails) y
+  // NUNCA lanzan, así que un fallo de Brevo no rompe el webhook ni provoca un
+  // reintento de Stripe que duplicaría nada. Se disparan EN PARALELO:
+  //   1) confirmación al cliente,
+  //   2) aviso operativo interno al equipo (destinatarios en lib/emails/
+  //      constants.js). El teléfono no se persiste en orders; lo pasamos aquí
+  //      desde customer_details. Un fallo del aviso interno es SECUNDARIO: no
+  //      debe bloquear el 200 (el cliente ya tiene su pedido).
+  const phone = full.customer_details?.phone ?? null;
+  const [confRes, internalRes] = await Promise.allSettled([
+    sendOrderConfirmation(data.order_id),
+    sendInternalOrderNotification(data.order_id, { phone }),
+  ]);
+
+  if (confRes.status === "fulfilled") {
+    const r = confRes.value;
+    console.log(`[webhook] Email confirmación ${data.order_number}: ${r.status}` +
+      (r.reason ? ` (${r.reason})` : "") +
+      (r.error ? ` — ${r.error}` : ""));
+  } else {
+    console.error(`[webhook] Email confirmación ${data.order_number} lanzó: ${confRes.reason}`);
+  }
+
+  if (internalRes.status === "fulfilled") {
+    const r = internalRes.value;
+    if (r.status === "sent") {
+      console.log(`[webhook] internal notification sent for ${data.order_number} (messageId=${r.messageId}).`);
+    } else if (r.status === "skipped") {
+      console.log(`[webhook] internal notification skipped for ${data.order_number} (${r.reason || "already sent"}).`);
+    } else {
+      console.error(`[webhook] internal notification failed for ${data.order_number}: ${r.error}`);
+    }
+  } else {
+    // No debería ocurrir (la función no lanza), pero nunca dejamos que rompa el 200.
+    console.error(`[webhook] internal notification threw for ${data.order_number}: ${internalRes.reason}`);
+  }
 }
 
 // Pago asíncrono fallido: registramos el pedido como 'payment_failed' para que
